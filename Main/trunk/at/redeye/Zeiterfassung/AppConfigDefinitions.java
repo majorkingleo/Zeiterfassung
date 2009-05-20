@@ -37,8 +37,8 @@ public class AppConfigDefinitions {
        addLocal(LoggingDir);
        addLocal(LoggingLevel);
        
-       GlobalConfigDefinitions.add_help_path("/at/momm/Application/resources/Help/Params/");
-       LocalConfigDefinitions.add_help_path("/at/momm/Application/resources/Help/Params/");
+       GlobalConfigDefinitions.add_help_path("/at/redeye/Zeiterfassung/resources/Help/Params/");
+       LocalConfigDefinitions.add_help_path("/at/redeye/Zeiterfassung/resources/Help/Params/");
     }
     
     

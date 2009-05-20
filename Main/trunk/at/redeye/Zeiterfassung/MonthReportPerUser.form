@@ -50,7 +50,7 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="JCUser" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="389" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="382" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -83,7 +83,7 @@
     <Component class="javax.swing.JButton" name="plusMon">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/next.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/next.png"/>
         </Property>
       </Properties>
       <Events>
@@ -93,7 +93,7 @@
     <Component class="javax.swing.JButton" name="minusMon">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/prev.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/prev.png"/>
         </Property>
       </Properties>
       <Events>
@@ -103,7 +103,7 @@
     <Component class="javax.swing.JButton" name="jBPrint">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/print.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/print.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Drucken"/>
       </Properties>

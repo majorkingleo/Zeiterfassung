@@ -234,7 +234,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <Component id="month" pref="634" max="32767" attributes="0"/>
-                  <EmptySpace pref="12" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
                       <Component id="jLSum" max="32767" attributes="1"/>
                       <Component id="minusMon" alignment="1" max="32767" attributes="1"/>
@@ -250,7 +250,7 @@
         <Component class="javax.swing.JButton" name="minusMon">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/prev.png"/>
+              <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/prev.png"/>
             </Property>
           </Properties>
           <Events>
@@ -260,14 +260,14 @@
         <Component class="javax.swing.JButton" name="plusMon">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/next.png"/>
+              <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/next.png"/>
             </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="plusMonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="at.momm.FrameWork.widgets.calendar.CalendarComponent" name="month">
+        <Component class="at.redeye.FrameWork.widgets.calendar.CalendarComponent" name="month">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
@@ -281,7 +281,7 @@
         <Component class="javax.swing.JButton" name="jBHelp">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/help.png"/>
+              <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/help.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Hilfe"/>
           </Properties>

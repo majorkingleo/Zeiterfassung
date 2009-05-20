@@ -16,6 +16,6 @@ public class LocalHelpWin extends HelpWin {
 
     public LocalHelpWin( Root root, String Module )
     {
-        super( root, "/at/momm/Application/resources/Help/", Module );
+        super( root, "/at/redeye/Zeiterfassung/resources/Help/", Module );
     }
 }

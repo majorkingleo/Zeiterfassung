@@ -53,7 +53,7 @@
                   <Component id="jLTitle" alignment="0" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="298" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="281" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" alignment="0" groupAlignment="3" attributes="0">
@@ -81,7 +81,7 @@
     <Component class="javax.swing.JButton" name="jBHelp">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/help.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/help.png"/>
         </Property>
       </Properties>
       <Events>
@@ -112,7 +112,7 @@
     <Component class="javax.swing.JButton" name="jBClose">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/fileclose.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/fileclose.gif"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Schlie&#xdf;en"/>
       </Properties>
@@ -123,7 +123,7 @@
     <Component class="javax.swing.JButton" name="jBDel">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/edittrash.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/edittrash.gif"/>
         </Property>
         <Property name="text" type="java.lang.String" value="L&#xf6;schen"/>
       </Properties>
@@ -134,7 +134,7 @@
     <Component class="javax.swing.JButton" name="jBNew">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/bookmark.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/bookmark.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Neu"/>
       </Properties>
@@ -145,7 +145,7 @@
     <Component class="javax.swing.JButton" name="jBSave">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/momm/FrameWork/framework/resources/icons/button_ok.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/button_ok.gif"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Speichern"/>
       </Properties>
