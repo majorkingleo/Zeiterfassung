@@ -54,6 +54,7 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 		configureLogging();
 
 		um.addUMListener(this);
+        um.setLogo("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
 		um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
 
 	}
