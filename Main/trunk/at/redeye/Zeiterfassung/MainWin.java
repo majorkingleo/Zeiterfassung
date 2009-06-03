@@ -716,7 +716,9 @@ public void close()
                     	StringUtils.autoLineBreak(
                             "Sie müssen zuerst Tätigkeiten, die zur Benutzung neuer" +
                             "Zeiteinträge verwendet werden können, erstellen. " +
-                            "Menüpunkt: Einstellungen -> Tätigkeiten.", 40),
+                            "Menüpunkt: Einstellungen -> Tätigkeiten.\n" +
+                            "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich " +
+                            "bitte an Ihren Administrator.", 40),
                             "Fehler",
                             JOptionPane.OK_OPTION);
                     
@@ -750,7 +752,10 @@ public void close()
                     JOptionPane.showMessageDialog(null,
                     	StringUtils.autoLineBreak(
                             "Sie müssen zuerst die Normalarbeitszeit für die Benutzer festlegen. " +
-                            "Menüpunkt: Einstellungen -> Monatseinstellungen für die Benutzer.", 40),
+                            "Menüpunkt: Einstellungen -> \"Monatseinstellungen für die Benutzer\".\n" +
+                            "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich " +
+                            "bitte an Ihren Administrator."
+                            , 40),
                             "Fehler",
                             JOptionPane.OK_OPTION);
                     
