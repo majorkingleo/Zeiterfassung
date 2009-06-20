@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Locale;
@@ -380,7 +381,7 @@ public class BookDay extends BaseDialog {
 	private void insertOrUpdateValues(DBTimeEntries entry)
 			throws UnsupportedDBDataTypeException,
 			WrongBindFileFormatException, SQLException,
-			TableBindingNotRegisteredException {
+			TableBindingNotRegisteredException, IOException {
 		DBTimeEntries e = new DBTimeEntries();
 
 		e.loadFromCopy(entry);

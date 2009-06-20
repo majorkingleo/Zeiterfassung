@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
@@ -353,7 +354,7 @@ private void jBSetAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private void insertOrUpdateValues(DBMonthBlocks entry)
             throws UnsupportedDBDataTypeException,
             WrongBindFileFormatException, SQLException,
-            TableBindingNotRegisteredException 
+            TableBindingNotRegisteredException, IOException 
     {
         DBMonthBlocks e = new DBMonthBlocks();
 

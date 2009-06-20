@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -204,7 +205,7 @@ public class JobTypes extends BaseDialog {
             UnsupportedDBDataTypeException,
             WrongBindFileFormatException,
             SQLException,
-            TableBindingNotRegisteredException {
+            TableBindingNotRegisteredException, IOException {
         DBJobType e = new DBJobType();
 
         e.loadFromCopy(entry);

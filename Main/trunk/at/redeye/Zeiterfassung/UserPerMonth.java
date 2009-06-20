@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
@@ -310,7 +311,7 @@ private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 private void insertOrUpdateValues(DBUserPerMonth entry) 
             throws UnsupportedDBDataTypeException,
             WrongBindFileFormatException, SQLException,
-            TableBindingNotRegisteredException {
+            TableBindingNotRegisteredException, IOException {
         DBUserPerMonth e = new DBUserPerMonth();
 
         e.loadFromCopy(entry);
