@@ -205,7 +205,9 @@ public class JobTypes extends BaseDialog {
             UnsupportedDBDataTypeException,
             WrongBindFileFormatException,
             SQLException,
-            TableBindingNotRegisteredException, IOException {
+            TableBindingNotRegisteredException, 
+            IOException {
+
         DBJobType e = new DBJobType();
 
         e.loadFromCopy(entry);
