@@ -60,6 +60,7 @@ public class JobTypes extends BaseDialog {
         tm.setEditable(jt.type);
         tm.setEditable(jt.help);
         tm.setEditable(jt.locked);
+        tm.setEditable(jt.is_holliday);
         
         
         tm.prepareTable();

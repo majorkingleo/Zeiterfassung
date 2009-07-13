@@ -83,12 +83,13 @@ public class DBJobType extends DBStrukt
         
     }
     
-    public DBInteger  id     = new DBInteger( "id", "Id" );
-    public DBEnum     type   = new DBEnum( "type", "Typ", new JobEnumHandler() );
-    public DBString   name   = new DBString( "name", "Name", 20 );
-    public DBString   help   = new DBString( "help", "Hilfetext", 20 );
-    public DBFlagJaNein     locked = new DBFlagJaNein( "locked", "gesperrt" );
-    public DBHistory  hist   = new DBHistory( "hist" );
+    public DBInteger      id          = new DBInteger( "id", "Id" );
+    public DBEnum         type        = new DBEnum( "type", "Typ", new JobEnumHandler() );   
+    public DBString       name        = new DBString( "name", "Name", 20 );
+    public DBString       help        = new DBString( "help", "Hilfetext", 20 );
+    public DBFlagJaNein   is_holliday = new DBFlagJaNein( "is_holliday", "Urlaub" );
+    public DBFlagJaNein   locked      = new DBFlagJaNein( "locked", "gesperrt" );
+    public DBHistory  hist            = new DBHistory( "hist" );
 
     public DBJobType()
     {
@@ -97,11 +98,14 @@ public class DBJobType extends DBStrukt
         add( id );
         add( type );
         add( name );
-        add( help );
+        add( help );        
         add( locked );
+        add( is_holliday, 2 );
         add( hist );
         
         id.setAsPrimaryKey();
+        
+        setVersion(2);
     }
     
     @Override
