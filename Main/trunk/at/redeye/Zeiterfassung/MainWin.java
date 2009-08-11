@@ -17,6 +17,7 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.ConnectionDialog;
 import at.redeye.FrameWork.base.GlobalConfig;
 import at.redeye.FrameWork.base.LocalConfig;
+import at.redeye.FrameWork.base.MemInfo;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.utilities.Rounding;
@@ -149,6 +150,9 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMLocalConfig = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMMonthReport = new javax.swing.JMenuItem();
+        jMenuInfo = new javax.swing.JMenu();
+        jMInfo = new javax.swing.JMenuItem();
+        jMMemInfo = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -356,6 +360,26 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMenu1.add(jMMonthReport);
 
         jMenuBar1.add(jMenu1);
+
+        jMenuInfo.setText("Info");
+
+        jMInfo.setText("Über");
+        jMInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMInfoActionPerformed(evt);
+            }
+        });
+        jMenuInfo.add(jMInfo);
+
+        jMMemInfo.setText("Speicherinformationen");
+        jMMemInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMMemInfoActionPerformed(evt);
+            }
+        });
+        jMenuInfo.add(jMMemInfo);
+
+        jMenuBar1.add(jMenuInfo);
 
         setJMenuBar(jMenuBar1);
 
@@ -595,6 +619,26 @@ private void jMMonthBlocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     
 }//GEN-LAST:event_jMMonthBlocksActionPerformed
 
+private void jMInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMInfoActionPerformed
+// TODO add your handling code here:
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+        public void run() {
+            new About(root).setVisible(true);
+        }
+    });
+}//GEN-LAST:event_jMInfoActionPerformed
+
+private void jMMemInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMemInfoActionPerformed
+// TODO add your handling code here:
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+        public void run() {
+            new MemInfo(root).setVisible(true);
+        }
+    });
+}//GEN-LAST:event_jMMemInfoActionPerformed
+
 
 
 
@@ -677,14 +721,17 @@ public void close()
     private javax.swing.JMenuItem jMDatabase;
     private javax.swing.JMenuItem jMExtraHolidays;
     private javax.swing.JMenuItem jMGlobalConfig;
+    private javax.swing.JMenuItem jMInfo;
     private javax.swing.JMenuItem jMJobTypes;
     private javax.swing.JMenuItem jMLocalConfig;
+    private javax.swing.JMenuItem jMMemInfo;
     private javax.swing.JMenuItem jMMonthBlocks;
     private javax.swing.JMenuItem jMMonthReport;
     private javax.swing.JMenu jMUser;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuHollidays;
+    private javax.swing.JMenu jMenuInfo;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenu jMenuProgram;
     private javax.swing.JMenuItem jMenuQuit;
