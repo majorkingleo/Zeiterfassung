@@ -1,5 +1,6 @@
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.AutoLogger;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -15,6 +16,7 @@ import at.redeye.FrameWork.base.LocalRoot;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
+import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
@@ -83,17 +85,37 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 						.showMessageDialog(
 								null,
 								StringUtils
-										.autoLineBreak("Das Logger konnte nicht korrekt initialisiert werden!"),
+										.autoLineBreak("Der Logger konnte nicht korrekt initialisiert werden!"),
 								"User Management", JOptionPane.WARNING_MESSAGE);
 			}
 
 		}
 
+        checkTableVersions();
+        
 		// Don't start as thread, because BaseDialog attempts wrong closing of
 		// application
 		new MainWin(root).setVisible(true);
 
 	}
+
+    private void checkTableVersions() 
+    {                
+        new AutoLogger( ModuleLauncher.class.getCanonicalName() ) {
+
+            @Override
+            public void do_stuff() throws Exception {
+             
+                Transaction trans = root.getDBConnection().getDefaultTransaction();
+                
+               if( trans.isOpen() )
+               {
+                 root.getBindtypeManager().setTransaction(trans);
+                 root.getBindtypeManager().check_table_versions_with_message( root.getUserPermissionLevel() );
+               }               
+            }
+        };                       
+    }
 
 	private void configureLogging() {
 
