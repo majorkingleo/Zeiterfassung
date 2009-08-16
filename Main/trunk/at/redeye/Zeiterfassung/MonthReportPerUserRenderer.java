@@ -14,11 +14,17 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.FrameWork.base.bindtypes.DBFlagJaNein.FLAGTYPES;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.reports.BaseReportRenderer;
 import at.redeye.FrameWork.base.reports.ReportRenderer;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.HMSTime;
+import at.redeye.Zeiterfassung.bindtypes.DBJobType;
+import at.redeye.Zeiterfassung.bindtypes.DBJobType.JOBTYPES;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  *
@@ -28,6 +34,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 {    
     Transaction trans;
     Vector<DBStrukt> data = new Vector<DBStrukt>();
+    HashMap<Integer,DBJobType> job_types = new HashMap<Integer,DBJobType>();
     int mon;
     int year;
     String username;
@@ -60,7 +67,16 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                         + " order by " + trans.markColumn("from");
 
                 data = trans.fetchTable(new DBTimeEntries(), where);
-                
+
+                // alle Jobtypes ins Hirn blasen
+                Vector<DBStrukt> res = trans.fetchTable(new DBJobType());
+
+                for( DBStrukt s : res )
+                {
+                    DBJobType jt = (DBJobType) s;
+                    job_types.put(jt.id.getValue(), jt);
+                }
+
                 result = new Boolean(true);
             }
         };
@@ -77,8 +93,9 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
         html_setTitle("Monatsbericht " + MonthReportPerUser.getTitle(mon, year) + " für " + username );
         
         int day = 0;
-        long milli_per_day = 0;
-        long milli_per_month = 0;
+
+        HashMap<Integer,Long> millis_per_jobtype_month = new HashMap<Integer,Long>();
+        HashMap<Integer,Long> millis_per_jobtype_day = new HashMap<Integer,Long>();
         
         for( DBStrukt s : data )
         {
@@ -95,9 +112,9 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 if( day != 0 )
                 {
                     // summe pro Tag
-                    html_newline();
-                    write_sum(milli_per_day);
-                    milli_per_day = 0;
+                    html_newline();                    
+                    write_sum_day(millis_per_jobtype_day);
+                    millis_per_jobtype_day.clear();
                     
                     html_blockquote_end();
                 }
@@ -109,21 +126,34 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 
                 html_blockquote_start();
                 
-                milli_per_day = 0;
+                millis_per_jobtype_day.clear();
             }
-            
-            milli_per_day += e.calcDuration();
-            milli_per_month += e.calcDuration();
+
+            Long duration =  millis_per_jobtype_day.get((Integer)e.jobtype.getValue());
+
+            if( duration == null )
+                duration = new Long(0);
+
+            millis_per_jobtype_day.put((Integer)e.jobtype.getValue(),duration + e.calcDuration());
+
+            duration =  millis_per_jobtype_month.get((Integer)e.jobtype.getValue());
+
+            if( duration == null )
+                duration = new Long(0);
+
+            millis_per_jobtype_month.put((Integer)e.jobtype.getValue(),duration + e.calcDuration());
             
             DateTime dur = new DateTime(new Time(e.calcDuration()-60*60*1000));
             
             html_bold( d_from.toString("HH:mm" ) + " - " + d_to.toString("HH:mm") + " = " +  dur.toString("HH:mm") );
+            html_normal_text( " [" + job_types.get((Integer)e.jobtype.getValue()).name.toString() + "]" );
             html_normal_text( " " + e.comment.getValue().toString() );
             
             html_newline();
         }
         
-        write_sum(milli_per_day);
+        html_newline();
+        write_sum_day(millis_per_jobtype_day);
         
         if( data.size() > 0 )
             html_blockquote_end();
@@ -131,7 +161,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
         html_bold_title( "Gesamt:" );
         html_blockquote_start();
         
-        write_sum(milli_per_month);
+        write_sum_month(millis_per_jobtype_month);
         
         html_blockquote_end();
         
@@ -140,12 +170,64 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
         return text.toString();
     }
 
-    private void write_sum(long milli_per_day) {                
-        DateTime dur = new DateTime(new Time(milli_per_day-60*60*1000));
-         
-        html_bold( "Summe: " + dur.toString("HH:mm") );                
-    }
-    
+    private void write_sum_month(HashMap<Integer,Long> sum_data) {
 
-    
+        Set<Integer> keys = sum_data.keySet();
+        
+        for( Integer key : keys )
+        {                        
+            html_bold(job_types.get(key).name.toString() + ": " + getDurFromMilli(sum_data.get(key)) );
+            html_newline();
+        }
+
+        // Leistungszeit gesammt
+        long lz=0;
+        long nlz=0;
+        long urlaub=0;
+        long summe=0;
+
+        for( Integer key : keys )
+        {
+          DBJobType jt = job_types.get(key);
+
+          if( jt.type.getValue().equals(JOBTYPES.LZ.toString()) )
+            lz += sum_data.get(key);
+          else
+            nlz += sum_data.get(key);
+
+          if(jt.is_holliday.getValue().equals(FLAGTYPES.JA.toString()))
+              urlaub += sum_data.get(key);
+
+          summe += sum_data.get(key);
+        }
+
+        html_newline();
+        html_bold("Leistungszeit: " + getDurFromMilli(lz)); html_newline();
+        html_bold("Nichtleistungszeit: " + getDurFromMilli(nlz)); html_newline();
+        html_bold("Urlaub: " + getDurFromMilli(urlaub)); html_newline();
+        html_bold("Summe: " + getDurFromMilli(summe)); html_newline();
+    }
+
+    private String getDurFromMilli(long milli)
+    {
+        // DateTime dur = new DateTime(new Time(milli-60*60*1000));
+        // return dur.toString("HH:mm");
+        HMSTime hms_time = new HMSTime( milli );
+        return hms_time.toString("HH:mm");
+    }
+
+    private void write_sum_day(HashMap<Integer,Long> sum_data) {
+
+        Set<Integer> keys = sum_data.keySet();
+
+        StringBuilder line = new StringBuilder();
+
+        for( Integer key : keys )
+        {            
+            line.append(" ");
+            line.append(job_types.get(key).name.toString() + ": " + getDurFromMilli(sum_data.get(key)));
+        }
+
+        html_bold(line.toString());
+    }
 }
