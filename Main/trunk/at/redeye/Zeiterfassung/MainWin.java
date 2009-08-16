@@ -849,12 +849,23 @@ public void close()
 
                         ms.calc();
 
+                        StringBuilder text = new StringBuilder();
+                        /*
                         String text = "Soll: " + 
                                 Rounding.RndDouble(ms.hours_per_month,3) + 
                                 " Ist: " + 
-                                ms.complete_time.toString("HH:mm");
+                                ms.complete_time.toString("HH:mm") +
+                                " Resturlaub: " + ms.resturlaub.toString("HH:mm");
+                        */
+                        text.append("Soll: ");
+                        text.append(Rounding.RndDouble(ms.hours_per_month,3));
+                        text.append(" Ist: ");
+                        text.append(ms.complete_time.toString("HH:mm"));
+                        text.append(" Resturlaub: ");
+                        text.append(ms.remaining_leave.toString("HH:mm"));
+                        text.append(" (" + Rounding.RndDouble(ms.remaining_leave.getHours() / ms.hours_per_day,1) + " Tage)" );
 
-                        jLSum.setText(text);
+                        jLSum.setText(text.toString());
                     }
                 };
             }

@@ -29,6 +29,7 @@ public class DBUserPerMonth extends DBStrukt
     public DBDouble        hours_per_week = new DBDouble( "hours_per_week", "Arbeitsstunden pro Woche" );
     public DBDouble        days_per_week  = new DBDouble( "days_per_week", "Arbeitstage pro Woche" );
     public DBDouble        hours_holidays = new DBDouble( "hours_holidays", "Urlaubsstunden");
+    public DBDouble        days_holidays  = new DBDouble( "days_holidays", "Urlaub in Tagen");
     public DBDouble        hours_overtime = new DBDouble( "hours_overtime", "Überstunden");
     public DBHistory       hist           = new DBHistory( "hist" );    
     
@@ -43,10 +44,13 @@ public class DBUserPerMonth extends DBStrukt
         add( hours_per_week );        
         add( days_per_week );
         add( hours_holidays );
+        add( days_holidays, 2 );
         add( hours_overtime );
         add( hist );
         
         id.setAsPrimaryKey();
+        
+        setVersion(2);
     }
     
     public DBUserPerMonth( DBSqlAsInteger.SqlQuery query_user )

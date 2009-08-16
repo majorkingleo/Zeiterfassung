@@ -39,7 +39,7 @@ public class DateValidator extends TableValidator {
     }
 
     @Override
-    public boolean loadToValue(DBValue val, String s) {
+    public boolean loadToValue(DBValue val, String s, int row) {
        
     	Date time = (Date) val.getValue();
         //Add dummy time for parsing

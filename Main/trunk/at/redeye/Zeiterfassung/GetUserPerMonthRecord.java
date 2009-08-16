@@ -24,6 +24,8 @@ import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
  */
 public class GetUserPerMonthRecord {
 
+    private static Logger logger = Logger.getLogger(GetUserPerMonthRecord.class);
+
     public static DBUserPerMonth getValidRecordForMonth( Transaction trans, int userId, int year, int month ) throws SQLException, SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
         
@@ -37,13 +39,22 @@ public class GetUserPerMonthRecord {
                     " and "
                     + trans.markColumn(upm.locked) + "='NEIN'" + 
                     " and "
-                    + trans.getPeriodStmt(upm.from, upm.to, dm_from)                    
+                    + trans.getLowerDate(upm.from, dm_from) +
+                    " and " +
+                    " ( "
+                    +   trans.getHigherDate(upm.to, dm_from) +
+                    "    or "
+                    +   trans.getDayStmt(upm.to, new DateMidnight(0L)) +
+                    " )"
                 );
-        
+
+        if( res.size() != 1 )
+            logger.info("res: " + res.size() + " " + trans.getSql());
+
         if( res.size() == 0 )
         {
             // gibt es einen 1.1.1970 Eintrag?
-            
+
             dm_from = new DateMidnight( 0L );
             
             res = trans.fetchTable(new DBUserPerMonth(),
@@ -52,8 +63,10 @@ public class GetUserPerMonthRecord {
                     " and "
                     + trans.markColumn(upm.locked) + "='NEIN'" + 
                     " and "
-                    + trans.getPeriodStmt(upm.from, upm.to, dm_from)                    
-                );    
+                    + trans.getPeriodStmt(upm.from, upm.to, dm_from)
+                );
+
+            logger.info("retry: " + res.size() + " " + trans.getSql());
         }
         
         if( res.size() != 1 )
@@ -74,11 +87,12 @@ public class GetUserPerMonthRecord {
                         
                             
                 logger.error(message);  
-                logger.error("Liste der Einträge:");  
+                logger.error("Liste der Einträge:");
+                logger.error("Sql: " + trans.getSql());
                 
                 for( int i = 0; i < res.size(); i++ )
                 {
-                    DBUserPerMonth rec = (DBUserPerMonth) res.get(0);
+                    DBUserPerMonth rec = (DBUserPerMonth) res.get(i);
                     
                     logger.error( (i+1) + " Id: " + rec.id + " from: " + rec.from.getDateStr() + " to: " + rec.to.getDateStr() );
                 }

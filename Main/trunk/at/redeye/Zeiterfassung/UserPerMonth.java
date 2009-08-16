@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.bindtypes.DBValue;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -18,7 +19,9 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
+import at.redeye.FrameWork.base.tablemanipulator.TableValidator;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
@@ -58,12 +61,84 @@ public class UserPerMonth extends BaseDialog {
         tm.setEditable(upm.user);
         tm.setEditable(upm.hours_per_week);
         tm.setEditable(upm.hours_holidays);
+        tm.setEditable(upm.days_holidays);
         tm.setEditable(upm.hours_overtime);
         tm.setEditable(upm.days_per_week);
         
         tm.setValidator(upm.from, new DateValidator());
         tm.setValidator(upm.to, new DateValidator());
-        
+        tm.setValidator(upm.days_holidays, new TableValidator() {
+
+                @Override
+                public boolean wantDoLoadSelf() {
+                    return true;
+                }
+
+                @Override
+                public boolean loadToValue(DBValue val, String s, int row) {
+                    if( !val.acceptString(s) )
+                        return false;
+                    
+                    val.loadFromString(s);                                       
+                    
+                    DBUserPerMonth u = (DBUserPerMonth) values.get(row);
+                    
+                    if( u == null )
+                        return false;
+
+                    double hpd = CalcMonthStuff.getHoursPerDay(u);
+
+                    if( hpd == 0 )
+                        hpd = 8;
+
+                    Double days_holidays = (Double) val.getValue();
+                    Double hh = Rounding.RndDouble(days_holidays * hpd,3);
+                    u.hours_holidays.loadFromCopy(hh);                    
+
+                    tm.updateUI();
+
+                    return true;
+                }                                
+                
+            });
+
+        tm.setValidator(upm.hours_holidays, new TableValidator() {
+
+                @Override
+                public boolean wantDoLoadSelf() {
+                    return true;
+                }
+
+                @Override
+                public boolean loadToValue(DBValue val, String s, int row) {
+                    if( !val.acceptString(s) )
+                        return false;
+
+                    val.loadFromString(s);                    
+
+                    DBUserPerMonth u = (DBUserPerMonth) values.get(row);
+
+                    if( u == null )
+                        return false;
+
+                    double hpd = CalcMonthStuff.getHoursPerDay(u);
+
+                    if( hpd == 0 )
+                        hpd = 8;
+                    
+
+                    Double hours_holidays = (Double) val.getValue();
+                    Double hh = Rounding.RndDouble(hours_holidays / hpd,3);
+                    u.days_holidays.loadFromCopy(hh);
+
+                    tm.updateUI();
+
+                    return true;
+                }
+
+        });
+
+
         tm.prepareTable();
         
         feed_table(false);

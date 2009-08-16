@@ -38,7 +38,7 @@ public class TimeHourMinuteValidator extends TableValidator {
     }
 
     @Override
-    public boolean loadToValue(DBValue val, String s) {
+    public boolean loadToValue(DBValue val, String s, int row) {
        
         DBDateTime time = (DBDateTime) val;
         
