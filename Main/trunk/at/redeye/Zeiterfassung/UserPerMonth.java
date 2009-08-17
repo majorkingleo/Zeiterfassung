@@ -94,8 +94,8 @@ public class UserPerMonth extends BaseDialog {
                     Double days_holidays = (Double) val.getValue();
                     Double hh = Rounding.RndDouble(days_holidays * hpd,3);
                     u.hours_holidays.loadFromCopy(hh);                    
-
-                    tm.updateUI();
+                    
+                    tm.updateValue(u.hours_holidays, row);                    
 
                     return true;
                 }                                
@@ -131,7 +131,7 @@ public class UserPerMonth extends BaseDialog {
                     Double hh = Rounding.RndDouble(hours_holidays / hpd,3);
                     u.days_holidays.loadFromCopy(hh);
 
-                    tm.updateUI();
+                    tm.updateValue(u.days_holidays, row);                    
 
                     return true;
                 }
