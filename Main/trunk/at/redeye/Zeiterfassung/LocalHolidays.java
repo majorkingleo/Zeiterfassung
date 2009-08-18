@@ -28,7 +28,9 @@ public class LocalHolidays implements Holidays
 {
     Transaction trans;
     Vector<DBStrukt> values = new Vector<DBStrukt>();
-    
+    protected int last_used_year=0;
+    protected Collection<HolidayInfo> last_used_holidays = null;
+
     public LocalHolidays(Transaction trans)
     {
         this.trans=trans;   
@@ -69,6 +71,26 @@ public class LocalHolidays implements Holidays
 
     public String getPrimaryCountryCode() {
         return "";
+    }
+
+    public HolidayInfo getHolidayForDay( DateMidnight date )
+    {
+        if( last_used_year != date.getYear() ||
+                last_used_holidays == null )
+        {
+            last_used_year = date.getYear();
+            last_used_holidays = getHolidays(last_used_year);
+        }
+
+        for( HolidayInfo hi : last_used_holidays )
+        {
+            if( hi.date.equals(date) )
+            {
+                return hi;
+            }
+        }
+
+        return null;
     }
 
 }

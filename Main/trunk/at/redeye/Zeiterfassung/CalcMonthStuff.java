@@ -5,6 +5,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -16,14 +17,17 @@ import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.HMSTime;
+import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.widgets.calendar.DisplayMonth;
 import at.redeye.FrameWork.widgets.calendarday.DisplayDay;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
+import at.redeye.Zeiterfassung.bindtypes.DBJobType.JOBTYPES;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import org.apache.log4j.Logger;
@@ -121,7 +125,54 @@ public class CalcMonthStuff
                 continue;
             
             hours_per_month += hours_per_day;            
-        }                
+        }
+    }
+
+    public static int getDaysOfMonth( Date date )
+    {
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+
+        return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    public boolean isHoliday( DateMidnight day )
+    {
+        HolidayInfo holidays = month.getHolidays().getHolidayForDay(day);
+
+        if( holidays == null )
+            return false;
+
+        return holidays.official_holiday;
+    }
+
+    public int getWorkDaysForMonth( Date date )
+    {
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+        int days_of_month = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        int days_to_work = 0;
+
+        for( int i = 1; i <= days_of_month; i++ )
+        {
+           cal.set(Calendar.DAY_OF_MONTH, i);
+
+           if( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY )
+               continue;
+
+           if( cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY )
+               continue;
+
+           if( isHoliday(new DateMidnight(cal)) )
+               continue;
+
+           days_to_work++;
+        }
+
+        return days_to_work;
     }
     
     public void calcHoursPerMonthDone() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
@@ -223,6 +274,33 @@ public class CalcMonthStuff
         return line.toString();
     }
 
+    private String getJobTyesForWork() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
+    {
+        DBJobType types = new DBJobType();
+
+        Vector<DBStrukt> res = trans.fetchTable(types,
+                "where "
+                + trans.markColumn(types.is_holliday) + "='JA'"
+                + " or "
+                + trans.markColumn(types.type) + "='" + JOBTYPES.LZ.toString() + "'");
+
+        StringBuilder line = new StringBuilder();
+
+        for( int i = 0; i < res.size(); i++ )
+        {
+            DBJobType type = (DBJobType) res.get(i);
+
+            if( i > 0 )
+                line.append(",");
+
+            line.append("'");
+            line.append(type.id.toString());
+            line.append("'");
+        }
+
+        return line.toString();
+    }
+
     /*
      * berechnet den Resturlaub
      */
@@ -279,8 +357,85 @@ public class CalcMonthStuff
         remaining_leave = new HMSTime(urlaub);
     }
 
-    private void calcOverTime()
+    private void calcOverTime() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
+        GregorianCalendar gdate = new GregorianCalendar(month.getYear(), month.getMonth(), 1);
 
+        Date date = gdate.getTime();
+
+        DBUserPerMonth upm = GetUserPerMonthRecord.getValidRecordForMonth(trans, root.getUserId(), month.getYear(), month.getMonth() );
+
+        if( upm == null )
+        {
+            logger.error("Keinen passenden Monatseintrag gefunden. Die Überstunden können nicht berechnet werden.");
+            return;
+        }
+
+        DBTimeEntries entries = new DBTimeEntries();
+
+        Date from = upm.from.getValue();
+        Date to = upm.to.getValue();
+
+        logger.info(to.getTime());
+
+        if( to.getTime() <= 2000*60*60 )
+        {
+            // der letzte tag des aktuellen Monats
+            GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth(), month.getDaysOfMonth());
+            to = gdate2.getTime();
+        }
+
+        Vector<DBStrukt> res = trans.fetchTable(
+                entries,
+                "where " + trans.getPeriodStmt("from", new DateMidnight(from), new DateMidnight(to)) +
+                " and " + trans.markColumn(entries.user) + "='" + root.getUserId() + "'" +
+                " and " + trans.markColumn(entries.jobtype) + " in ("  + getJobTyesForWork() + ")");
+
+
+        if( res.size() <= 0 )
+        {
+            logger.warn("Noch keine Einträge gefunden mit: " + trans.getSql() );
+            return;
+        }
+
+        Double dovertime = upm.hours_overtime.getValue();
+        long lovertime = dovertime.longValue() * 60*60*1000;
+
+        for( int i = 0; i < res.size(); i++ )
+        {
+            DBTimeEntries entry = (DBTimeEntries) res.get(i);
+            lovertime += entry.calcDuration();
+        }
+
+        // so jetzt haben wir auf der Haben Seite alle Arbeitszeiten zusammenaddiert.
+        // nun muß die Sollartbeitszeit abgezogen werden.
+
+        DateMidnight cal_from = new DateMidnight(from);
+        DateMidnight cal_to = new DateMidnight(to);
+
+        double regular_work_time = 0;
+
+        for( int i = cal_from.getMonthOfYear(); i <= cal_to.getMonthOfYear(); i++ )
+        {
+            Date aktual_day = cal_from.plusMonths(i).toDate();
+            long work_days_for_month = getWorkDaysForMonth(aktual_day);
+            double dhours_per_month = getHoursPerDay(upm);
+            double work_time_for_month = work_days_for_month * dhours_per_month;
+
+            logger.info(String.format("%s Working Days: %d regular working hours per day: %f working hours per month: %f",
+                    aktual_day, work_days_for_month, work_time_for_month, dhours_per_month));
+
+            regular_work_time += work_time_for_month;
+        }
+
+        double overtime_result = lovertime/60/60/1000.0 - regular_work_time;
+
+        logger.info(String.format("overal working hours from %s to %s: %.3f regular working hours: %.3f result: %.3f",
+                from, to,
+                Rounding.RndDouble(lovertime/60/60/1000.0, 3),
+                Rounding.RndDouble(regular_work_time, 3),
+                Rounding.RndDouble(overtime_result,3)));
+
+        overtime.setTime((long)(overtime_result*60*60*1000));
     }
 }

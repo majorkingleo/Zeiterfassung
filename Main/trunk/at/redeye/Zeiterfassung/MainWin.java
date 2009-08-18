@@ -855,6 +855,8 @@ public void close()
                         text.append(Rounding.RndDouble(ms.hours_per_month,3));
                         text.append(" Ist: ");
                         text.append(ms.complete_time.toString("HH:mm"));
+                        text.append(" Gleitzeitkonto: ");
+                        text.append(ms.overtime.toString("HH:mm"));
                         text.append(" Resturlaub: ");
                         text.append(ms.remaining_leave.toString("HH:mm"));
                         text.append(" (" + Rounding.RndDouble(ms.remaining_leave.getHours() / ms.hours_per_day,1) + " Tage)" );
