@@ -381,9 +381,10 @@ public class CalcMonthStuff
 
         if( Time.isMinimumTime(to.getTime() ) )
         {
-            // der letzte tag des aktuellen Monats
-            GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth(), month.getDaysOfMonth());
+            // der letzte Tag des aktuellen Monats
+            GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth()-1, month.getDaysOfMonth());
             to = gdate2.getTime();
+            logger.info("Setting to to:" + to);
         }
 
         Vector<DBStrukt> res = trans.fetchTable(
