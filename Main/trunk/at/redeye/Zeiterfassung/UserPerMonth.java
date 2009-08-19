@@ -23,6 +23,7 @@ import at.redeye.FrameWork.base.tablemanipulator.TableValidator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.FrameWork.utilities.Time;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -161,6 +162,9 @@ public class UserPerMonth extends BaseDialog {
             long etfrom = efrom.getTime();
             long etto = eto.getTime();
 
+            if( Time.isMinimumTime(etto) )
+                etto = Long.MAX_VALUE;
+
             int counter2 = 0;
             
             for( DBStrukt s2 : values )
@@ -183,7 +187,10 @@ public class UserPerMonth extends BaseDialog {
                  
                  long otfrom = ofrom.getTime();
                  long otto = oto.getTime();
-                 
+
+                 if( Time.isMinimumTime(otto) )
+                     otto = Long.MAX_VALUE;
+
                  boolean failed = false;
                 
                 if (etfrom < otfrom && etto > otfrom) // links überlappend

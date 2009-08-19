@@ -18,6 +18,7 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.Rounding;
+import at.redeye.FrameWork.utilities.Time;
 import at.redeye.FrameWork.widgets.calendar.DisplayMonth;
 import at.redeye.FrameWork.widgets.calendarday.DisplayDay;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
@@ -233,12 +234,12 @@ public class CalcMonthStuff
         long lfrom = from.getTime();
         long lto = to.getTime();
 
-        if (lto <= 2000 * 60 * 60) {
+        if ( Time.isMinimumTime(lto) ) {
             lto = 0;
         }
 
-        if (lfrom <= 2000 * 60 * 60) {
-            lfrom = 2000 * 60 * 60;
+        if (Time.isMinimumTime(lfrom) ) {
+            lfrom = 0;
         }
 
         long current = date.getTime();
@@ -325,7 +326,7 @@ public class CalcMonthStuff
 
         logger.info(to.getTime());
 
-        if( to.getTime() <= 2000*60*60 )
+        if( Time.isMinimumTime( to.getTime() ) )
         {
             // der letzte tag des aktuellen Monats
             GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth(), month.getDaysOfMonth());
@@ -378,7 +379,7 @@ public class CalcMonthStuff
 
         logger.info(to.getTime());
 
-        if( to.getTime() <= 2000*60*60 )
+        if( Time.isMinimumTime(to.getTime() ) )
         {
             // der letzte tag des aktuellen Monats
             GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth(), month.getDaysOfMonth());
