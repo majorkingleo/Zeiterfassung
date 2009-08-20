@@ -187,16 +187,14 @@ public class CalcMonthStuff
         
         // One month later minus 1 second 
         // (e.g. 01.01.2010 00:00:00 till 31.01.2010 23:59:59)
-        DateTime dmEnd = new DateTime(dmStart.plusMonths(1)); 
+        DateMidnight dmEnd = dmStart.plusMonths(1).minusDays(1);
         
         
         String where = "where " 
         	+ trans.markColumn("user")
         	+ "='" + root.getUserId() + "' " 
         	+ " and " 
-        	+ trans.getPeriodStmt("from", 
-        			DBDateTime.getStdString(dmStart), 
-        			DBDateTime.getStdString(dmEnd) )
+        	+ trans.getPeriodStmt("from", dmStart, dmEnd )
         	+ " order by " + trans.markColumn("from");
         
         Vector<DBStrukt> res = trans.fetchTable(new DBTimeEntries(), where );
@@ -307,7 +305,7 @@ public class CalcMonthStuff
      */
     public void calcRemainingLeave() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
-        GregorianCalendar gdate = new GregorianCalendar(month.getYear(), month.getMonth(), 1);
+        GregorianCalendar gdate = new GregorianCalendar(month.getYear(), month.getMonth()-1, 1);
 
         Date date = gdate.getTime();
 
@@ -329,15 +327,26 @@ public class CalcMonthStuff
         if( Time.isMinimumTime( to.getTime() ) )
         {
             // der letzte tag des aktuellen Monats
-            GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth(), month.getDaysOfMonth());
+            GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth()-1, month.getDaysOfMonth());
             to = gdate2.getTime();
         }
+
+        String JobTypeString = getJobTyesForHoliday();
+
+        if( JobTypeString.isEmpty() )
+        {
+            logger.info("Keine Urlaubstätigkeiten gefunden. Resturlaubsberechnung nicht möglich.");
+            return;
+        }
+
+        String job_type_sql = " and " + trans.markColumn(entries.jobtype) + " in ("  + JobTypeString + ") ";
 
         Vector<DBStrukt> res = trans.fetchTable(
                 entries,
                 "where " + trans.getPeriodStmt("from", new DateMidnight(from), new DateMidnight(to)) +
                 " and " + trans.markColumn(entries.user) + "='" + root.getUserId() + "'" +
-                " and " + trans.markColumn(entries.jobtype) + " in ("  + getJobTyesForHoliday() + ")");
+                job_type_sql +
+                " order by " + trans.markColumn(entries.from));
 
 
         if( res.size() <= 0 )
@@ -360,7 +369,7 @@ public class CalcMonthStuff
 
     private void calcOverTime() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
-        GregorianCalendar gdate = new GregorianCalendar(month.getYear(), month.getMonth(), 1);
+        GregorianCalendar gdate = new GregorianCalendar(month.getYear(), month.getMonth()-1, 1);
 
         Date date = gdate.getTime();
 
@@ -384,7 +393,7 @@ public class CalcMonthStuff
             // der letzte Tag des aktuellen Monats
             GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth()-1, month.getDaysOfMonth());
             to = gdate2.getTime();
-            logger.info("Setting to to:" + to);
+            logger.info("Setting to to:" +  DBDateTime.getDateStr(to));
         }
 
         Vector<DBStrukt> res = trans.fetchTable(
@@ -403,10 +412,20 @@ public class CalcMonthStuff
         Double dovertime = upm.hours_overtime.getValue();
         long lovertime = dovertime.longValue() * 60*60*1000;
 
+        logger.info(trans.getSql());
+
         for( int i = 0; i < res.size(); i++ )
         {
             DBTimeEntries entry = (DBTimeEntries) res.get(i);
             lovertime += entry.calcDuration();
+
+            String msg = String.format("%s - %s => %s (%s)",
+                        DBDateTime.getDateStr(entry.from.getValue()),
+                        DBDateTime.getDateStr(entry.to.getValue()),
+                        new HMSTime(entry.calcDuration()).toString("HH:mm"),
+                        entry.comment.getValue());
+
+            logger.info(msg);
         }
 
         // so jetzt haben wir auf der Haben Seite alle Arbeitszeiten zusammenaddiert.
@@ -417,15 +436,18 @@ public class CalcMonthStuff
 
         double regular_work_time = 0;
 
-        for( int i = cal_from.getMonthOfYear(); i <= cal_to.getMonthOfYear(); i++ )
-        {
-            Date aktual_day = cal_from.plusMonths(i).toDate();
-            long work_days_for_month = getWorkDaysForMonth(aktual_day);
-            double dhours_per_month = getHoursPerDay(upm);
-            double work_time_for_month = work_days_for_month * dhours_per_month;
+        logger.info( "from: " + DBDateTime.getDateStr(cal_from) + " to " + DBDateTime.getDateStr(cal_to) );
 
-            logger.info(String.format("%s Working Days: %d regular working hours per day: %f working hours per month: %f",
-                    aktual_day, work_days_for_month, work_time_for_month, dhours_per_month));
+        int start = cal_from.getMonthOfYear();
+        for( int i = start; i <= cal_to.getMonthOfYear(); i++ )
+        {
+            Date aktual_day = cal_from.plusMonths(start-i).toDate();
+            long work_days_for_month = getWorkDaysForMonth(aktual_day);
+            double dhours_per_day = getHoursPerDay(upm);
+            double work_time_for_month = work_days_for_month * dhours_per_day;
+
+            logger.info(String.format("%d %s Working Days: %d regular working hours per month: %f working hours per day: %f",
+                    i, DBDateTime.getDateStr(aktual_day), work_days_for_month, work_time_for_month, dhours_per_day));
 
             regular_work_time += work_time_for_month;
         }
@@ -433,7 +455,8 @@ public class CalcMonthStuff
         double overtime_result = lovertime/60/60/1000.0 - regular_work_time;
 
         logger.info(String.format("overal working hours from %s to %s: %.3f regular working hours: %.3f result: %.3f",
-                from, to,
+                DBDateTime.getDateStr(from),
+                DBDateTime.getDateStr(to),
                 Rounding.RndDouble(lovertime/60/60/1000.0, 3),
                 Rounding.RndDouble(regular_work_time, 3),
                 Rounding.RndDouble(overtime_result,3)));
