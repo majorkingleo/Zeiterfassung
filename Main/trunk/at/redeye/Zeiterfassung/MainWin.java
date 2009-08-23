@@ -153,6 +153,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMenuInfo = new javax.swing.JMenu();
         jMInfo = new javax.swing.JMenuItem();
         jMMemInfo = new javax.swing.JMenuItem();
+        jMChangeLog = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -378,6 +379,14 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
         jMenuInfo.add(jMMemInfo);
+
+        jMChangeLog.setText("Änderungsprotokoll");
+        jMChangeLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMChangeLogActionPerformed(evt);
+            }
+        });
+        jMenuInfo.add(jMChangeLog);
 
         jMenuBar1.add(jMenuInfo);
 
@@ -639,6 +648,16 @@ private void jMMemInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     });
 }//GEN-LAST:event_jMMemInfoActionPerformed
 
+private void jMChangeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMChangeLogActionPerformed
+    // TODO add your handling code here:
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+        public void run() {
+            new LocalHelpWin(root,"ChangeLog").setVisible(true);
+        }
+    });
+}//GEN-LAST:event_jMChangeLogActionPerformed
+
 
 
 
@@ -718,6 +737,7 @@ public void close()
     private javax.swing.JCheckBoxMenuItem jCBHolidaysGermany;
     private javax.swing.JCheckBoxMenuItem jCBHolidaysSwitzerland;
     private javax.swing.JLabel jLSum;
+    private javax.swing.JMenuItem jMChangeLog;
     private javax.swing.JMenuItem jMDatabase;
     private javax.swing.JMenuItem jMExtraHolidays;
     private javax.swing.JMenuItem jMGlobalConfig;
