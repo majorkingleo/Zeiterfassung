@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
@@ -49,6 +48,7 @@ public class CalcMonthStuff
     HMSTime remaining_leave = new HMSTime();
     HMSTime overtime = new HMSTime();
     private static Logger logger = Logger.getLogger(CalcMonthStuff.class);
+    StringBuilder error_log = new StringBuilder();
     
     public CalcMonthStuff( DisplayMonth month, Transaction trans, Root root )
     {
@@ -101,7 +101,9 @@ public class CalcMonthStuff
         
         if( upm == null )
         {
-            logger.error("Der Moantseintrag des Benutzers konnte nicht berechnet werden!");
+            logger.error("Der Monatseintrag des Benutzers konnte nicht berechnet werden!");
+            error("Der Monatseintrag des Benutzers konnte nicht berechnet werden!\n"+
+                  "Überprüfen sie die Daten im Menü \"Einstellungen\" => \"Monatseinstellungen für die Benutzer\".");
             return 0;
         }
         
@@ -215,12 +217,22 @@ public class CalcMonthStuff
     
     public void calc() throws TableBindingNotRegisteredException, UnsupportedDBDataTypeException, SQLException, WrongBindFileFormatException, CloneNotSupportedException, DuplicateRecordException
     {
-        if( calcHoursPerDay() )
+        error_log.setLength(0);
+
+        if( !calcHoursPerDay() )
         {
+            error("Die Anzahl der Arbeitsstunden pro Tag konnte nicht berechnet werden.");
+        } else {
+
             calcHoursPerMonth();
+
             calcHoursPerMonthDone();
-            calcRemainingLeave();
-            calcOverTime();
+
+            if( !calcRemainingLeave() )
+                error("Der Resturlaub konnte nicht berechnet werden.");
+
+            if( !calcOverTime() )
+                error("Der Gesammtarbeitszeit konnte nicht berechnet werden.");
         }
     }
 
@@ -303,7 +315,7 @@ public class CalcMonthStuff
     /*
      * berechnet den Resturlaub
      */
-    public void calcRemainingLeave() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
+    public boolean calcRemainingLeave() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
         GregorianCalendar gdate = new GregorianCalendar(month.getYear(), month.getMonth()-1, 1);
 
@@ -313,8 +325,10 @@ public class CalcMonthStuff
 
         if( upm == null )
         {
-            logger.error("Keinen passenden Monatseintrag gefunden. Die Urlaubsstunden können nicht berechnet werden.");
-            return;
+            String msg = "Keinen passenden Monatseintrag gefunden. Die Urlaubsstunden können nicht berechnet werden.";
+            logger.error(msg);
+            error(msg);
+            return false;
         }
 
         DBTimeEntries entries = new DBTimeEntries();
@@ -335,8 +349,11 @@ public class CalcMonthStuff
 
         if( JobTypeString.isEmpty() )
         {
-            logger.info("Keine Urlaubstätigkeiten gefunden. Resturlaubsberechnung nicht möglich.");
-            return;
+            String msg = "Keine Urlaubstätigkeiten gefunden. Resturlaubsberechnung nicht möglich.\n" +
+                    "Bitte kontrollieren Sie die konfigurierten Tätigkeiten im Menü \"Einstellungen\" => \"Tätigkeiten\"";
+            logger.info(msg);
+            error(msg);
+            return false;
         }
 
         String job_type_sql = " and " + trans.markColumn(entries.jobtype) + " in ("  + JobTypeString + ") ";
@@ -352,7 +369,7 @@ public class CalcMonthStuff
         if( res.size() <= 0 )
         {
             logger.warn("Noch keine Einträge gefunden mit: " + trans.getSql() );
-            return;
+            return true;
         }
 
         Double durlaub = upm.hours_holidays.getValue();
@@ -365,9 +382,11 @@ public class CalcMonthStuff
         }
 
         remaining_leave = new HMSTime(urlaub);
+
+        return true;
     }
 
-    private void calcOverTime() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
+    private boolean calcOverTime() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
         GregorianCalendar gdate = new GregorianCalendar(month.getYear(), month.getMonth()-1, 1);
 
@@ -377,8 +396,11 @@ public class CalcMonthStuff
 
         if( upm == null )
         {
-            logger.error("Keinen passenden Monatseintrag gefunden. Die Überstunden können nicht berechnet werden.");
-            return;
+            String msg = "Keinen passenden Monatseintrag gefunden. Die Überstunden können nicht berechnet werden.\n" +
+                    "Bitte kontrollieren Sie die \"Monatseinstellungen für die Benutzer\"";
+            logger.error(msg);
+            error(msg);
+            return false;
         }
 
         DBTimeEntries entries = new DBTimeEntries();
@@ -406,7 +428,7 @@ public class CalcMonthStuff
         if( res.size() <= 0 )
         {
             logger.warn("Noch keine Einträge gefunden mit: " + trans.getSql() );
-            return;
+            return true;
         }
 
         Double dovertime = upm.hours_overtime.getValue();
@@ -462,5 +484,24 @@ public class CalcMonthStuff
                 Rounding.RndDouble(overtime_result,3)));
 
         overtime.setTime((long)(overtime_result*60*60*1000));
+
+        return true;
+    }
+
+    public String getError()
+    {
+        return error_log.toString();
+    }
+
+    public boolean hasError()
+    {
+        return error_log.length() > 0;
+    }
+
+    private void error(String text)
+    {
+        if( error_log.length() > 0 )
+            error_log.append("\n");
+        error_log.append(text);
     }
 }

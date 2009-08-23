@@ -13,10 +13,12 @@ import javax.swing.JOptionPane;
 import org.joda.time.DateMidnight;
 
 import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.ConnectionDialog;
 import at.redeye.FrameWork.base.GlobalConfig;
 import at.redeye.FrameWork.base.LocalConfig;
+import at.redeye.FrameWork.base.LogWin;
 import at.redeye.FrameWork.base.MemInfo;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
@@ -33,6 +35,7 @@ import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.impl.UserDataHandling;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import javax.swing.JFrame;
 
 /**
  *
@@ -45,7 +48,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
     private int year = 2009;
     private HolidayMerger merger = new HolidayMerger();
     private TimeEntryCache cache = new TimeEntryCache();
-        
+    private CalcMonthStuff month_stuff = null;
+
         /** Creates new form MainWin
          * @param root 
          */
@@ -60,7 +64,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         
         year = today.getYear();        
         mon = today.getMonthOfYear();
-        
+
+        month_stuff = new CalcMonthStuff(month, getTransaction(), root);
         
         String res = root.getSetup().getLocalConfig("HolidaysAustria", 
                 new Boolean(jCBHolidaysAustria.getState()).toString());
@@ -128,6 +133,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         month = new at.redeye.FrameWork.widgets.calendar.CalendarComponent();
         jLSum = new javax.swing.JLabel();
         jBHelp = new javax.swing.JButton();
+        jBErrorLog = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuProgram = new javax.swing.JMenu();
         jMDatabase = new javax.swing.JMenuItem();
@@ -181,6 +187,15 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
 
+        jBErrorLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/info.png"))); // NOI18N
+        jBErrorLog.setBorderPainted(false);
+        jBErrorLog.setContentAreaFilled(false);
+        jBErrorLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBErrorLogActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -191,21 +206,25 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(plusMon)
                 .addGap(45, 45, 45)
-                .addComponent(jLSum, javax.swing.GroupLayout.PREFERRED_SIZE, 654, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 188, Short.MAX_VALUE)
+                .addComponent(jLSum, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jBErrorLog, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(146, 146, 146)
                 .addComponent(jBHelp))
             .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 1106, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLSum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(minusMon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(plusMon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jBHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jBErrorLog, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(minusMon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(plusMon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jBHelp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -658,6 +677,18 @@ private void jMChangeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     });
 }//GEN-LAST:event_jMChangeLogActionPerformed
 
+private void jBErrorLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBErrorLogActionPerformed
+    // TODO add your handling code here:
+
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+        public void run() {
+            new LogWin( root, "Fehlermeldungen", month_stuff.getError() ).setVisible(true);
+        }
+    });
+
+}//GEN-LAST:event_jBErrorLogActionPerformed
+
 
 
 
@@ -732,6 +763,7 @@ public void close()
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu Hauptfeiertage;
     private javax.swing.JMenuItem JMUserPerMonth;
+    private javax.swing.JButton jBErrorLog;
     private javax.swing.JButton jBHelp;
     private javax.swing.JCheckBoxMenuItem jCBHolidaysAustria;
     private javax.swing.JCheckBoxMenuItem jCBHolidaysGermany;
@@ -861,27 +893,27 @@ public void close()
                 
                 jLSum.setText("");
 
-                new AutoLogger("updateMonthSumInfo") {
+                new AutoMBox("updateMonthSumInfo") {
 
                     @Override
                     public void do_stuff() throws Exception {
-                        CalcMonthStuff ms = new CalcMonthStuff(month, getTransaction(), root);
-
-                        ms.calc();
+                        month_stuff.calc();
 
                         StringBuilder text = new StringBuilder();
 
                         text.append("Soll: ");
-                        text.append(Rounding.RndDouble(ms.hours_per_month,3));
+                        text.append(Rounding.RndDouble(month_stuff.hours_per_month,3));
                         text.append(" Ist: ");
-                        text.append(ms.complete_time.toString("HH:mm"));
+                        text.append(month_stuff.complete_time.toString("HH:mm"));
                         text.append(" Gleitzeitkonto: ");
-                        text.append(ms.overtime.toString("HH:mm"));
+                        text.append(month_stuff.overtime.toString("HH:mm"));
                         text.append(" Resturlaub: ");
-                        text.append(ms.remaining_leave.toString("HH:mm"));
-                        text.append(" (" + Rounding.RndDouble(ms.remaining_leave.getHours() / ms.hours_per_day,1) + " Tage)" );
+                        text.append(month_stuff.remaining_leave.toString("HH:mm"));
+                        text.append(" (" + Rounding.RndDouble(month_stuff.remaining_leave.getHours() / month_stuff.hours_per_day,1) + " Tage)" );
 
                         jLSum.setText(text.toString());
+
+                        jBErrorLog.setVisible(month_stuff.hasError());
                     }
                 };
             }
