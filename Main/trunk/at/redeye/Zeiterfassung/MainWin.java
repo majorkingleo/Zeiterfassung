@@ -22,6 +22,7 @@ import at.redeye.FrameWork.base.LogWin;
 import at.redeye.FrameWork.base.MemInfo;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.calendar.AustrianHolidays;
@@ -35,7 +36,6 @@ import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.impl.UserDataHandling;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
-import javax.swing.JFrame;
 
 /**
  *
@@ -58,7 +58,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         
         initComponents();
         
-        month.setInfoRenderer(new TimeEntryRenderer(getTransaction(), root, cache));
+        month.setInfoRenderer(new TimeEntryRenderer(getTransaction(), root, cache,merger));
         
         DateMidnight today = new DateMidnight();
         
@@ -128,12 +128,13 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        minusMon = new javax.swing.JButton();
-        plusMon = new javax.swing.JButton();
         month = new at.redeye.FrameWork.widgets.calendar.CalendarComponent();
-        jLSum = new javax.swing.JLabel();
-        jBHelp = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         jBErrorLog = new javax.swing.JButton();
+        plusMon = new javax.swing.JButton();
+        minusMon = new javax.swing.JButton();
+        jBHelp = new javax.swing.JButton();
+        jLSum = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuProgram = new javax.swing.JMenu();
         jMDatabase = new javax.swing.JMenuItem();
@@ -163,29 +164,20 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        minusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/prev.png"))); // NOI18N
-        minusMon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                minusMonActionPerformed(evt);
-            }
-        });
-
-        plusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/next.png"))); // NOI18N
-        plusMon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                plusMonActionPerformed(evt);
-            }
-        });
-
         month.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
-        jBHelp.setText("Hilfe");
-        jBHelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBHelpActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 1106, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         jBErrorLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/info.png"))); // NOI18N
         jBErrorLog.setBorderPainted(false);
@@ -196,36 +188,62 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(minusMon)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(plusMon)
-                .addGap(45, 45, 45)
-                .addComponent(jLSum, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+        plusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/next.png"))); // NOI18N
+        plusMon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                plusMonActionPerformed(evt);
+            }
+        });
+
+        minusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/prev.png"))); // NOI18N
+        minusMon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minusMonActionPerformed(evt);
+            }
+        });
+
+        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
+        jBHelp.setText("Hilfe");
+        jBHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBHelpActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(minusMon, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(plusMon, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLSum, javax.swing.GroupLayout.PREFERRED_SIZE, 671, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jBErrorLog, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(146, 146, 146)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 169, Short.MAX_VALUE)
                 .addComponent(jBHelp))
-            .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 1106, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jBErrorLog, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(minusMon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(plusMon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jBHelp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jBHelp)
+                        .addContainerGap())
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(minusMon)
+                            .addContainerGap())
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(plusMon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
+                            .addComponent(jLSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                            .addComponent(jBErrorLog, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)))))
         );
 
         jMenuProgram.setText("Programm");
@@ -417,14 +435,18 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -788,6 +810,7 @@ public void close()
     private javax.swing.JMenu jMenuProgram;
     private javax.swing.JMenuItem jMenuQuit;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JRadioButtonMenuItem jRBHolidaysAustria;
     private javax.swing.JRadioButtonMenuItem jRBHolidaysGermany;
     private javax.swing.JRadioButtonMenuItem jRBHolidaysSwitzerland;
@@ -902,14 +925,38 @@ public void close()
                         StringBuilder text = new StringBuilder();
 
                         text.append("Soll: ");
-                        text.append(Rounding.RndDouble(month_stuff.hours_per_month,3));
+                        text.append(month_stuff.getFormatedHoursPerMonth());
                         text.append(" Ist: ");
                         text.append(month_stuff.complete_time.toString("HH:mm"));
+
+                        if( month_stuff.time_correction_month_done.getMillis() != 0 )
+                        {
+                            text.append(" ");
+
+                            if( month_stuff.time_correction_month_done.getMillis() > 0 )
+                            {
+                                text.append("+");
+                            }
+
+                            text.append(month_stuff.time_correction_month_done.toString("HH:mm"));
+
+                            text.append(" = ");
+
+                            HMSTime t = new HMSTime();
+                            t.setTime(month_stuff.getHoursPerMonthDoneinMillis());
+                            t.addMillis(month_stuff.time_correction_month_done.getMillis());
+
+                            text.append(t.toString("HH:mm"));
+
+                        }
+
                         text.append(" Gleitzeitkonto: ");
                         text.append(month_stuff.overtime.toString("HH:mm"));
                         text.append(" Resturlaub: ");
                         text.append(month_stuff.remaining_leave.toString("HH:mm"));
-                        text.append(" (" + Rounding.RndDouble(month_stuff.remaining_leave.getHours() / month_stuff.hours_per_day,1) + " Tage)" );
+
+                        if(  month_stuff.hours_per_day > 0 )
+                            text.append(" (" + Rounding.RndDouble(month_stuff.remaining_leave.getHours() / month_stuff.hours_per_day,1) + " Tage)" );
 
                         jLSum.setText(text.toString());
 

@@ -16,8 +16,13 @@ import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.HMSTime;
+import at.redeye.FrameWork.utilities.calendar.Holidays;
+import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import at.redeye.FrameWork.widgets.calendarday.InfoRenderer;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
 
 /**
  *
@@ -34,12 +39,15 @@ public class TimeEntryRenderer implements InfoRenderer
     protected SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm");
     protected String sum = new String();
     protected TimeEntryCache cache = null;
+    protected OvertimeInterface calc_overtime = null;
+    protected Holidays holidays = null;
     
-    public TimeEntryRenderer( Transaction trans, Root root, TimeEntryCache cache )
+    public TimeEntryRenderer( Transaction trans, Root root, TimeEntryCache cache, Holidays holidays )
     {
         this.trans = trans;
         this.root = root;
         this.cache = cache;
+        this.holidays = holidays;
     }
     
     public void clear() {
@@ -49,7 +57,7 @@ public class TimeEntryRenderer implements InfoRenderer
     }
 
     public InfoRenderer getNewInstance() {
-        return new TimeEntryRenderer(trans, root, cache);
+        return new TimeEntryRenderer(trans, root, cache, holidays);
     }
 
     public void setInfo(String info) {
@@ -70,6 +78,13 @@ public class TimeEntryRenderer implements InfoRenderer
                 if( cache != null )
                 {
                     rows = cache.getEntries(trans, root.getUserId(), day);
+                    
+                    DBUserPerMonth upm = cache.getUPM(trans, root.getUserId(), day);
+                    
+                    if( upm != null )
+                    {
+                        calc_overtime = CalcMonthStuff.getOverTimeforUPM(upm);
+                    }
                 }
                 else
                 {
@@ -80,7 +95,7 @@ public class TimeEntryRenderer implements InfoRenderer
                         + trans.getDayStmt("from", day )
                         + " order by " + trans.markColumn("from");
             	
-                       rows = trans.fetchTable(new DBTimeEntries(), where);  
+                       rows = trans.fetchTable(new DBTimeEntries(), where);
                 }            		                      
             }
         };
@@ -99,11 +114,15 @@ public class TimeEntryRenderer implements InfoRenderer
             text.append("<font size=\"2\">");
             
             long millis = 0;
-            
+
+            Vector<DBTimeEntries> entries = new Vector<DBTimeEntries>();
+
             for( DBStrukt e : rows )
             {
                 DBTimeEntries te = (DBTimeEntries)e;
-                
+
+                entries.add(te);
+
                 text.append("<br/>\n");
                                 
                 Date time = (Date)te.from.getValue();                
@@ -129,6 +148,41 @@ public class TimeEntryRenderer implements InfoRenderer
             {
   ///              System.out.println("millis: " + millis);
                 sum = formater_time.format(new Time(millis-60*60*1000) );
+
+                StringBuilder bsum = new StringBuilder();
+
+                bsum.append("<html><body><b>");
+                bsum.append(sum);
+                bsum.append("<b>");
+
+                if( calc_overtime != null )
+                {
+                    HolidayInfo hi = holidays.getHolidayForDay(day);
+
+                    boolean is_holiday = false;
+
+                    if( hi != null && hi.official_holiday )
+                        is_holiday = true;
+
+                    long correction = calc_overtime.calcExtraTimeForDay(entries, is_holiday);
+
+                    if( correction != 0 )
+                    {
+                        bsum.append(" <font color=\"#990000\">");
+
+                        
+                        HMSTime t_corr = new HMSTime(correction);
+
+                        if( correction > 0 )
+                            bsum.append("+");
+
+                        bsum.append(t_corr.toString("HH:mm"));
+                        bsum.append("</font>");
+                    }
+                }
+
+                bsum.append("</body></html>");
+                sum = bsum.toString();
             }
         }
         

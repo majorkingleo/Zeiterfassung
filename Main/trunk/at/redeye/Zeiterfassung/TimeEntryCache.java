@@ -17,6 +17,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 
 /**
  *
@@ -25,7 +26,13 @@ import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 public class TimeEntryCache {
     
     Vector<DBStrukt> entries = new Vector<DBStrukt>();
-    boolean outdated = true;    
+    boolean outdated = true;
+
+    public DBUserPerMonth getUPM( Transaction trans, int userid, DateMidnight day ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
+    {
+        DBUserPerMonth upm = GetUserPerMonthRecord.getValidRecordForMonth(trans, userid, day.getYear(), day.getMonthOfYear());
+        return upm;
+    }
     
     public Vector<DBStrukt> getEntries( Transaction trans, int userid, DateMidnight day ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
     {

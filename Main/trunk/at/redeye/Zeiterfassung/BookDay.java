@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.AutoLogger;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -42,10 +43,11 @@ public class BookDay extends BaseDialog {
 	TableManipulator tm;
     DisplayDay display_day;
 	Vector<DBStrukt> values = new Vector<DBStrukt>();
-    MonthSumInfo sum_info;    
+    MonthSumInfo sum_info;
+    int min_num_of_chars = 4;
     
 	/** Creates new form BookDay */
-	public BookDay(Root root, DateMidnight day, DisplayDay display_day , MonthSumInfo suminfo ) {
+	public BookDay(final Root root, DateMidnight day, DisplayDay display_day , MonthSumInfo suminfo ) {
 		super(root, "Tag Buchen: " + getTitle(day));
 
 		initComponents();
@@ -83,7 +85,17 @@ public class BookDay extends BaseDialog {
         if( values.size() == 0 )
             newEntry(false, false);
 
-		tm.autoResize();                                
+		tm.autoResize();
+
+        new AutoLogger(getTitle())
+        {
+            public void do_stuff() throws Exception
+            {
+                String comment_chars = root.getSetup().getConfig(AppConfigDefinitions.NumberOfMinimumCommentChars);
+                Integer num = Integer.valueOf(comment_chars);
+                min_num_of_chars = num;
+            }
+        };
 	}
 
 	protected static String getTitle(DateMidnight d) {
@@ -320,20 +332,33 @@ public class BookDay extends BaseDialog {
                       return false;
                  }
             }
-            
-            if( ((String)entry.comment.getValue()).isEmpty() ||
-                !(((String)entry.comment.getValue())).matches("....*") )
+
+            if( min_num_of_chars != 0 )
             {
-                JOptionPane.showMessageDialog(null,
-                	StringUtils.autoLineBreak(
-                		"Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
-                		"oder der eingegebene Text '" + 
-                		(entry.comment.getValue().toString().isEmpty() ? 
-                				"   " : entry.comment.getValue()) + 
-                		"' ist zu kurz."),
-                     "Fehler",
-                      JOptionPane.OK_OPTION);
-                return false;
+                if( entry.comment.getValue().isEmpty() ||
+                    entry.comment.getValue().length() < min_num_of_chars )
+                {
+                    String minimum_msg = "";
+
+                    if (min_num_of_chars > 0) {
+                        if (min_num_of_chars == 1) {
+                            minimum_msg = " Es muß mindestens ein Zeichen eingeben werden.";
+                        } else {
+                            minimum_msg = " Es müssen mindestens " + min_num_of_chars + " Zeichen eingeben werden.";
+                        }
+                    }
+
+                    JOptionPane.showMessageDialog(null,
+                            StringUtils.autoLineBreak(
+                            "Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
+                            "oder der eingegebene Text '" +
+                            (entry.comment.getValue().toString().isEmpty() ? "   " : entry.comment.getValue()) +
+                            "' ist zu kurz." +
+                            minimum_msg),
+                            "Fehler",
+                            JOptionPane.OK_OPTION);
+                    return false;
+                }
             }
             
             if( etfrom >= etto )
