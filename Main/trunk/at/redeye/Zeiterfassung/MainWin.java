@@ -898,7 +898,9 @@ public void close()
             // System.out.println("Clicked on day " + month.isWhatDayOfMonth(day) );
             BookDay book_day = new BookDay(root,
                     new DateMidnight(year, mon, month.isWhatDayOfMonth(day)),
-                    month.getDay(day), this);
+                    month.getDay(day), this,
+                    month_stuff.hours_per_day,
+                    cache);
             book_day.setVisible(true);            
         }
     }        

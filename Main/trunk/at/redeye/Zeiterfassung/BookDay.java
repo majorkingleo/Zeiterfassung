@@ -20,9 +20,12 @@ import org.joda.time.DateMidnight;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.calendarday.DisplayDay;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
@@ -30,6 +33,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.JobTypeQuery;
+import java.text.SimpleDateFormat;
 
 /**
  * 
@@ -45,9 +49,16 @@ public class BookDay extends BaseDialog {
 	Vector<DBStrukt> values = new Vector<DBStrukt>();
     MonthSumInfo sum_info;
     int min_num_of_chars = 4;
+    double hours_per_day;
     
 	/** Creates new form BookDay */
-	public BookDay(final Root root, DateMidnight day, DisplayDay display_day , MonthSumInfo suminfo ) {
+	public BookDay(
+                final Root root,
+                DateMidnight day,
+                DisplayDay display_day ,
+                MonthSumInfo suminfo,
+                double hours_per_day,
+                TimeEntryCache cache) {
 		super(root, "Tag Buchen: " + getTitle(day));
 
 		initComponents();
@@ -55,6 +66,7 @@ public class BookDay extends BaseDialog {
 		this.day = day;
         this.display_day = display_day;
         this.sum_info = suminfo;
+        this.hours_per_day = hours_per_day;
 
 		setTitle(day);
 
@@ -77,6 +89,16 @@ public class BookDay extends BaseDialog {
 
 		tm.setValidator(te.to, new TimeHourMinuteValidator());
 		tm.setValidator(te.from, new TimeHourMinuteValidator());
+
+        Vector<Object> additional_values_to = new Vector<Object>();
+        additional_values_to.addAll(this.getEndTimes());
+        tm.setAdditionalAutocompleteData(te.to, additional_values_to);
+
+        Vector<Object> additional_values_from = new Vector<Object>();
+        additional_values_from.addAll(this.getStartTimes());
+        tm.setAdditionalAutocompleteData(te.from, additional_values_from);        
+
+        tm.setAdditionalAutocompleteData(te.comment, cache.getAutoCompleteInfoFor(te.comment).get());
 
 		tm.prepareTable();
 
@@ -594,6 +616,70 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
         }
         return true;
     }
+
+    protected void loadFromParam( DBDateTime value, DBConfig param )
+    {
+        String time = root.getSetup().getConfig(param);
+
+        value.loadFromCopy(new Date(day.getMillis()));
+
+        if( !value.loadTimePart(time + ":00") )
+        {
+            logger.debug("Invalid time format string '" + time + "' in parameter "
+                         + param.getConfigName());
+        }
+    }
+
+    protected Vector<Object> getEndTimes()
+    {
+        Vector<Object> times = new Vector<Object>();
+        DBTimeEntries te = new DBTimeEntries();
+
+        DBDateTime dt = te.to.getCopy();
+
+        // Aufgrund der Normalarbeitszeit wird das "normale" Ende vorgeschlagen
+        loadFromParam( dt, AppConfigDefinitions.NormalWorkTimeStart);
+
+        long normal_endtime = (long) (dt.getValue().getTime() + hours_per_day * 60 * 60 * 1000);
+        dt.loadFromCopy(new Date(normal_endtime));
+
+        System.out.println( "normales Ende: " + new Date(normal_endtime));
+
+        times.add(dt.getCopy());
+
+        loadFromParam( dt, AppConfigDefinitions.NormalWorkTimeStop);
+
+        times.add(dt.getCopy());
+
+        getNow(dt);
+
+        times.add(dt.getCopy());
+
+        return times;
+    }
+
+    protected void getNow(DBDateTime dt)
+    {
+        Date now = new Date(System.currentTimeMillis());
+        dt.loadTimePart(DBDateTime.getTimeStr(now));
+    }
+
+     protected Vector<Object> getStartTimes()
+     {
+        Vector<Object> times = new Vector<Object>();
+        DBTimeEntries te = new DBTimeEntries();
+
+        DBDateTime dt = te.from.getCopy();
+
+        loadFromParam(dt,AppConfigDefinitions.NormalWorkTimeStart);
+        times.add(dt.getCopy());
+
+        getNow(dt);
+        times.add(dt.getCopy());
+
+        return times;
+     }
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBClose;

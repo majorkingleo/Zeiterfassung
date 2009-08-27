@@ -12,12 +12,15 @@ import java.util.Vector;
 import org.joda.time.DateMidnight;
 
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.widgets.AutoCompleteTextField;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import java.util.HashMap;
 
 /**
  *
@@ -27,6 +30,7 @@ public class TimeEntryCache {
     
     Vector<DBStrukt> entries = new Vector<DBStrukt>();
     boolean outdated = true;
+    HashMap<String,AutoCompleteInfo> info_map = new HashMap<String,AutoCompleteInfo>();
 
     public DBUserPerMonth getUPM( Transaction trans, int userid, DateMidnight day ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
@@ -95,6 +99,28 @@ public class TimeEntryCache {
     public void setOutdated()
     {
         outdated = true;
+        info_map.clear();
+    }
+
+    public AutoCompleteInfo getAutoCompleteInfoFor( DBValue val )
+    {
+        AutoCompleteInfo info = info_map.get(val.getName());
+
+        if( info != null )
+            return info;
+
+        info = new AutoCompleteInfo();
+
+        for( int i = 0; i < entries.size(); i++ )
+        {
+            DBStrukt s = entries.get(i);
+            DBValue value = s.getValue(val);
+
+            if( value != null )
+                info.add(value);
+        }
+
+        return info;
     }
 
 }
