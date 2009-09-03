@@ -5,6 +5,7 @@
 
 package at.redeye.Zeiterfassung.bindtypes;
 
+import at.redeye.FrameWork.base.transaction.Transaction;
 import java.util.Date;
 
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
@@ -30,10 +31,12 @@ public class DBTimeEntries extends DBStrukt {
     public DBValue    jobtype = new DBInteger( "JobType", "Tätigkeit" );
     public DBString   comment = new DBString( "Comment", "Kommentar", 200 );
     public DBInteger  locked = new DBInteger( "locked", "gesperrt" );
-    public DBInteger  project = new DBInteger( "Project", "Projekt" );    
-    public DBInteger  sub_project = new DBInteger( "SubProject", "Unterprojekt" );   
+    public DBValue    customer = new DBInteger( "customer", "Kunde" );
+    public DBValue    project = new DBInteger( "Project", "Projekt" );
+    public DBValue    sub_project = new DBInteger( "SubProject", "Unterprojekt" );
     public DBHistory  hist = new DBHistory( "hist" );
-                
+
+    public static final String table_name = "TIMEENTRIES";
     
     void add_all()
     {
@@ -44,6 +47,7 @@ public class DBTimeEntries extends DBStrukt {
         add( jobtype );
         add( comment );
         add( locked );
+        add( customer, 2 );
         add( project );
         add( sub_project );
         add( hist );
@@ -51,17 +55,57 @@ public class DBTimeEntries extends DBStrukt {
         id.setAsPrimaryKey();        
         user.setShouldHaveIndex();
         from.setShouldHaveIndex();
+
+        setVersion(2);
+    }
+
+    void add_all( DBSqlAsInteger.SqlQuery jobtype_query,
+                  DBSqlAsInteger.SqlQuery customer_query,
+                  DBSqlAsInteger.SqlQuery project_query,
+                  DBSqlAsInteger.SqlQuery subproject_query )
+    {
+        jobtype     = new DBSqlAsInteger( "JobType", "Tätigkeit", jobtype_query );
+        customer    = new DBSqlAsInteger( "customer", "Kunde", customer_query );
+        project     = new DBSqlAsInteger( "project", "Projekt", project_query );
+        sub_project = new DBSqlAsInteger( "SubProject", "Unterprojekt", subproject_query );
+
+        add_all();
     }
     
-    public static final String table_name = "TIMEENTRIES";
     
-    public DBTimeEntries( DBSqlAsInteger.SqlQuery jobtype_query )
+
+
+    public DBTimeEntries(Transaction transaction, boolean with_null_entry )
     {
         super(table_name);
-        
-        jobtype = new DBSqlAsInteger( "JobType", "Tätigkeit", jobtype_query );        
-        
-        add_all();
+
+        add_all( new JobTypeQuery(transaction),
+                 new CustomerQuery(transaction,with_null_entry),
+                 new ProjectQuery(transaction,with_null_entry),
+                 new SubProjectQuery(transaction,with_null_entry)
+                );
+    }
+
+
+    public DBTimeEntries(Transaction transaction )
+    {
+        super(table_name);
+
+        add_all( new JobTypeQuery(transaction),
+                 new CustomerQuery(transaction),
+                 new ProjectQuery(transaction),
+                 new SubProjectQuery(transaction)
+                );
+    }
+
+    public DBTimeEntries( DBSqlAsInteger.SqlQuery jobtype_query,
+                          DBSqlAsInteger.SqlQuery customer_query,  
+                          DBSqlAsInteger.SqlQuery project_query, 
+                          DBSqlAsInteger.SqlQuery subproject_query )
+    {
+        super(table_name);
+               
+        add_all(jobtype_query, customer_query, project_query, subproject_query);
     }
     
     public DBTimeEntries()
@@ -77,7 +121,11 @@ public class DBTimeEntries extends DBStrukt {
         if( jobtype instanceof DBInteger )
             return new DBTimeEntries();
         else
-            return new DBTimeEntries( ((DBSqlAsInteger)jobtype).query );
+            return new DBTimeEntries( 
+                    ((DBSqlAsInteger)jobtype).query,
+                    ((DBSqlAsInteger)customer).query,
+                    ((DBSqlAsInteger)project).query,
+                    ((DBSqlAsInteger)sub_project).query);
     }
     
     /*

@@ -25,15 +25,12 @@ import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.calendarday.DisplayDay;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
-import at.redeye.Zeiterfassung.bindtypes.JobTypeQuery;
-import java.text.SimpleDateFormat;
 
 /**
  * 
@@ -70,14 +67,12 @@ public class BookDay extends BaseDialog {
 
 		setTitle(day);
 
-		DBTimeEntries te = new DBTimeEntries( new JobTypeQuery(getTransaction()) );
+		DBTimeEntries te = new DBTimeEntries( getTransaction(), true );
 
 		tm = new TableManipulator(root,jTContent, te);
 
 		tm.hide(te.id);
-		tm.hide(te.user);
-		tm.hide(te.project);
-		tm.hide(te.sub_project);
+		tm.hide(te.user);		
 		tm.hide(te.locked);
         tm.hide(te.hist.lo_user);
         tm.hide(te.hist.lo_zeit);
@@ -86,6 +81,10 @@ public class BookDay extends BaseDialog {
 		tm.setEditable(te.to);
 		tm.setEditable(te.from);
         tm.setEditable(te.jobtype);
+        
+        tm.setEditable(te.customer);
+        tm.setEditable(te.project);
+        tm.setEditable(te.sub_project);
 
 		tm.setValidator(te.to, new TimeHourMinuteValidator());
 		tm.setValidator(te.from, new TimeHourMinuteValidator());
@@ -447,7 +446,7 @@ public class BookDay extends BaseDialog {
 			@Override
 			public void do_stuff() throws Exception {
 
-				DBTimeEntries te = new DBTimeEntries( new JobTypeQuery(getTransaction()) );
+				DBTimeEntries te = new DBTimeEntries( getTransaction() );
 
 				te.id.loadFromCopy(new Integer(
 						getNewSequenceValue(te.getName())));
@@ -526,18 +525,10 @@ public class BookDay extends BaseDialog {
 
 private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
     // TODO add your handling code here:
-    if( jTContent.getSelectedRowCount() <= 0 )
+
+    if( !checkAnyAndSingleSelection(jTContent))
         return;
-    
-    if( jTContent.getSelectedRowCount() > 1 )
-    {
-         JOptionPane.showMessageDialog(null, 
-            "Bitte nur einen Eintrag auswählen.",
-            "Fehler",
-            JOptionPane.OK_OPTION);
-        return;
-    }
-    
+
     final int i = jTContent.getSelectedRow();
     
     if( i < 0 || i >= values.size() )
@@ -587,7 +578,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                 tm.clear();
                 Transaction trans = getTransaction();
                 values = trans.fetchTable(
-                        new DBTimeEntries( new JobTypeQuery( getTransaction() ) ),
+                        new DBTimeEntries( getTransaction() ),
                         "where "                         
                         + getTransaction().getDayStmt("from", day)
                         + " and " 

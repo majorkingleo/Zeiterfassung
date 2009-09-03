@@ -155,6 +155,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMMonthBlocks = new javax.swing.JMenuItem();
         jMGlobalConfig = new javax.swing.JMenuItem();
         jMLocalConfig = new javax.swing.JMenuItem();
+        JMDefaultData = new javax.swing.JMenu();
+        JMCustomers = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMMonthReport = new javax.swing.JMenuItem();
         jMenuInfo = new javax.swing.JMenu();
@@ -386,6 +388,18 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMUser.add(jMLocalConfig);
 
         jMenuBar1.add(jMUser);
+
+        JMDefaultData.setText("Stammdaten");
+
+        JMCustomers.setText("Kunden");
+        JMCustomers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JMCustomersActionPerformed(evt);
+            }
+        });
+        JMDefaultData.add(JMCustomers);
+
+        jMenuBar1.add(JMDefaultData);
 
         jMenu1.setText("Berichte");
 
@@ -711,6 +725,17 @@ private void jBErrorLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
 }//GEN-LAST:event_jBErrorLogActionPerformed
 
+private void JMCustomersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMCustomersActionPerformed
+    // TODO add your handling code here:
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                new Customers(root).setVisible(true);
+            }
+        });
+
+}//GEN-LAST:event_JMCustomersActionPerformed
+
 
 
 
@@ -784,6 +809,8 @@ public void close()
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu Hauptfeiertage;
+    private javax.swing.JMenuItem JMCustomers;
+    private javax.swing.JMenu JMDefaultData;
     private javax.swing.JMenuItem JMUserPerMonth;
     private javax.swing.JButton jBErrorLog;
     private javax.swing.JButton jBHelp;

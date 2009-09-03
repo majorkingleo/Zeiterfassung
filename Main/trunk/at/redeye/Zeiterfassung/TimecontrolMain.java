@@ -4,7 +4,9 @@ public class TimecontrolMain {
 
 	public static void main(String[] args) {
 		// TODO code application logic here
-		new ModuleLauncher().invoke();
+		ModuleLauncher ml = new ModuleLauncher();
+
+        ml.invoke();
 
 	}
 

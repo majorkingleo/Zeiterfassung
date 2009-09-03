@@ -24,43 +24,45 @@ import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
-import at.redeye.Zeiterfassung.bindtypes.DBJobType;
-import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBCustomerAddresses;
+import at.redeye.Zeiterfassung.bindtypes.DBCustomers;
+import at.redeye.Zeiterfassung.bindtypes.DBProjects;
 
 /**
  *
  * @author  martin
  */
-public class JobTypes extends BaseDialog {
+public class Customers extends BaseDialog {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(JobTypes.class.getSimpleName());
+	private static Logger logger = Logger.getLogger(Customers.class.getSimpleName());
 	TableManipulator tm;
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     
     /** Creates new form JobTypes
      * @param root 
      */
-    public JobTypes( Root root ) {
-        super(root, "Tätigkeiten");
+    public Customers( Root root ) {
+        super(root, "Kunden");
         initComponents();
         
-        DBJobType jt = new DBJobType();
+        DBCustomers cust = new DBCustomers();
         
-        tm = new TableManipulator(root,jTContent,jt);
+        tm = new TableManipulator(root,jTContent,cust);
         
-        tm.hide(jt.id);
-        tm.hide(jt.hist.lo_user);
-        tm.hide(jt.hist.lo_zeit);
+        tm.hide(cust.id);
+        tm.hide(cust.hist.lo_user);
+        tm.hide(cust.hist.lo_zeit);
         
-        tm.setEditable(jt.name);
-        tm.setEditable(jt.type);
-        tm.setEditable(jt.help);
-        tm.setEditable(jt.locked);
-        tm.setEditable(jt.is_holliday);
+        tm.setEditable(cust.name);
+        tm.setEditable(cust.locked);
+        tm.setEditable(cust.comment);
+        tm.setEditable(cust.currency);
+        tm.setEditable(cust.hourly_rate);
+        tm.setEditable(cust.locked);
         
         
         tm.prepareTable();
@@ -81,7 +83,7 @@ public class JobTypes extends BaseDialog {
        {
            counter1++;
            
-           DBJobType type = (DBJobType)entry;
+           DBCustomers type = (DBCustomers)entry;
            
            int counter2=0;
            
@@ -92,7 +94,7 @@ public class JobTypes extends BaseDialog {
                if( type.equals(sub) )
                    continue;
                
-               DBJobType sub_type = (DBJobType)sub;
+               DBCustomers sub_type = (DBCustomers)sub;
                
                // if( type.type.toString().equalsIgnoreCase(sub_type.type.toString()) ) {
                    if( type.name.toString().equalsIgnoreCase(sub_type.name.toString()) ) {
@@ -111,14 +113,14 @@ public class JobTypes extends BaseDialog {
            
            if( !type.name.toString().matches("....*") )
            {
-        	   logger.error("Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
+        	   logger.error("Bei Eintrag " + counter1 + " fehlt der Name, " +
             				   "oder der eingegebene Text '" + 
             				   (type.name.getValue().toString().isEmpty() ?
             						   "   " : type.name.getValue()) + 
                        			"' ist zu kurz.");
                JOptionPane.showMessageDialog(null,
             		   StringUtils.autoLineBreak(
-            				   "Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
+            				   "Bei Eintrag " + counter1 + " fehlt der Name, " +
             				   "oder der eingegebene Text '" + 
             				   (type.name.getValue().toString().isEmpty() ?
             						   "   " : type.name.getValue()) + 
@@ -132,12 +134,23 @@ public class JobTypes extends BaseDialog {
        return true;
     }
             
-    private boolean entriesExist(final DBJobType entry) 
+    private boolean entriesExist(final DBCustomers entry)
     {
         try {
+            DBCustomerAddresses cust_addr = new DBCustomerAddresses();
 
-            Vector<DBStrukt> res = getTransaction().fetchTable(new DBTimeEntries(),
-                    "where " + getTransaction().markColumn("jobtype") +
+            Vector<DBStrukt> res = getTransaction().fetchTable(cust_addr,
+                    "where " + getTransaction().markColumn(cust_addr.customer) +
+                    " = '" + entry.id.toString() + "'");
+
+            if (res.size() > 0) {
+                return true;
+            }
+
+            DBProjects projects = new DBProjects();
+
+            res = getTransaction().fetchTable(projects,
+                    "where " + getTransaction().markColumn(cust_addr.customer) +
                     " = '" + entry.id.toString() + "'");
 
             if (res.size() > 0) {
@@ -148,7 +161,7 @@ public class JobTypes extends BaseDialog {
             ex.printStackTrace();
         }
         
-        return false;    
+        return false;
     }
     
     private void feed_table()
@@ -167,7 +180,7 @@ public class JobTypes extends BaseDialog {
                 
                 Transaction trans = getTransaction();
                 values = trans.fetchTable(
-                        new DBJobType()
+                        new DBCustomers()
                         );
                 
 				for (DBStrukt entry : values) { 
@@ -187,12 +200,11 @@ public class JobTypes extends BaseDialog {
             @Override
             public void do_stuff() throws Exception {
 
-                DBJobType jt = new DBJobType();
+                DBCustomers jt = new DBCustomers();
 
                 jt.id.loadFromCopy(new Integer(
                                     getNewSequenceValue(jt.getName())));
-                jt.type.loadFromString(DBJobType.JOBTYPES.LZ.toString());
-                
+                                
                 jt.hist.setAnHist(root.getUserName());
                 
                 tm.add(jt, true);
@@ -201,7 +213,7 @@ public class JobTypes extends BaseDialog {
         };
     }
     
-    private void insertOrUpdateValues(DBJobType entry)
+    private void insertOrUpdateValues(DBCustomers entry)
             throws
             UnsupportedDBDataTypeException,
             WrongBindFileFormatException,
@@ -209,7 +221,7 @@ public class JobTypes extends BaseDialog {
             TableBindingNotRegisteredException, 
             IOException {
 
-        DBJobType e = new DBJobType();
+        DBCustomers e = new DBCustomers();
 
         e.loadFromCopy(entry);
 
@@ -238,6 +250,10 @@ public class JobTypes extends BaseDialog {
         jBClose = new javax.swing.JButton();
         jLTitle = new javax.swing.JLabel();
         jBHelp = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jBAddresses = new javax.swing.JButton();
+        jBProjects = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -286,9 +302,9 @@ public class JobTypes extends BaseDialog {
             }
         });
 
-        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18));
+        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLTitle.setText("Tätigkeiten");
+        jLTitle.setText("Kunden");
 
         jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
         jBHelp.addActionListener(new java.awt.event.ActionListener() {
@@ -297,25 +313,64 @@ public class JobTypes extends BaseDialog {
             }
         });
 
+        jBAddresses.setText("Addressen");
+        jBAddresses.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBAddressesActionPerformed(evt);
+            }
+        });
+
+        jBProjects.setText("Projekte");
+        jBProjects.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBProjectsActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jBAddresses)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jBProjects)
+                .addContainerGap(537, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBAddresses)
+                    .addComponent(jBProjects))
+                .addContainerGap(0, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jBSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jBNew)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jBDel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 314, Short.MAX_VALUE)
                         .addComponent(jBClose))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 716, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -325,15 +380,19 @@ public class JobTypes extends BaseDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jBHelp)
-                    .addComponent(jLTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLTitle))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(3, 3, 3)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBSave)
                     .addComponent(jBNew)
-                    .addComponent(jBClose)
-                    .addComponent(jBDel))
+                    .addComponent(jBDel)
+                    .addComponent(jBClose))
                 .addContainerGap())
         );
 
@@ -352,7 +411,7 @@ private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 			public void do_stuff() throws Exception {
 				for (Integer i : tm.getEditedRows()) {
                     
-					DBJobType entry = (DBJobType) values.get(i);
+					DBCustomers entry = (DBCustomers) values.get(i);
                     
                     entry.hist.setAeHist(root.getUserName());
                     
@@ -380,26 +439,25 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
 private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
 // TODO add your handling code here:
-
-    if(!checkAnyAndSingleSelection(jTContent))
+    if( !checkAnyAndSingleSelection(jTContent) )
         return;
     
     final int i = jTContent.getSelectedRow();
     
-    if( i < 0 || i >= values.size() )
+    if( i < 0 || i >= values.size() ) {    
         return;
+    }
     
     // TODO es dürfen nur Einträge gelöscht werden für die es noch keine Zeitstempel gibt    
-    if( entriesExist( (DBJobType)values.get(i) ) )
+    if( entriesExist( (DBCustomers)values.get(i) ) )
     {
-    	logger.error("Dieser Eintrag kann nicht mehr gelöscht, " +
+        String msg = "Dieser Eintrag kann nicht mehr gelöscht, " +
         		"sondern nur gesperrt werden, " +
-            	"da bereits Zeiteinträge mit dieser Tätigkeit existieren.");
+            	"da es bereits Einträge gibt, auf diesen Kunden verweisen.";
+
+    	logger.error(msg);
          JOptionPane.showMessageDialog(null, 
-        	StringUtils.autoLineBreak(
-        		"Dieser Eintrag kann nicht mehr gelöscht, " +
-        		"sondern nur gesperrt werden, " +
-            	"da bereits Zeiteinträge mit dieser Tätigkeit existieren."),
+        	StringUtils.autoLineBreak(msg),
             "Fehler",
             JOptionPane.OK_OPTION);
          return;         
@@ -410,7 +468,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     
         public void do_stuff() throws Exception
         {
-            DBJobType entry = (DBJobType)values.get(i);
+            DBCustomers entry = (DBCustomers)values.get(i);
             
             getTransaction().updateValues(
                 "delete from " + entry.getName() + " where " +
@@ -431,20 +489,57 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     java.awt.EventQueue.invokeLater(new Runnable() {
 
         public void run() {
-            new LocalHelpWin(root, "JobTypes").setVisible(true);
+            new LocalHelpWin(root, "Customers").setVisible(true);
         }
     });
 }//GEN-LAST:event_jBHelpActionPerformed
 
 
+private void jBAddressesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBAddressesActionPerformed
+
+    if( !checkAnyAndSingleSelection(jTContent) )
+        return;
+
+    final int i = jTContent.getSelectedRow();
+
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                new CustomersAddresses(root,(DBCustomers) values.get(i)).setVisible(true);
+            }
+        });
+}//GEN-LAST:event_jBAddressesActionPerformed
+
+private void jBProjectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBProjectsActionPerformed
+    // TODO add your handling code here:
+    if (!checkAnyAndSingleSelection(jTContent)) {
+        return;
+    }
+
+    final int i = jTContent.getSelectedRow();
+
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+        public void run() {
+            new Projects(root, (DBCustomers) values.get(i)).setVisible(true);
+        }
+    });
+
+}//GEN-LAST:event_jBProjectsActionPerformed
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBAddresses;
     private javax.swing.JButton jBClose;
     private javax.swing.JButton jBDel;
     private javax.swing.JButton jBHelp;
     private javax.swing.JButton jBNew;
+    private javax.swing.JButton jBProjects;
     private javax.swing.JButton jBSave;
     private javax.swing.JLabel jLTitle;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTContent;
     // End of variables declaration//GEN-END:variables
 

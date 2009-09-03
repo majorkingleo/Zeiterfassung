@@ -271,17 +271,8 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
 private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
 // TODO add your handling code here:
-    if( jTContent.getSelectedRowCount() <= 0 )
+    if(!checkAnyAndSingleSelection(jTContent))
         return;
-    
-    if( jTContent.getSelectedRowCount() > 1 )
-    {
-         JOptionPane.showMessageDialog(null, 
-            "Bitte nur einen Eintrag auswählen.",
-            "Fehler",
-            JOptionPane.OK_OPTION);
-        return;
-    }
     
     final int i = jTContent.getSelectedRow();
     

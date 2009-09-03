@@ -1,0 +1,72 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package at.redeye.Zeiterfassung.bindtypes;
+
+import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
+import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger.SqlQuery;
+import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.transaction.Transaction;
+import java.util.Vector;
+
+/**
+ *
+ * @author martin
+ */
+public class NameNotLockedQuery extends DBSqlAsInteger.SqlQuery
+{
+    Vector<SqlQuery.Pair> pairs = new Vector<SqlQuery.Pair>();
+    int default_value = 0;
+
+    public NameNotLockedQuery( final Transaction trans, final NameIdLockedInterface strukt )
+    {
+        new AutoLogger(NameNotLockedQuery.class.getName()) {
+
+            public void do_stuff() throws Exception {
+
+                Vector<DBStrukt> res = trans.fetchTable( strukt.getNewOne(),
+                            "where " +
+                            trans.markColumn(strukt.getLockedName()) +
+                            "= 'NEIN'" );
+
+                for( DBStrukt s : res )
+                {
+                    NameIdLockedInterface sub = (NameIdLockedInterface)s;
+
+                    String text =  sub.getNameValue().toString();
+
+                    pairs.add( new SqlQuery.Pair( (Integer)sub.getIdValue(), text ) );
+                }
+            }
+        };
+    }
+
+    @Override
+    public Vector<SqlQuery.Pair> getPossibleValues() {
+        return pairs;
+    }
+
+    @Override
+    public int getDefaultValue() {
+        if( pairs.size() > 0 )
+            return pairs.get(default_value).val;
+
+        return 0;
+    }
+
+    public void setNullEntryAsDefault()
+    {
+        /*
+        Vector<SqlQuery.Pair> new_pairs = new Vector<SqlQuery.Pair>();
+        new_pairs.add(new SqlQuery.Pair(0,""));
+        new_pairs.addAll(pairs);
+        pairs = new_pairs;
+        */
+
+        pairs.add(new SqlQuery.Pair(0,""));
+        default_value = pairs.size() -1;
+    }
+}

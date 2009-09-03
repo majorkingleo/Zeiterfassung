@@ -22,6 +22,9 @@ public class About extends BaseDialog {
         initComponents();
         
         jLVersion.setText("Version " + Version.getVersion());
+
+        if( at.redeye.Dongle.AppliactionModes.getAppliactionModes().isDemoVersion() )
+            jLabelPic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/Zeiterfassung/resources/icons/redeye15b-dev.png")));
     }
 
     /** This method is called from within the constructor to
@@ -35,12 +38,12 @@ public class About extends BaseDialog {
 
         jLTitle = new javax.swing.JLabel();
         jBCancel = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelPic = new javax.swing.JLabel();
         jLVersion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18));
         jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLTitle.setText("Über das Zeiterfassungssystem");
 
@@ -52,10 +55,10 @@ public class About extends BaseDialog {
             }
         });
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png"))); // NOI18N
+        jLabelPic.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelPic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png"))); // NOI18N
 
-        jLVersion.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLVersion.setFont(new java.awt.Font("Dialog", 1, 14));
         jLVersion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLVersion.setText("Version");
 
@@ -68,7 +71,7 @@ public class About extends BaseDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+                        .addComponent(jLabelPic, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jBCancel)
@@ -83,7 +86,7 @@ public class About extends BaseDialog {
                 .addGap(4, 4, 4)
                 .addComponent(jLVersion)
                 .addGap(22, 22, 22)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabelPic, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(jBCancel)
                 .addContainerGap())
@@ -102,7 +105,7 @@ private void jBCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JButton jBCancel;
     private javax.swing.JLabel jLTitle;
     private javax.swing.JLabel jLVersion;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelPic;
     // End of variables declaration//GEN-END:variables
 
 }

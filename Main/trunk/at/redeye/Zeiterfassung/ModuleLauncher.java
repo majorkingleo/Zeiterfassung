@@ -22,19 +22,37 @@ import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import at.redeye.UserManagement.impl.UserDataHandling;
+import at.redeye.Zeiterfassung.bindtypes.DBCustomerAddresses;
+import at.redeye.Zeiterfassung.bindtypes.DBCustomers;
 import at.redeye.Zeiterfassung.bindtypes.DBExtraHolidays;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBMonthBlocks;
+import at.redeye.Zeiterfassung.bindtypes.DBProjects;
+import at.redeye.Zeiterfassung.bindtypes.DBSubProjects;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 
 public class ModuleLauncher implements at.redeye.UserManagement.UserManagementListener {
 
-	private static Root root = new LocalRoot("MOMM");
-	private UserManagementInterface um = new UserDataHandling(root);
+	private static Root root = null;
+	private UserManagementInterface um = null;
 	private static Logger logger = Logger.getRootLogger();
 
+    public ModuleLauncher() {
+
+        String name = "MOMM";
+
+        if( at.redeye.Dongle.AppliactionModes.getAppliactionModes().isDemoVersion() )
+            name += "-dev";
+
+        root = new LocalRoot(name);
+        um = new UserDataHandling(root);
+    }
+
 	protected void invoke() {
+
+
+
 
 		try {
 			root.loadDBConnectionFromSetup();
@@ -52,11 +70,20 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 		root.getBindtypeManager().register(new DBConfig());
 		root.getBindtypeManager().register(new DBExtraHolidays());
 		root.getBindtypeManager().register(new DBMonthBlocks());
+        root.getBindtypeManager().register(new DBCustomers());
+        root.getBindtypeManager().register(new DBCustomerAddresses());
+        root.getBindtypeManager().register(new DBProjects());
+        root.getBindtypeManager().register(new DBSubProjects());
 
 		configureLogging();
 
 		um.addUMListener(this);
-        um.setLogo("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
+
+        if( at.redeye.Dongle.AppliactionModes.getAppliactionModes().isDemoVersion() )
+            um.setLogo("/at/redeye/Zeiterfassung/resources/icons/redeye15b-dev.png");
+        else
+            um.setLogo("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
+
 		um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
 
 	}

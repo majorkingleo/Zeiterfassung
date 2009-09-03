@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
@@ -20,48 +19,58 @@ import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
-import at.redeye.Zeiterfassung.bindtypes.DBJobType;
-import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBCustomerAddresses;
+import at.redeye.Zeiterfassung.bindtypes.DBCustomers;
 
 /**
  *
  * @author  martin
  */
-public class JobTypes extends BaseDialog {
+public class CustomersAddresses extends BaseDialog {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(JobTypes.class.getSimpleName());
+	private static Logger logger = Logger.getLogger(CustomersAddresses.class.getSimpleName());
 	TableManipulator tm;
     Vector<DBStrukt> values = new Vector<DBStrukt>();
-    
+    DBCustomers cust;
     /** Creates new form JobTypes
      * @param root 
      */
-    public JobTypes( Root root ) {
-        super(root, "Tätigkeiten");
+    public CustomersAddresses( Root root, DBCustomers cust ) {
+        super(root, getTitle(cust));
         initComponents();
         
-        DBJobType jt = new DBJobType();
+        this.cust = cust;
+
+        jLTitle.setText(title);
+
+        DBCustomerAddresses cust_addr = new DBCustomerAddresses();
         
-        tm = new TableManipulator(root,jTContent,jt);
+        tm = new TableManipulator(root,jTContent,cust_addr);
         
-        tm.hide(jt.id);
-        tm.hide(jt.hist.lo_user);
-        tm.hide(jt.hist.lo_zeit);
-        
-        tm.setEditable(jt.name);
-        tm.setEditable(jt.type);
-        tm.setEditable(jt.help);
-        tm.setEditable(jt.locked);
-        tm.setEditable(jt.is_holliday);
-        
+        tm.hide(cust_addr.id);
+        tm.hide(cust_addr.hist.lo_user);
+        tm.hide(cust_addr.hist.lo_zeit);
+        tm.hide(cust_addr.customer);
+
+        tm.setEditable(cust_addr.name);
+        tm.setEditable(cust_addr.city);
+        tm.setEditable(cust_addr.company);
+        tm.setEditable(cust_addr.contact);
+        tm.setEditable(cust_addr.country);
+        tm.setEditable(cust_addr.email);
+        tm.setEditable(cust_addr.mobile);
+        tm.setEditable(cust_addr.name);
+        tm.setEditable(cust_addr.postcode);
+        tm.setEditable(cust_addr.state);
+        tm.setEditable(cust_addr.street);
+        tm.setEditable(cust_addr.tel);
         
         tm.prepareTable();
         
@@ -73,83 +82,17 @@ public class JobTypes extends BaseDialog {
 		tm.autoResize();
     }
 
-    private boolean check_entries() {
-       
-      int counter1=0;
-        
-       for( DBStrukt entry : values )
-       {
-           counter1++;
-           
-           DBJobType type = (DBJobType)entry;
-           
-           int counter2=0;
-           
-           for( DBStrukt sub : values )
-           {
-               counter2++;
-               
-               if( type.equals(sub) )
-                   continue;
-               
-               DBJobType sub_type = (DBJobType)sub;
-               
-               // if( type.type.toString().equalsIgnoreCase(sub_type.type.toString()) ) {
-                   if( type.name.toString().equalsIgnoreCase(sub_type.name.toString()) ) {
-                	   logger.error("Eintrag " + counter1 + " und Eintrag " + 
-        					   counter2 + " gleichen sich.");
-                	   JOptionPane.showMessageDialog(null, 
-                			   StringUtils.autoLineBreak(
-                					   "Eintrag " + counter1 + " und Eintrag " + 
-                					   counter2 + " gleichen sich."),
-                        "Fehler",
-                        JOptionPane.OK_OPTION);
-                      return false;
-                   }
-               // }
-           }
-           
-           if( !type.name.toString().matches("....*") )
-           {
-        	   logger.error("Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
-            				   "oder der eingegebene Text '" + 
-            				   (type.name.getValue().toString().isEmpty() ?
-            						   "   " : type.name.getValue()) + 
-                       			"' ist zu kurz.");
-               JOptionPane.showMessageDialog(null,
-            		   StringUtils.autoLineBreak(
-            				   "Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
-            				   "oder der eingegebene Text '" + 
-            				   (type.name.getValue().toString().isEmpty() ?
-            						   "   " : type.name.getValue()) + 
-                       			"' ist zu kurz."),
-                       "Fehler",
-                       JOptionPane.OK_OPTION);
-               return false;
-           }
-       }
-        
-       return true;
-    }
-            
-    private boolean entriesExist(final DBJobType entry) 
+    private static String getTitle(DBCustomers cust)
     {
-        try {
+        String ret = "Addressen " + cust.name.toString();
 
-            Vector<DBStrukt> res = getTransaction().fetchTable(new DBTimeEntries(),
-                    "where " + getTransaction().markColumn("jobtype") +
-                    " = '" + entry.id.toString() + "'");
+        if( !cust.comment.getValue().isEmpty() )
+            return ret + " - " + cust.comment.getValue().toString();
 
-            if (res.size() > 0) {
-                return true;
-            }
-        } catch (Exception ex) {
-            logger.error("Exception: " + ex.toString() + "\n" + ex.getLocalizedMessage());
-            ex.printStackTrace();
-        }
-        
-        return false;    
+        return ret;
     }
+
+    
     
     private void feed_table()
     {
@@ -164,10 +107,14 @@ public class JobTypes extends BaseDialog {
 
                 tm.clear();
                 clearEdited();
-                
+
+                DBCustomerAddresses cust_addr = new DBCustomerAddresses();
+
                 Transaction trans = getTransaction();
                 values = trans.fetchTable(
-                        new DBJobType()
+                        cust_addr,
+                        "where " +
+                        trans.markColumn(cust_addr.customer) + "='" + cust.id.toString() + "'"
                         );
                 
 				for (DBStrukt entry : values) { 
@@ -187,12 +134,12 @@ public class JobTypes extends BaseDialog {
             @Override
             public void do_stuff() throws Exception {
 
-                DBJobType jt = new DBJobType();
+                DBCustomerAddresses jt = new DBCustomerAddresses();
 
                 jt.id.loadFromCopy(new Integer(
                                     getNewSequenceValue(jt.getName())));
-                jt.type.loadFromString(DBJobType.JOBTYPES.LZ.toString());
-                
+                jt.customer.loadFromCopy(cust.id.getValue());
+                                
                 jt.hist.setAnHist(root.getUserName());
                 
                 tm.add(jt, true);
@@ -201,7 +148,7 @@ public class JobTypes extends BaseDialog {
         };
     }
     
-    private void insertOrUpdateValues(DBJobType entry)
+    private void insertOrUpdateValues(DBCustomers entry)
             throws
             UnsupportedDBDataTypeException,
             WrongBindFileFormatException,
@@ -209,7 +156,7 @@ public class JobTypes extends BaseDialog {
             TableBindingNotRegisteredException, 
             IOException {
 
-        DBJobType e = new DBJobType();
+        DBCustomerAddresses e = new DBCustomerAddresses();
 
         e.loadFromCopy(entry);
 
@@ -286,9 +233,9 @@ public class JobTypes extends BaseDialog {
             }
         });
 
-        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18));
+        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLTitle.setText("Tätigkeiten");
+        jLTitle.setText("Addressen");
 
         jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
         jBHelp.addActionListener(new java.awt.event.ActionListener() {
@@ -304,17 +251,17 @@ public class JobTypes extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jBSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jBNew)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jBDel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                         .addComponent(jBClose))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
+                        .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -327,7 +274,7 @@ public class JobTypes extends BaseDialog {
                     .addComponent(jBHelp)
                     .addComponent(jLTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBSave)
@@ -341,10 +288,7 @@ public class JobTypes extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
-// TODO add your handling code here:
-    
-       if( check_entries() == false )
-            return;
+// TODO add your handling code here:    
         
 		new AutoMBox(getTitle()) {
 
@@ -352,7 +296,7 @@ private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 			public void do_stuff() throws Exception {
 				for (Integer i : tm.getEditedRows()) {
                     
-					DBJobType entry = (DBJobType) values.get(i);
+					DBCustomerAddresses entry = (DBCustomerAddresses) values.get(i);
                     
                     entry.hist.setAeHist(root.getUserName());
                     
@@ -380,37 +324,20 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
 private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
 // TODO add your handling code here:
-
-    if(!checkAnyAndSingleSelection(jTContent))
+    if( !checkAnyAndSingleSelection(jTContent) )
         return;
     
     final int i = jTContent.getSelectedRow();
     
     if( i < 0 || i >= values.size() )
-        return;
-    
-    // TODO es dürfen nur Einträge gelöscht werden für die es noch keine Zeitstempel gibt    
-    if( entriesExist( (DBJobType)values.get(i) ) )
-    {
-    	logger.error("Dieser Eintrag kann nicht mehr gelöscht, " +
-        		"sondern nur gesperrt werden, " +
-            	"da bereits Zeiteinträge mit dieser Tätigkeit existieren.");
-         JOptionPane.showMessageDialog(null, 
-        	StringUtils.autoLineBreak(
-        		"Dieser Eintrag kann nicht mehr gelöscht, " +
-        		"sondern nur gesperrt werden, " +
-            	"da bereits Zeiteinträge mit dieser Tätigkeit existieren."),
-            "Fehler",
-            JOptionPane.OK_OPTION);
-         return;         
-    }
+        return;        
     
     
     new AutoMBox( getTitle() ) {
     
         public void do_stuff() throws Exception
         {
-            DBJobType entry = (DBJobType)values.get(i);
+            DBCustomerAddresses entry = (DBCustomerAddresses)values.get(i);
             
             getTransaction().updateValues(
                 "delete from " + entry.getName() + " where " +
@@ -431,7 +358,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     java.awt.EventQueue.invokeLater(new Runnable() {
 
         public void run() {
-            new LocalHelpWin(root, "JobTypes").setVisible(true);
+            new LocalHelpWin(root, "CustomerAddresses").setVisible(true);
         }
     });
 }//GEN-LAST:event_jBHelpActionPerformed
@@ -458,6 +385,25 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
             return false;
         }
         return true;
+    }
+
+    private void insertOrUpdateValues(DBCustomerAddresses entry)
+            throws
+            UnsupportedDBDataTypeException,
+            WrongBindFileFormatException,
+            SQLException,
+            TableBindingNotRegisteredException,
+            IOException {
+
+        DBCustomerAddresses e = new DBCustomerAddresses();
+
+        e.loadFromCopy(entry);
+
+        if (getTransaction().fetchTableWithPrimkey(e) == false) {
+            getTransaction().insertValues(e);
+        } else {
+            getTransaction().updateValues(entry);
+        }
     }
 
 }
