@@ -67,7 +67,7 @@ public class BookDay extends BaseDialog {
 
 		setTitle(day);
 
-		DBTimeEntries te = new DBTimeEntries( getTransaction(), true );
+		DBTimeEntries te = getBindType();
 
 		tm = new TableManipulator(root,jTContent, te);
 
@@ -129,6 +129,11 @@ public class BookDay extends BaseDialog {
 	public void setTitle(DateMidnight d) {
 		jLTitle.setText(getTitle(d));
 	}
+
+    private DBTimeEntries getBindType()
+    {
+        return new DBTimeEntries(getTransaction(), true);
+    }
 
 	/**
 	 * This method is called from within the constructor to initialize the form.
@@ -446,7 +451,7 @@ public class BookDay extends BaseDialog {
 			@Override
 			public void do_stuff() throws Exception {
 
-				DBTimeEntries te = new DBTimeEntries( getTransaction() );
+				DBTimeEntries te = getBindType();
 
 				te.id.loadFromCopy(new Integer(
 						getNewSequenceValue(te.getName())));
@@ -578,7 +583,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                 tm.clear();
                 Transaction trans = getTransaction();
                 values = trans.fetchTable(
-                        new DBTimeEntries( getTransaction() ),
+                        getBindType(),
                         "where "                         
                         + getTransaction().getDayStmt("from", day)
                         + " and " 

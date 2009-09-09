@@ -59,14 +59,7 @@ public class NameNotLockedQuery extends DBSqlAsInteger.SqlQuery
 
     public void setNullEntryAsDefault()
     {
-        /*
-        Vector<SqlQuery.Pair> new_pairs = new Vector<SqlQuery.Pair>();
-        new_pairs.add(new SqlQuery.Pair(0,""));
-        new_pairs.addAll(pairs);
-        pairs = new_pairs;
-        */
-
-        pairs.add(new SqlQuery.Pair(0,""));
-        default_value = pairs.size() -1;
+        pairs.insertElementAt(new SqlQuery.Pair(0,""), 0);
+        default_value = 0;
     }
 }
