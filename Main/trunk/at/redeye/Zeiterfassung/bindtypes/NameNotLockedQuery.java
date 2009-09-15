@@ -20,17 +20,31 @@ public class NameNotLockedQuery extends DBSqlAsInteger.SqlQuery
 {
     Vector<SqlQuery.Pair> pairs = new Vector<SqlQuery.Pair>();
     int default_value = 0;
+    Transaction trans;
+    NameIdLockedInterface strukt;    
 
-    public NameNotLockedQuery( final Transaction trans, final NameIdLockedInterface strukt )
+    public NameNotLockedQuery( Transaction trans, NameIdLockedInterface strukt )
     {
+        this.trans = trans;
+        this.strukt = strukt;
+
+        refresh();
+    }
+    
+    public void refresh()
+    {        
         new AutoLogger(NameNotLockedQuery.class.getName()) {
 
             public void do_stuff() throws Exception {
+                
+                pairs.clear();
 
                 Vector<DBStrukt> res = trans.fetchTable( strukt.getNewOne(),
                             "where " +
                             trans.markColumn(strukt.getLockedName()) +
-                            "= 'NEIN'" );
+                            "= 'NEIN' " + getExtraSql() );
+
+                // System.out.println( "sql: " + trans.getSql() );
 
                 for( DBStrukt s : res )
                 {

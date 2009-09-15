@@ -22,15 +22,24 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
+import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
+import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
+import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger.SqlQuery;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.base.tablemanipulator.TableDesign;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
+import at.redeye.FrameWork.base.tablemanipulator.TableValidator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.FrameWork.widgets.AutoCompleteCombo;
 import at.redeye.FrameWork.widgets.calendarday.DisplayDay;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.NameNotLockedQuery;
+import javax.swing.JComponent;
 
 /**
  * 
@@ -67,7 +76,7 @@ public class BookDay extends BaseDialog {
 
 		setTitle(day);
 
-		DBTimeEntries te = getBindType();
+		final DBTimeEntries te = getBindType();
 
 		tm = new TableManipulator(root,jTContent, te);
 
@@ -98,6 +107,43 @@ public class BookDay extends BaseDialog {
         tm.setAdditionalAutocompleteData(te.from, additional_values_from);        
 
         tm.setAdditionalAutocompleteData(te.comment, cache.getAutoCompleteInfoFor(te.comment).get());
+
+        tm.setValidator(te.project, new TableValidator()
+            {
+                @Override
+                public void updateComponentBeforeEdit(JComponent component, Object value, TableDesign tabledesign, int row, int column)
+                {
+                   if( !(component instanceof AutoCompleteCombo) )
+                       return;
+
+                   AutoCompleteCombo ac = (AutoCompleteCombo) component;
+
+                   Vector<Object> cols = tabledesign.rows.get(row);
+
+                   for( int i = 0; i < cols.size(); i++ )
+                   {
+                       Object col = cols.get(i);
+
+                       if( col instanceof DBValue )
+                       {
+                            DBValue val = (DBValue) col;
+
+                            if( val.getName().equals(te.customer.getName()) )
+                            {
+                                DBSqlAsInteger easi = (DBSqlAsInteger) tabledesign.rows.get(row).get(column);                                
+
+                                easi.query.setExtraSql(" and " + getTransaction().markColumn(te.customer) + "='" + val.getValue() + "'");
+
+                                easi.refresh();
+
+                                ac.set_items(easi.getPossibleValues());
+
+                                break;
+                            }
+                       }
+                   }
+                }
+            });
 
 		tm.prepareTable();
 
