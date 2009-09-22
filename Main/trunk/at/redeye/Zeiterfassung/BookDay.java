@@ -68,7 +68,7 @@ public class BookDay extends BaseDialog {
 
 		setTitle(day);
 
-		final DBTimeEntries te = getBindType();
+		DBTimeEntries te = getBindType();
 
 		tm = new TableManipulator(root,jTContent, te);
 
@@ -102,7 +102,7 @@ public class BookDay extends BaseDialog {
 
         tm.setValidator(te.project, new JoinTableCell(te.customer, getTransaction()) );
 
-        tm.setValidator(te.sub_project, new JoinTableCell(te.project, getTransaction()) );
+        tm.setValidator(te.sub_project, new SubProjectValidator(this, tm, te.project) );
 
 		tm.prepareTable();
 

@@ -116,24 +116,38 @@ public class SubProjects extends BaseDialog {
     }
     
     private void newEntry(boolean autombox) {
-        new AutoMBox(getTitle(), autombox) {
+
+        DBSubProjects jt = createNewSubProjectEntry(this, project, autombox);
+
+        if (jt != null) {
+            tm.add(jt, true);
+            values.add(jt);
+        }
+    }
+
+    public static DBSubProjects createNewSubProjectEntry(final BaseDialog dlg, final DBProjects parent_project, boolean display_error_box)
+    {
+        final DBSubProjects jt = new DBSubProjects();
+
+        AutoMBox al = new AutoMBox(getTitle(parent_project), display_error_box) {
 
             @Override
             public void do_stuff() throws Exception {
 
-                DBSubProjects jt = new DBSubProjects();
+                jt.id.loadFromCopy(new Integer(dlg.getNewSequenceValue(jt.getName())));
+                jt.project.loadFromCopy(parent_project.id.getValue());
+                jt.hourly_rate.loadFromCopy(parent_project.hourly_rate.getValue());
+                jt.currency.loadFromCopy(parent_project.currency.getValue());
+                jt.hist.setAnHist(dlg.getRoot().getUserName());
 
-                jt.id.loadFromCopy(new Integer(
-                                    getNewSequenceValue(jt.getName())));
-                jt.project.loadFromCopy(project.id.getValue());
-                jt.hourly_rate.loadFromCopy(project.hourly_rate.getValue());
-                jt.currency.loadFromCopy(project.currency.getValue());
-                jt.hist.setAnHist(root.getUserName());                
-                
-                tm.add(jt, true);
-                values.add(jt);
             }
         };
+
+        if (al.isFailed()) {
+            return null;
+        }
+
+        return jt;
     }
     
     private void insertOrUpdateValues(DBSubProjects entry)
