@@ -138,6 +138,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuProgram = new javax.swing.JMenu();
         jMDatabase = new javax.swing.JMenuItem();
+        jMLogout = new javax.swing.JMenuItem();
         jMenuQuit = new javax.swing.JMenuItem();
         jMUser = new javax.swing.JMenu();
         Hauptfeiertage = new javax.swing.JMenu();
@@ -257,6 +258,14 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
         jMenuProgram.add(jMDatabase);
+
+        jMLogout.setText("Abmelden");
+        jMLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMLogoutActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMLogout);
 
         jMenuQuit.setText("Beenden");
         jMenuQuit.addActionListener(new java.awt.event.ActionListener() {
@@ -736,6 +745,12 @@ private void JMCustomersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 
 }//GEN-LAST:event_JMCustomersActionPerformed
 
+private void jMLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMLogoutActionPerformed
+
+    TimecontrolMain.relogin();
+
+}//GEN-LAST:event_jMLogoutActionPerformed
+
 
 
 
@@ -789,20 +804,26 @@ public void handleHolidays()
     month.setMonth(mon, year);   
 }
 
-@Override
-public void close()
+    @Override
+public void closeNoAppExit()
 {
     root.getSetup().setLocalConfig("HolidaysAustria", new Boolean(jCBHolidaysAustria.getState()).toString());
     root.getSetup().setLocalConfig("HolidaysGermany", new Boolean(jCBHolidaysGermany.getState()).toString());
     root.getSetup().setLocalConfig("HolidaysSwitzerland", new Boolean(jCBHolidaysSwitzerland.getState()).toString());
-    
+
     root.getSetup().setLocalConfig("MainHolidaysAustria", new Boolean(jRBHolidaysAustria.isSelected()).toString());
     root.getSetup().setLocalConfig("MainHolidaysGermany", new Boolean(jRBHolidaysGermany.isSelected()).toString());
     root.getSetup().setLocalConfig("MainHolidaysSwitzerland", new Boolean(jRBHolidaysSwitzerland.isSelected()).toString());
-    
+
     super.close();
-    root.appExit();
     this.dispose();
+}
+
+@Override
+public void close()
+{
+    closeNoAppExit();
+    root.appExit();    
 }
 
 
@@ -825,6 +846,7 @@ public void close()
     private javax.swing.JMenuItem jMInfo;
     private javax.swing.JMenuItem jMJobTypes;
     private javax.swing.JMenuItem jMLocalConfig;
+    private javax.swing.JMenuItem jMLogout;
     private javax.swing.JMenuItem jMMemInfo;
     private javax.swing.JMenuItem jMMonthBlocks;
     private javax.swing.JMenuItem jMMonthReport;

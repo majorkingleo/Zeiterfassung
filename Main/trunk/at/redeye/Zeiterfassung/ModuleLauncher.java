@@ -37,6 +37,7 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
     private static Root root = null;
     private UserManagementInterface um = null;
     private static Logger logger = Logger.getRootLogger();
+    private boolean first_run = true;
 
     public ModuleLauncher() {
 
@@ -48,6 +49,13 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
         root = new LocalRoot(name);
         um = new UserDataHandling(root);
+    }
+
+    public void relogin()
+    {
+        root.closeAllWindowsNoAppExit();
+        um.setAutoLogin(false);
+        invoke();
     }
 
     protected void invoke() {
@@ -75,7 +83,8 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
         configureLogging();
 
-        um.addUMListener(this);
+        if( first_run )
+            um.addUMListener(this);
 
         if (um.tryAutoLogin() == false) {
             
@@ -87,6 +96,8 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
             um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
         }
+
+        first_run = false;
 
     }
 
