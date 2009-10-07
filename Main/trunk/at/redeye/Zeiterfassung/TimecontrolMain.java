@@ -1,5 +1,7 @@
 package at.redeye.Zeiterfassung;
 
+import java.net.ProxySelector;
+
 public class TimecontrolMain {
 
     private static ModuleLauncher ml;
@@ -10,7 +12,11 @@ public class TimecontrolMain {
     }
 
 	public static void main(String[] args) {
-		// TODO code application logic here
+		
+        // Proxyeinstellungen von Java Ausschalten, sonst versucht sich 
+        // der oracle Treiber über den Proxy zu DB zu verbinden.
+        ProxySelector.setDefault(null);
+
 		ml = new ModuleLauncher();
 
         ml.invoke();
