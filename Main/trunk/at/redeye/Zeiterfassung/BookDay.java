@@ -20,7 +20,7 @@ import org.joda.time.DateMidnight;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;

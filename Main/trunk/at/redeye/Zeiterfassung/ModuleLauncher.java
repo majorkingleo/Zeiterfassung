@@ -14,7 +14,7 @@ import org.apache.log4j.RollingFileAppender;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.LocalRoot;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;

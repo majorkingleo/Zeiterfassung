@@ -5,9 +5,9 @@
 
 package at.redeye.Zeiterfassung;
 
-import at.redeye.FrameWork.base.GlobalConfigDefinitions;
-import at.redeye.FrameWork.base.LocalConfigDefinitions;
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.impl.GlobalConfigDefinitions;
+import at.redeye.FrameWork.base.prm.impl.LocalConfigDefinitions;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 
 /**
  *
