@@ -104,6 +104,11 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
     @Override
     public void accessGranted() {
 
+        // Now the user is known - apply allowed value to AutoLoginUser-PRM
+        String [] autoLoginValues = {root.getLogin(), ""}; // myself or nothing
+        root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName()).setPossibleValues(autoLoginValues);
+
+
         // Extend existing logfile-name to format log.OS-XX-APPL-XX
         RollingFileAppender fileAppender = (RollingFileAppender) logger.getAppender(RollingFileAppender.class.getSimpleName());
 
