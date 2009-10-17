@@ -174,7 +174,9 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
         logger.setLevel(Level.toLevel(logFileLevel));
         logger.addAppender(consoleAppender);
 
-        if (loggingEnabled.equalsIgnoreCase("ja")) {
+        if (loggingEnabled.equalsIgnoreCase("ja") ||
+                loggingEnabled.equalsIgnoreCase("yes") ||
+                loggingEnabled.equalsIgnoreCase("true")) {
 
             try {
 
