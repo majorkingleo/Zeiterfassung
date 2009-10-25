@@ -15,6 +15,7 @@ import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.LocalRoot;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.impl.PrmDBInit;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -82,6 +83,9 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
         root.getBindtypeManager().register(new DBSubProjects());
 
         configureLogging();
+
+        PrmDBInit prmDBInit =  new PrmDBInit(root);
+        prmDBInit.initDb();
 
         if( first_run )
             um.addUMListener(this);
