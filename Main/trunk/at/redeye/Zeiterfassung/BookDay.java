@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.tablemanipulator.validators.TimeHourMinuteValidator;
 import at.redeye.FrameWork.base.AutoLogger;
 import java.io.IOException;
 import java.sql.SQLException;
