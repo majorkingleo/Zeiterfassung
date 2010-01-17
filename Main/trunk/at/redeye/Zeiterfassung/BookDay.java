@@ -27,6 +27,7 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.FrameWork.utilities.calendar.MonthNames;
 import at.redeye.FrameWork.widgets.JoinTableCell;
 import at.redeye.FrameWork.widgets.calendarday.DisplayDay;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
@@ -128,7 +129,7 @@ public class BookDay extends BaseDialog {
 	protected static String getTitle(DateMidnight d) {
 		return d.dayOfWeek().getAsText(Locale.GERMAN) + " "
 				+ d.dayOfMonth().getAsText(Locale.GERMAN) + " "
-				+ d.monthOfYear().getAsText(Locale.GERMAN) + " "
+				+ MonthNames.getFullMonthName(d.getMonthOfYear()) + " "
 				+ Integer.toString(d.getYear());
 	}
 
