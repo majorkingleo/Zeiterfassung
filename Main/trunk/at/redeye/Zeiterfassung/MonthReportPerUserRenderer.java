@@ -57,7 +57,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
             public void do_stuff() throws Exception {
                 result = new Boolean(false);
                 
-                String where = " where " + trans.markColumn("user") + " = '" + user_id + "' " 
+                String where = " where " + trans.markColumn("user") + " = " + user_id 
                         + " and "                         
                         //+ trans.markColumn("from") 
                         //+ " like '" 

@@ -38,7 +38,7 @@ public class UserQuery extends DBSqlAsInteger.SqlQuery {
                 Vector<DBStrukt> res = trans.fetchTable(new DBPb(),
                         "where " +
                         trans.markColumn("locked") +
-                        "= '0'");
+                        "= 0");
 
                 for (DBStrukt s : res) {
                     DBPb jt = (DBPb) s;
