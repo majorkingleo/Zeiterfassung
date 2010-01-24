@@ -35,7 +35,7 @@ public class GetUserPerMonthRecord {
         
         Vector<DBStrukt> res = trans.fetchTable(new DBUserPerMonth(),
                 "where " 
-                    + trans.markColumn(upm.user) + "='" + userId + "'" +
+                    + trans.markColumn(upm.user) + "=" + userId + 
                     " and "
                     + trans.markColumn(upm.locked) + "='NEIN'" + 
                     " and "
@@ -59,7 +59,7 @@ public class GetUserPerMonthRecord {
             
             res = trans.fetchTable(new DBUserPerMonth(),
                 "where " 
-                    + trans.markColumn(upm.user) + "='" + userId + "'" +
+                    + trans.markColumn(upm.user) + "=" + userId +
                     " and "
                     + trans.markColumn(upm.locked) + "='NEIN'" + 
                     " and "

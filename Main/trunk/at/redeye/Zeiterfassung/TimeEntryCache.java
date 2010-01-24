@@ -84,7 +84,7 @@ public class TimeEntryCache {
         
         String where = "where "
             		+ trans.markColumn("user")
-            		+ "='" + userid + "' " 
+            		+ "=" + userid + " " 
                  	+ " and "
                  	+ trans.getPeriodStmt("from", dm_from, dm_to )
                  	+ " order by " + trans.markColumn("from");

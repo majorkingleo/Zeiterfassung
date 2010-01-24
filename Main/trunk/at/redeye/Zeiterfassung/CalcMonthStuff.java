@@ -222,7 +222,7 @@ public class CalcMonthStuff
         
         String where = "where " 
         	+ trans.markColumn("user")
-        	+ "='" + root.getUserId() + "' " 
+        	+ " = " + root.getUserId()
         	+ " and " 
         	+ trans.getPeriodStmt("from", dmStart, dmEnd )
         	+ " order by " + trans.markColumn("from");
@@ -347,9 +347,8 @@ public class CalcMonthStuff
             if( i > 0 )
                 line.append(",");
 
-            line.append("'");
             line.append(type.id.toString());
-            line.append("'");
+           
         }
 
         return line.toString();
@@ -374,9 +373,8 @@ public class CalcMonthStuff
             if( i > 0 )
                 line.append(",");
 
-            line.append("'");
             line.append(type.id.toString());
-            line.append("'");
+           
         }
 
         return line.toString();
@@ -431,7 +429,7 @@ public class CalcMonthStuff
         Vector<DBStrukt> res = trans.fetchTable(
                 entries,
                 "where " + trans.getPeriodStmt("from", new DateMidnight(from), new DateMidnight(to)) +
-                " and " + trans.markColumn(entries.user) + "='" + root.getUserId() + "'" +
+                " and " + trans.markColumn(entries.user) + " = " + root.getUserId() + 
                 job_type_sql +
                 " order by " + trans.markColumn(entries.from));
 
@@ -491,7 +489,7 @@ public class CalcMonthStuff
         Vector<DBStrukt> res = trans.fetchTable(
                 entries,
                 "where " + trans.getPeriodStmt("from", new DateMidnight(from), new DateMidnight(to)) +
-                " and " + trans.markColumn(entries.user) + "='" + root.getUserId() + "'" +
+                " and " + trans.markColumn(entries.user) + " = " + root.getUserId() + 
                 " and " + trans.markColumn(entries.jobtype) + " in ("  + getJobTyesForWork() + ")");
 
 

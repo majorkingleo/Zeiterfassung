@@ -594,7 +594,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                         "where "                         
                         + getTransaction().getDayStmt("from", day)
                         + " and " 
-                        + trans.markColumn("user") + " = '" + root.getUserId() + "' " 
+                        + trans.markColumn("user") + " = " + root.getUserId()
                         + " order by " + trans.markColumn("from"));
 
 				for (DBStrukt entry : values) {                    

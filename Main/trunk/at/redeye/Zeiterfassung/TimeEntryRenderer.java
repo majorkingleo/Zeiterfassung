@@ -90,7 +90,7 @@ public class TimeEntryRenderer implements InfoRenderer
                 {
                     String where = "where "
                         + trans.markColumn("user")
-                        + "='" + root.getUserId() + "' " 
+                        + "=" + root.getUserId() + " " 
                         + " and "
                         + trans.getDayStmt("from", day )
                         + " order by " + trans.markColumn("from");

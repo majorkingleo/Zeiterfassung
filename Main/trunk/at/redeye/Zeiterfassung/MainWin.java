@@ -916,7 +916,7 @@ public void close()
                 Vector<DBStrukt> entries = getTransaction().fetchTable(new DBUserPerMonth(),
                         "where " + getTransaction().markColumn("locked") + "='NEIN'" +
                         " and " +
-                        getTransaction().markColumn("user") + "='" + root.getUserId() +"'" );
+                        getTransaction().markColumn("user") + " = " + root.getUserId());
                         
                 if( entries.size() == 0 )
                 {
