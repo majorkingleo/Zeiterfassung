@@ -19,6 +19,7 @@ import at.redeye.FrameWork.base.prm.impl.PrmDBInit;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.FrameWork.widgets.StartupWindow;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
@@ -39,6 +40,7 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
     private UserManagementInterface um = null;
     private static Logger logger = Logger.getRootLogger();
     private boolean first_run = true;
+    private StartupWindow splash = null;
 
     public ModuleLauncher() {
 
@@ -46,6 +48,9 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
         if (at.redeye.Dongle.AppliactionModes.getAppliactionModes().isDemoVersion()) {
             name += "-dev";
+            splash = new StartupWindow("/at/redeye/Zeiterfassung/resources/icons/redeye15b-dev.png");
+        } else {
+            splash = new StartupWindow("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
         }
 
         root = new LocalRoot(name);
@@ -91,6 +96,8 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
             um.addUMListener(this);
 
         if (um.tryAutoLogin() == false) {
+
+            splash.close();
             
             if (at.redeye.Dongle.AppliactionModes.getAppliactionModes().isDemoVersion()) {
                 um.setLogo("/at/redeye/Zeiterfassung/resources/icons/redeye15b-dev.png");
@@ -99,6 +106,8 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
             }
 
             um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
+        } else {
+            splash.close();
         }
 
         first_run = false;
