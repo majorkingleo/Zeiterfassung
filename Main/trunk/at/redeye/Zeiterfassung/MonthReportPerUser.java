@@ -19,6 +19,7 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.reports.ReportRenderer;
+import at.redeye.FrameWork.utilities.calendar.MonthNames;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 
@@ -102,13 +103,9 @@ public class MonthReportPerUser extends BaseDialog {
     
     public static String getTitle(int mon, int year )
     {
-        return getTitle( new DateMidnight( year, mon, 1 ));
+      	return MonthNames.getFullMonthName(mon) + " "
+				+ Integer.toString(year);
     }
-
-    public static String getTitle(DateMidnight d) {
-		return d.monthOfYear().getAsText(Locale.GERMAN) + " "
-				+ Integer.toString(d.getYear());
-	}
     
     /** This method is called from within the constructor to
      * initialize the form.
