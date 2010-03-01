@@ -66,8 +66,13 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
     protected void invoke() {
 
+        boolean failed_connect_db = true;
+
         try {
-            root.loadDBConnectionFromSetup();
+            if( root.loadDBConnectionFromSetup() )
+            {
+                failed_connect_db = false;
+            }
         } catch (NoClassDefFoundError ex) {
             System.out.println(ex);
         }
@@ -89,8 +94,11 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
         configureLogging();
 
-        PrmDBInit prmDBInit =  new PrmDBInit(root);
-        prmDBInit.initDb();
+        if( !failed_connect_db )
+        {
+            PrmDBInit prmDBInit =  new PrmDBInit(root);
+            prmDBInit.initDb();
+        }
 
         if( first_run )
             um.addUMListener(this);
