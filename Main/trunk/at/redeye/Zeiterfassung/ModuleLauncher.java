@@ -93,13 +93,13 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
         root.getBindtypeManager().register(new DBSubProjects());
 
         configureLogging();
-/*
+
         if( !failed_connect_db )
         {
             PrmDBInit prmDBInit =  new PrmDBInit(root);
             prmDBInit.initDb();
         }
-*/
+
         if( first_run )
             um.addUMListener(this);
 
