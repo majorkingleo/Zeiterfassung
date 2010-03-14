@@ -1,6 +1,7 @@
 package at.redeye.Zeiterfassung;
 
 import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.FrameWork.base.BaseModuleLauncher;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -34,27 +35,32 @@ import at.redeye.Zeiterfassung.bindtypes.DBSubProjects;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 
-public class ModuleLauncher implements at.redeye.UserManagement.UserManagementListener {
-
-    private static Root root = null;
-    private UserManagementInterface um = null;
-    private static Logger logger = Logger.getRootLogger();
-    private boolean first_run = true;
-    private StartupWindow splash = null;
+public class ModuleLauncher extends BaseModuleLauncher implements at.redeye.UserManagement.UserManagementListener {
+    
+    private UserManagementInterface um = null;    
+    private boolean first_run = true;    
 
     public ModuleLauncher() {
 
         String name = "MOMM";
 
+        String url = "";
+        String title;
+
         if (at.redeye.Dongle.AppliactionModes.getAppliactionModes().isDemoVersion()) {
             name += "-dev";
             splash = new StartupWindow("/at/redeye/Zeiterfassung/resources/icons/redeye15b-dev.png");
+            url = "http://redeye.hoffer.cx/Zeiterfassung-developer/launch.jnlp";
+            title = "ZES-DEV";
         } else {
             splash = new StartupWindow("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
+            url = "http://redeye.hoffer.cx/Zeiterfassung/launch.jnlp";
+            title = "Zeiterfassung";
         }
 
-        root = new LocalRoot(name);
+        root = new LocalRoot(name, title);
         um = new UserDataHandling(root);
+        root.setWebStartUlr(url);
     }
 
     public void relogin()
@@ -120,6 +126,7 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
         first_run = false;
 
+        updateJnlp();
     }
 
     @Override
@@ -158,65 +165,4 @@ public class ModuleLauncher implements at.redeye.UserManagement.UserManagementLi
 
     }
 
-    private void checkTableVersions() {
-        new AutoLogger(ModuleLauncher.class.getCanonicalName()) {
-
-            @Override
-            public void do_stuff() throws Exception {
-
-                Transaction trans = root.getDBConnection().getDefaultTransaction();
-
-                if (trans.isOpen()) {
-                    root.getBindtypeManager().setTransaction(trans);
-                    root.getBindtypeManager().check_table_versions_with_message(root.getUserPermissionLevel());
-                }
-            }
-        };
-    }
-
-    private void configureLogging() {
-
-        PatternLayout layout = new PatternLayout(
-                "%d{ISO8601} %-5p (%F:%L): %m%n");
-        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-
-        String logFileDir = root.getSetup().getLocalConfig(
-                AppConfigDefinitions.LoggingDir);
-        System.out.println("logFileDir: " + logFileDir);
-        String logFileLevel = root.getSetup().getLocalConfig(
-                AppConfigDefinitions.LoggingLevel);
-        String loggingEnabled = root.getSetup().getLocalConfig(
-                AppConfigDefinitions.DoLogging);
-
-        String filename = logFileDir + (logFileDir.isEmpty() ? "" : "/") + "log.OS-" + System.getProperty("user.name", "unknown-user") + ".txt";
-
-        System.out.println("Filename: " + filename);
-
-        logger.setLevel(Level.toLevel(logFileLevel));
-        logger.addAppender(consoleAppender);
-
-        if (loggingEnabled.equalsIgnoreCase("ja") ||
-                loggingEnabled.equalsIgnoreCase("yes") ||
-                loggingEnabled.equalsIgnoreCase("true")) {
-
-            try {
-
-                RollingFileAppender fileAppender = new RollingFileAppender(
-                        layout, filename);
-                fileAppender.setAppend(true);
-                fileAppender.setMaxFileSize("3MB");
-                fileAppender.setName(RollingFileAppender.class.getSimpleName());
-
-                logger.addAppender(fileAppender);
-
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        StringUtils.autoLineBreak("Das Logger konnte nicht korrekt initialisiert werden!"),
-                        "User Management", JOptionPane.WARNING_MESSAGE);
-
-            }
-        }
-
-    }
 }

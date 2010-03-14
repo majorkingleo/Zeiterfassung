@@ -22,6 +22,7 @@ import at.redeye.FrameWork.base.LogWin;
 import at.redeye.FrameWork.base.MemInfo;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher;
 import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -114,6 +115,9 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         handleHolidays();
         
         month.setListener(this);
+
+        if( !DesktopLauncher.canCreateDesktopIcon() )
+            jMCreateDesktopIcon.setVisible(false);
         
         updateMonthSumInfo();
     }
@@ -138,6 +142,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuProgram = new javax.swing.JMenu();
         jMDatabase = new javax.swing.JMenuItem();
+        jMCreateDesktopIcon = new javax.swing.JMenuItem();
         jMLogout = new javax.swing.JMenuItem();
         jMenuQuit = new javax.swing.JMenuItem();
         jMUser = new javax.swing.JMenu();
@@ -258,6 +263,14 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
         jMenuProgram.add(jMDatabase);
+
+        jMCreateDesktopIcon.setText("Desktop Icon erstellen");
+        jMCreateDesktopIcon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMCreateDesktopIconActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMCreateDesktopIcon);
 
         jMLogout.setText("Abmelden");
         jMLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -751,6 +764,15 @@ private void jMLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
 }//GEN-LAST:event_jMLogoutActionPerformed
 
+private void jMCreateDesktopIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMCreateDesktopIconActionPerformed
+
+    DesktopLauncher launcher = new DesktopLauncher(root.getAppName(), root.getWebStartUrl(), root.getAppTitle() );
+
+    if( !launcher.createDesktopIcon() ) {
+        JOptionPane.showMessageDialog(this, "Das Desktopicon konnte leider nicht erzeugt werden.");
+    }
+}//GEN-LAST:event_jMCreateDesktopIconActionPerformed
+
 
 
 
@@ -840,6 +862,7 @@ public void close()
     private javax.swing.JCheckBoxMenuItem jCBHolidaysSwitzerland;
     private javax.swing.JLabel jLSum;
     private javax.swing.JMenuItem jMChangeLog;
+    private javax.swing.JMenuItem jMCreateDesktopIcon;
     private javax.swing.JMenuItem jMDatabase;
     private javax.swing.JMenuItem jMExtraHolidays;
     private javax.swing.JMenuItem jMGlobalConfig;
