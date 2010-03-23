@@ -26,6 +26,67 @@ public class GetUserPerMonthRecord {
 
     private static Logger logger = Logger.getLogger(GetUserPerMonthRecord.class);
 
+    public static class SameTriple<Index,Content>
+    {
+        private Index a,b,c;
+        private Content content;
+        
+        SameTriple( Index a, Index b, Index c, Content content )
+        {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            this.content = content;
+        }
+        
+        public boolean equals( SameTriple<Index,Content> other )
+        {
+            if( other.a.equals(a) &&
+                other.b.equals(b) &&
+                other.c.equals(c) )
+            {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        public boolean equals( Integer aa, Integer bb, Integer cc )
+        {
+            if( aa.equals(a) &&
+                bb.equals(b) &&
+                cc.equals(c) )
+            {
+                return true;
+            }
+            
+            return false;
+        }        
+        
+        public Content getContent()
+        {
+            return content;
+        }
+    }
+
+    Vector<SameTriple<Integer,DBUserPerMonth>> hashed_content = new  Vector<SameTriple<Integer,DBUserPerMonth>>();
+
+    public DBUserPerMonth getValidRecordForMonthCached( Transaction trans, Integer userId, Integer year, Integer month ) throws SQLException, SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
+    {
+        for( SameTriple<Integer,DBUserPerMonth> triple : hashed_content )
+        {
+            if( triple.equals(userId, year, month))
+                return triple.getContent();
+        }
+
+        DBUserPerMonth upm = getValidRecordForMonth(trans, userId, year,month);
+
+        if( upm != null )
+            hashed_content.add( new SameTriple<Integer,DBUserPerMonth>(userId,year,month,upm));
+
+        return upm;
+    }
+
     public static DBUserPerMonth getValidRecordForMonth( Transaction trans, int userId, int year, int month ) throws SQLException, SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
         
@@ -70,9 +131,7 @@ public class GetUserPerMonthRecord {
         }
         
         if( res.size() != 1 )
-        {
-            Logger logger = Logger.getLogger("GetUserPerMonthRecord");
-            
+        {                        
             if( res.size() == 0 )
             {
                 logger.warn("Keine Eintrag für den Zeitraum gefunden"); 
@@ -94,11 +153,16 @@ public class GetUserPerMonthRecord {
                 {
                     DBUserPerMonth rec = (DBUserPerMonth) res.get(i);
                     
-                    logger.error( (i+1) + " Id: " + rec.id + " from: " + rec.from.getDateStr() + " to: " + rec.to.getDateStr() );
+                    logger.error( (i+1) + "UPM Id: " + rec.id + " from: " + rec.from.getDateStr() + " to: " + rec.to.getDateStr() );
                 }
                 
                 throw new DuplicateRecordException(message);
             }
+        } else if( res.size() == 1 ) {
+
+           DBUserPerMonth rec = (DBUserPerMonth) res.get(0);
+           logger.info( "UPM Id: " + rec.id + " from: " + rec.from.getDateStr() + " to: " + rec.to.getDateStr()
+                   + " holiday hours " + rec.hours_holidays );
         }
         
         return (DBUserPerMonth) res.get(0);

@@ -436,8 +436,7 @@ public class CalcMonthStuff
 
         if( res.size() <= 0 )
         {
-            logger.warn("Noch keine Einträge gefunden mit: " + trans.getSql() );
-            return true;
+            logger.warn("Noch keine Einträge gefunden mit: " + trans.getSql() );            
         }
 
         Double durlaub = upm.hours_holidays.getValue();

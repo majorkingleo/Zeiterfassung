@@ -14,7 +14,6 @@ import org.joda.time.DateMidnight;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import at.redeye.FrameWork.widgets.AutoCompleteTextField;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -31,10 +30,14 @@ public class TimeEntryCache {
     Vector<DBStrukt> entries = new Vector<DBStrukt>();
     boolean outdated = true;
     HashMap<String,AutoCompleteInfo> info_map = new HashMap<String,AutoCompleteInfo>();
+    GetUserPerMonthRecord get_upm = null;
 
     public DBUserPerMonth getUPM( Transaction trans, int userid, DateMidnight day ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
-        DBUserPerMonth upm = GetUserPerMonthRecord.getValidRecordForMonth(trans, userid, day.getYear(), day.getMonthOfYear());
+        if( get_upm == null )
+            get_upm = new GetUserPerMonthRecord();
+
+        DBUserPerMonth upm = get_upm.getValidRecordForMonthCached(trans, userid, day.getYear(), day.getMonthOfYear());
         return upm;
     }
     
@@ -99,6 +102,7 @@ public class TimeEntryCache {
     public void setOutdated()
     {
         outdated = true;
+        get_upm = null;
         info_map.clear();
     }
 
