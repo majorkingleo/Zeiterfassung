@@ -104,6 +104,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements at.redeye.User
         {
             PrmDBInit prmDBInit =  new PrmDBInit(root);
             prmDBInit.initDb();
+            
+            setLookAndFeel(root);
         }
 
         if( first_run )
@@ -164,5 +166,11 @@ public class ModuleLauncher extends BaseModuleLauncher implements at.redeye.User
         new MainWin(root).setVisible(true);
 
     }
+
+	@Override
+	public String getVersion() {
+		
+		return "1.4";
+	}
 
 }
