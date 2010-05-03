@@ -1,30 +1,25 @@
 package at.redeye.Zeiterfassung;
 
-import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.Zeiterfassung.ConfigWizard.CheckConfig;
 import at.redeye.FrameWork.base.BaseModuleLauncher;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.LocalRoot;
-import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.prm.impl.PrmDBInit;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
-import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import at.redeye.UserManagement.impl.UserDataHandling;
+import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBCustomerAddresses;
 import at.redeye.Zeiterfassung.bindtypes.DBCustomers;
 import at.redeye.Zeiterfassung.bindtypes.DBExtraHolidays;
@@ -72,6 +67,10 @@ public class ModuleLauncher extends BaseModuleLauncher implements at.redeye.User
 
     protected void invoke() {
 
+        CheckConfig check_config = new CheckConfig(root);
+
+        setCommonLoggingLevel();
+
         boolean failed_connect_db = true;
 
         try {
@@ -99,6 +98,16 @@ public class ModuleLauncher extends BaseModuleLauncher implements at.redeye.User
         root.getBindtypeManager().register(new DBSubProjects());
 
         configureLogging();
+
+        if( check_config.shoudPopUpwizard() )
+        {
+            if( splash != null )
+                splash.close();
+
+            ConfigWizard config_wizard = new ConfigWizard(root);
+
+            config_wizard.startWizard();
+        }
 
         if( !failed_connect_db )
         {
@@ -166,11 +175,10 @@ public class ModuleLauncher extends BaseModuleLauncher implements at.redeye.User
         new MainWin(root).setVisible(true);
 
     }
-
-	@Override
-	public String getVersion() {
-		
-		return "1.4";
-	}
+    
+    @Override
+    public String getVersion() {
+        return Version.getVersion();
+    }
 
 }
