@@ -42,8 +42,8 @@ public class CheckConfig {
 	}
 
 	private boolean hadConfigFile() {
-		
-		return !root.getSetup().initialRun();
+		return true;
+		//return !root.getSetup().initialRun();
 
 	}
 
