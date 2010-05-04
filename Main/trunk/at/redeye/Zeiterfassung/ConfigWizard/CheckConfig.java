@@ -5,32 +5,30 @@
 
 package at.redeye.Zeiterfassung.ConfigWizard;
 
+import java.sql.SQLException;
+
 import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import at.redeye.FrameWork.utilities.StringUtils;
-
-import java.sql.SQLException;
-
-import javax.swing.JOptionPane;
 
 /**
  * 
  * @author martin
  */
 public class CheckConfig {
-	Root root;
-
-	boolean had_config_file;
+	
+	private Root root;
 
 	public CheckConfig(Root root) {
 		this.root = root;
-		had_config_file = hadConfigFile();
+		
 	}
 
 	public boolean shouldPopUpWizard() {
-		if (!had_config_file) {
+		
+		
+		if (hadConfigFile() == false) {
 			System.out.println("hadConfigFile failed");
 			return true;
 		}
@@ -43,15 +41,14 @@ public class CheckConfig {
 		return false;
 	}
 
-	boolean hadConfigFile() {
-		// return !root.getSetup().initialRun();
+	private boolean hadConfigFile() {
+		
+		return !root.getSetup().initialRun();
 
-		// Das geht bei mir nicht!
-
-		return true;
 	}
 
 	private boolean haveDbConnection() {
+		
 		DBConnection con = root.getDBConnection();
 
 		if (con == null)
