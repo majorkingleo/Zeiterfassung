@@ -9,68 +9,75 @@ import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.StringUtils;
+
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 /**
- *
+ * 
  * @author martin
  */
-public class CheckConfig
-{
-    Root root;
+public class CheckConfig {
+	Root root;
 
-    boolean had_config_file;    
+	boolean had_config_file;
 
-    public CheckConfig( Root root )
-    {
-        this.root = root;
-        had_config_file = hadConfigFile();        
-    }
-    
-    public boolean shoudPopUpwizard()
-    {
-        if( !had_config_file )
-            return true;
-        
-        if( !haveDbConnection() )
-            return true;
+	public CheckConfig(Root root) {
+		this.root = root;
+		had_config_file = hadConfigFile();
+	}
 
-        return false;
-    }
-    
-    boolean hadConfigFile()
-    {
-        return !root.getSetup().initialRun();                
-    }
-    
-    private boolean haveDbConnection()
-    {
-        DBConnection con = root.getDBConnection();
+	public boolean shouldPopUpWizard() {
+		if (!had_config_file) {
+			System.out.println("hadConfigFile failed");
+			return true;
+		}
 
-        if( con == null )
-            return false;
+		if (!haveDbConnection()) {
+			System.out.println("hadConfigFile failed");
+			return true;
+		}
 
-       Transaction trans = con.getDefaultTransaction();
+		return false;
+	}
 
-        if (trans == null) {
-            return false;
-        }
+	boolean hadConfigFile() {
+		// return !root.getSetup().initialRun();
 
-        try {
+		// Das geht bei mir nicht!
 
-            if (!trans.isOpen()) {
-                return false;
-            }
+		return true;
+	}
 
-            DBConfig config = new DBConfig();
+	private boolean haveDbConnection() {
+		DBConnection con = root.getDBConnection();
 
-            if (!root.getDBManager().tableExists(config.getName())) {
-                return false;
-            }
-        } catch (SQLException ex) {
-            return false;
-        }
+		if (con == null)
+			return false;
 
-        return true;
-    }
+		Transaction trans = con.getDefaultTransaction();
+
+		if (trans == null) {
+			return false;
+		}
+
+		try {
+
+			if (!trans.isOpen()) {
+				return false;
+			}
+
+			DBConfig config = new DBConfig();
+
+			if (!root.getDBManager().tableExists(config.getName())) {
+				return false;
+			}
+		} catch (SQLException ex) {
+			return false;
+		}
+
+		return true;
+	}
 }
