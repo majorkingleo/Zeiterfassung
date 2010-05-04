@@ -8,6 +8,7 @@ package at.redeye.Zeiterfassung.ConfigWizard;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.wizards.WizardProperties;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
+import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.Setup.wizard.impl.WizardStepDBSetup;
 import at.redeye.Setup.wizard.impl.WizardStepFinished;
 import at.redeye.Setup.wizard.impl.WizardStepUserData;
@@ -31,12 +32,14 @@ public class ConfigWizard {
         this.root = root;
     }
 
-    public void startWizard()
+    
+    public void startWizard(WizardListener listener) // this is just a quick hack for testing purpose
     {
         BasicConfigurator.configure();
         WizardProperties props = new WizardProperties();
         props.setButtonNextText("Vorwärts");        
         Wizard wizard = new Wizard(props);
+        if (listener != null) wizard.addWizardListener(listener); // this is just a quick hack for testing purpose
         WizardStepDBSetup dbSetup = new WizardStepDBSetup(root, wizard);
         WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);
         WizardStepUserData user = new WizardStepUserData(root, wizard);
