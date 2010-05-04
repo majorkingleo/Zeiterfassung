@@ -35,7 +35,7 @@ public class ConfigWizard {
     
     public void startWizard(WizardListener listener) // this is just a quick hack for testing purpose
     {
-        BasicConfigurator.configure();
+       
         WizardProperties props = new WizardProperties();
         props.setButtonNextText("Vorwärts");        
         Wizard wizard = new Wizard(props);
