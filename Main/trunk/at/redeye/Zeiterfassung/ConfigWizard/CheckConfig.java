@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.transaction.Transaction;
 
@@ -34,7 +35,7 @@ public class CheckConfig {
 		}
 
 		if (!haveDbConnection()) {
-			System.out.println("hadConfigFile failed");
+			System.out.println("haveDbConnection failed");
 			return true;
 		}
 
@@ -42,9 +43,7 @@ public class CheckConfig {
 	}
 
 	private boolean hadConfigFile() {
-		return true;
-		//return !root.getSetup().initialRun();
-
+		return !root.getSetup().initialRun();
 	}
 
 	private boolean haveDbConnection() {
@@ -67,6 +66,8 @@ public class CheckConfig {
 			}
 
 			DBConfig config = new DBConfig();
+
+                        root.getBindtypeManager().setTransaction(trans);
 
 			if (!root.getDBManager().tableExists(config.getName())) {
 				return false;

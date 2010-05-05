@@ -13,7 +13,7 @@ import at.redeye.Setup.wizard.impl.WizardStepDBSetup;
 import at.redeye.Setup.wizard.impl.WizardStepFinished;
 import at.redeye.Setup.wizard.impl.WizardStepUserData;
 import at.redeye.Setup.wizard.impl.WizardStepWelcome;
-import org.apache.log4j.BasicConfigurator;
+import at.redeye.Zeiterfassung.ModuleLauncher;
 import org.apache.log4j.Logger;
 
 /**
@@ -21,25 +21,38 @@ import org.apache.log4j.Logger;
  * @author Mario
  */
 
-public class ConfigWizard {
-
+public class ConfigWizard
+{
     private static Logger logger = Logger.getLogger (ConfigWizard.class.getSimpleName());
 
     Root root;
+    ModuleLauncher module_launcher;
 
-    public ConfigWizard( Root root )
+    public ConfigWizard( Root root, ModuleLauncher module_launcher)
     {
         this.root = root;
+        this.module_launcher = module_launcher;
     }
 
     
-    public void startWizard(WizardListener listener) // this is just a quick hack for testing purpose
+    public void startWizard()
     {
        
         WizardProperties props = new WizardProperties();
         props.setButtonNextText("Vorwärts");        
-        Wizard wizard = new Wizard(props);
-        if (listener != null) wizard.addWizardListener(listener); // this is just a quick hack for testing purpose
+        final Wizard wizard = new Wizard(props);
+        wizard.addWizardListener( new WizardListener() {
+
+            public boolean onStateChange(WizardStatus currentWizardStatus) {
+                if (currentWizardStatus == WizardStatus.CLOSED) {
+                    module_launcher.openLoginDialog();
+                    return false;
+                }
+
+                return true;
+            }
+
+        });
         WizardStepDBSetup dbSetup = new WizardStepDBSetup(root, wizard);
         WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);
         WizardStepUserData user = new WizardStepUserData(root, wizard);

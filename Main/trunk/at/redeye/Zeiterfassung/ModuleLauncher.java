@@ -32,12 +32,13 @@ import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 
 public class ModuleLauncher extends BaseModuleLauncher implements
-		at.redeye.UserManagement.UserManagementListener, WizardListener {
+		at.redeye.UserManagement.UserManagementListener {
 
 	private UserManagementInterface um = null;
 	private boolean first_run = true;
 
-	public ModuleLauncher() {
+	public ModuleLauncher(String[] args) {
+            super(args);
 
 		String name = "MOMM";
 
@@ -47,13 +48,22 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		if (at.redeye.Dongle.AppliactionModes.getAppliactionModes()
 				.isDemoVersion()) {
 			name += "-dev";
-			splash = new StartupWindow(
+
+                        if( splashEnabled() )
+                        {
+                            splash = new StartupWindow(
 					"/at/redeye/Zeiterfassung/resources/icons/redeye15b-dev.png");
+                        }
 			url = "http://redeye.hoffer.cx/Zeiterfassung-developer/launch.jnlp";
 			title = "ZES-DEV";
 		} else {
-			splash = new StartupWindow(
-					"/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
+
+                        if( splashEnabled() )
+                        {
+                            splash = new StartupWindow(
+                            		"/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
+                        }
+
 			url = "http://redeye.hoffer.cx/Zeiterfassung/launch.jnlp";
 			title = "Zeiterfassung";
 		}
@@ -106,12 +116,12 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		if (check_config.shouldPopUpWizard()) {
 
-			if (splash != null)
-				splash.close();
+			ConfigWizard config_wizard = new ConfigWizard(root, this);
 
-			ConfigWizard config_wizard = new ConfigWizard(root);
+			config_wizard.startWizard();
 
-			config_wizard.startWizard(this);
+                        closeSplash();
+                        
 			wizardStarted = true;
 		}
 
@@ -127,7 +137,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		if (um.tryAutoLogin() == false) {
 
-			splash.close();
+                    closeSplash();
 
 			if (at.redeye.Dongle.AppliactionModes.getAppliactionModes()
 					.isDemoVersion()) {
@@ -142,7 +152,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 			}
 
 		} else {
-			splash.close();
+			closeSplash();
 		}
 
 		first_run = false;
@@ -199,14 +209,9 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		return Version.getVersion();
 	}
 
-	@Override
-	public void onStateChange(WizardStatus currentWizardStatus) {
-
-		if (currentWizardStatus == WizardStatus.CLOSED) {
-			System.out.println("Wizard closed!");
-			um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
-		}
-
-	}
+    public void openLoginDialog() {
+        if( um != null )
+            um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
+    }
 
 }

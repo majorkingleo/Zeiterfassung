@@ -17,7 +17,7 @@ public class TimecontrolMain {
         // der oracle Treiber über den Proxy zu DB zu verbinden.
         ProxySelector.setDefault(null);
 
-		ml = new ModuleLauncher();
+		ml = new ModuleLauncher(args);
 
         ml.invoke();
 	}
