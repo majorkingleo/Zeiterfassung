@@ -576,7 +576,11 @@ public class CalcMonthStuff
             Date aktual_day = cal_from.plusMonths(start-i).toDate();
             long work_days_for_month = getWorkDaysForMonth(aktual_day);
             double dhours_per_day = getHoursPerDay(upm);
-            double work_time_for_month = work_days_for_month * dhours_per_day;
+
+            // ansonsten werden die Feiertage nicht berücksichtigt, was auch schlecht ist.
+            // double work_time_for_month = work_days_for_month * dhours_per_day;
+
+            double work_time_for_month = hours_per_month;
 
             logger.info(String.format("%d %s Working Days: %d regular working hours per month: %f working hours per day: %f",
                     i, DBDateTime.getDateStr(aktual_day), work_days_for_month, work_time_for_month, dhours_per_day));

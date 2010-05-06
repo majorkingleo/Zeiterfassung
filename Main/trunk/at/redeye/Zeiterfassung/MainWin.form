@@ -285,7 +285,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="month" alignment="0" pref="1106" max="32767" attributes="0"/>
+              <Component id="month" alignment="0" pref="1109" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -344,7 +344,7 @@
                           </Group>
                           <Group type="103" alignment="0" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="plusMon" max="32767" attributes="1"/>
+                                  <Component id="plusMon" min="-2" max="-2" attributes="1"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                               <Component id="jLSum" alignment="1" pref="44" max="32767" attributes="1"/>
