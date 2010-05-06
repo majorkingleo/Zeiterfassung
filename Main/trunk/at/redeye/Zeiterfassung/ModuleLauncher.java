@@ -1,6 +1,6 @@
 package at.redeye.Zeiterfassung;
 
-import at.redeye.Zeiterfassung.ConfigWizard.CheckConfig;
+import at.redeye.Setup.ConfigCheck.CheckConfigBase;
 import at.redeye.FrameWork.base.BaseModuleLauncher;
 import java.io.IOException;
 
@@ -20,6 +20,7 @@ import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import at.redeye.UserManagement.impl.UserDataHandling;
+import at.redeye.Zeiterfassung.ConfigWizard.CheckConfig;
 import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBCustomerAddresses;
 import at.redeye.Zeiterfassung.bindtypes.DBCustomers;
@@ -83,7 +84,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		boolean wizardStarted = false;
 
-		CheckConfig check_config = new CheckConfig(root);
+		CheckConfigBase check_config = new CheckConfig(root);
 
 		setCommonLoggingLevel();
 

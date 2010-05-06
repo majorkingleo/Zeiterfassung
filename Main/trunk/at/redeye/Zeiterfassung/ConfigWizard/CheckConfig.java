@@ -5,77 +5,24 @@
 
 package at.redeye.Zeiterfassung.ConfigWizard;
 
-import java.sql.SQLException;
-
-import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.dbmanager.DBManager;
-import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
-import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.Setup.ConfigCheck.CheckConfigBase;
+import at.redeye.Setup.ConfigCheck.Checks.CreatedAlreadyAUser;
+import at.redeye.Setup.ConfigCheck.Checks.HaveDbConnection;
+import at.redeye.Setup.ConfigCheck.Checks.InitialRun;
 
 /**
- * 
+ *
  * @author martin
  */
-public class CheckConfig {
-	
-	private Root root;
+public class CheckConfig extends CheckConfigBase
+{
+    public CheckConfig( Root root )
+    {
+        super( root );
 
-	public CheckConfig(Root root) {
-		this.root = root;
-		
-	}
-
-	public boolean shouldPopUpWizard() {
-		
-		
-		if (hadConfigFile() == false) {
-			System.out.println("hadConfigFile failed");
-			return true;
-		}
-
-		if (!haveDbConnection()) {
-			System.out.println("haveDbConnection failed");
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean hadConfigFile() {
-		return !root.getSetup().initialRun();
-	}
-
-	private boolean haveDbConnection() {
-		
-		DBConnection con = root.getDBConnection();
-
-		if (con == null)
-			return false;
-
-		Transaction trans = con.getDefaultTransaction();
-
-		if (trans == null) {
-			return false;
-		}
-
-		try {
-
-			if (!trans.isOpen()) {
-				return false;
-			}
-
-			DBConfig config = new DBConfig();
-
-                        root.getBindtypeManager().setTransaction(trans);
-
-			if (!root.getDBManager().tableExists(config.getName())) {
-				return false;
-			}
-		} catch (SQLException ex) {
-			return false;
-		}
-
-		return true;
-	}
+        addCheck( new InitialRun(root) );
+        addCheck( new HaveDbConnection( root ));
+        addCheck( new CreatedAlreadyAUser((root)));
+    }
 }
