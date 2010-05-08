@@ -136,13 +136,12 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
                 wizardStarted = true;
             }
-
-		if (!failed_connect_db) {
-			PrmDBInit prmDBInit = new PrmDBInit(root);
-			prmDBInit.initDb();
-
-			setLookAndFeel(root);
-		}
+		
+            PrmDBInit prmDBInit = new PrmDBInit(root);
+            prmDBInit.initDb();
+            
+            setLookAndFeel(root);
+		
 
 		if (first_run)
 			um.addUMListener(this);

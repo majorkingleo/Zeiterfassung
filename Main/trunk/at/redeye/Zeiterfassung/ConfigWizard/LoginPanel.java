@@ -17,11 +17,9 @@ import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
-import at.redeye.UserManagement.bindtypes.DBPermissionLevel.PERMISSIONLEVEL;
 import at.redeye.UserManagement.impl.UserDataHandling;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 /**
@@ -66,6 +64,7 @@ public class LoginPanel extends javax.swing.JPanel
         
         jtPasswd.addKeyListener(new EnterKeyListener());
         jTLogin.addKeyListener(new EnterKeyListener());
+        jBLogin.addKeyListener(new EnterKeyListener());
     }
 
     
@@ -152,7 +151,7 @@ public class LoginPanel extends javax.swing.JPanel
                             + root.getUserPermissionLevel()
                             + "] successfully signed on!");
 
-                    if( root.getUserPermissionLevel() == PERMISSIONLEVEL.Administrator.ordinal() )
+                    if( root.getUserPermissionLevel() ==  UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN )
                     {
                         wizard_action.applyAction(WizardAction.WIZARD_ACTION_NEXT, true);
                     }
