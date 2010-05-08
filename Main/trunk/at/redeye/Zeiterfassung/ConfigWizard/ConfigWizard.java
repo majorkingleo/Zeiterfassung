@@ -51,11 +51,13 @@ public class ConfigWizard
         wizard.addWizardListener(wizard_listener);
         WizardStepDBSetup dbSetup = new WizardStepDBSetup(root, wizard);
         WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);
+        WizardStepLogin login = new WizardStepLogin(root, wizard);
         WizardStepUserData user = new WizardStepUserData(root, wizard);
         WizardStepFinished finish = new WizardStepFinished(root, wizard);
         
         wizard.addWindow(welcome);
         wizard.addWindow(dbSetup);
+        wizard.addWindow(login);
         wizard.addWindow(user);
         wizard.addWindow(finish);
 
