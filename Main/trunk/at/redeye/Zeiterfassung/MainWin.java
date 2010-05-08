@@ -23,6 +23,7 @@ import at.redeye.FrameWork.base.MemInfo;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher;
+import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -35,6 +36,7 @@ import at.redeye.FrameWork.widgets.calendarday.DayEventListener;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.impl.UserDataHandling;
+import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 
@@ -143,6 +145,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMenuProgram = new javax.swing.JMenu();
         jMDatabase = new javax.swing.JMenuItem();
         jMCreateDesktopIcon = new javax.swing.JMenuItem();
+        jMSetupWizard = new javax.swing.JMenuItem();
         jMLogout = new javax.swing.JMenuItem();
         jMenuQuit = new javax.swing.JMenuItem();
         jMUser = new javax.swing.JMenu();
@@ -271,6 +274,14 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
         jMenuProgram.add(jMCreateDesktopIcon);
+
+        jMSetupWizard.setText("Programm erneut einrichten");
+        jMSetupWizard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMSetupWizardActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMSetupWizard);
 
         jMLogout.setText("Abmelden");
         jMLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -495,25 +506,17 @@ private void jMenuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_jMenuQuitActionPerformed
 
 private void jMDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMDatabaseActionPerformed
-
-    java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {                
-                new ConnectionDialog( root ).setVisible( true );
-            }
-     });    
+    
+    invokeDialog(new ConnectionDialog( root ));
 }//GEN-LAST:event_jMDatabaseActionPerformed
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-// TODO add your handling code here:
-	
-    java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {                
-                // new ConnectionDialog( root ).setVisible( true );
-                // Mario hier dialogaufruf für Benutzerwartungsdialog
-            	UserManagementInterface um = new UserDataHandling (root);
-            	um.requestDialog(UserManagementDialogs.UM_ADMINISTRATION_DIALOG);
-            }
-     });        
+
+    setWaitCursor();
+    UserManagementInterface um = new UserDataHandling (root);
+    um.requestDialog(UserManagementDialogs.UM_ADMINISTRATION_DIALOG);
+    setNormalCursor();
+
 }//GEN-LAST:event_jMenuItem1ActionPerformed
 
 private void minusMonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusMonActionPerformed
@@ -531,7 +534,7 @@ private void minusMonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_minusMonActionPerformed
 
 private void plusMonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusMonActionPerformed
-// TODO add your handling code here:
+
    mon++;
    
    if( mon > 12 )
@@ -545,22 +548,22 @@ private void plusMonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_plusMonActionPerformed
 
 private void jCBHolidaysAustriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBHolidaysAustriaActionPerformed
-// TODO add your handling code here:
+
     handleHolidays();
 }//GEN-LAST:event_jCBHolidaysAustriaActionPerformed
 
 private void jCBHolidaysGermanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBHolidaysGermanyActionPerformed
-// TODO add your handling code here:
+
     handleHolidays();
 }//GEN-LAST:event_jCBHolidaysGermanyActionPerformed
 
 private void jCBHolidaysSwitzerlandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBHolidaysSwitzerlandActionPerformed
-// TODO add your handling code here:
+
     handleHolidays();
 }//GEN-LAST:event_jCBHolidaysSwitzerlandActionPerformed
 
 private void jRBHolidaysAustriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRBHolidaysAustriaActionPerformed
-// TODO add your handling code here:
+
         
     jRBHolidaysSwitzerland.setSelected(false);
     jRBHolidaysGermany.setSelected(false);        
@@ -575,7 +578,7 @@ private void jRBHolidaysAustriaActionPerformed(java.awt.event.ActionEvent evt) {
 }//GEN-LAST:event_jRBHolidaysAustriaActionPerformed
 
 private void jRBHolidaysGermanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRBHolidaysGermanyActionPerformed
-// TODO add your handling code here:
+
     jRBHolidaysSwitzerland.setSelected(false);
     jRBHolidaysAustria.setSelected(false);
     
@@ -589,7 +592,7 @@ private void jRBHolidaysGermanyActionPerformed(java.awt.event.ActionEvent evt) {
 }//GEN-LAST:event_jRBHolidaysGermanyActionPerformed
 
 private void jRBHolidaysSwitzerlandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRBHolidaysSwitzerlandActionPerformed
-// TODO add your handling code here:
+
     jRBHolidaysAustria.setSelected(false);
     jRBHolidaysGermany.setSelected(false);
     
@@ -603,14 +606,8 @@ private void jRBHolidaysSwitzerlandActionPerformed(java.awt.event.ActionEvent ev
 }//GEN-LAST:event_jRBHolidaysSwitzerlandActionPerformed
 
 private void jMJobTypesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMJobTypesActionPerformed
-
-    
-    java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {                
-                new JobTypes(root).setVisible(true);
-            }
-     });
-
+         
+   invokeDialog(new JobTypes(root));
      
 }//GEN-LAST:event_jMJobTypesActionPerformed
 
@@ -621,141 +618,79 @@ private void jMUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 }//GEN-LAST:event_jMUserActionPerformed
 
 private void JMUserPerMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMUserPerMonthActionPerformed
-// TODO add your handling code here:
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-            new UserPerMonth(root).setVisible(true);
-        }
-    });
+   invokeDialog(new UserPerMonth(root));
     
 }//GEN-LAST:event_JMUserPerMonthActionPerformed
 
 private void jMMonthReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthReportActionPerformed
-// TODO add your handling code here:
-    
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-            new MonthReportPerUser(root, mon, year).setVisible(true);
-        }
-    });    
+    
+    invokeDialog(new MonthReportPerUser(root, mon, year));
+
 }//GEN-LAST:event_jMMonthReportActionPerformed
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new LocalHelpWin(root,"MainWin").setVisible(true);
-        }
-    }); 
+    invokeDialog(new LocalHelpWin(root,"MainWin"));
     
 }//GEN-LAST:event_jBHelpActionPerformed
 
 private void jMGlobalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGlobalConfigActionPerformed
-        
-    java.awt.EventQueue.invokeLater(new Runnable() {//GEN-LAST:event_jMGlobalConfigActionPerformed
-
-   public void run() {
-            new GlobalConfig(root).setVisible(true);
-        }
-  }); 
-
-}
+            
+    invokeDialog(new GlobalConfig(root));
+    
+}//GEN-LAST:event_jMGlobalConfigActionPerformed
 
         
 private void jMExtraHolidaysActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMExtraHolidaysActionPerformed
-
-
-    final MainWin mw = this;
     
-    java.awt.EventQueue.invokeLater(new Runnable() {                                              
-
-   public void run() {
-            new ExtraHolidays(root, mw).setVisible(true);
-        }
-  }); 
-
+    invokeDialog(new ExtraHolidays(root, this));
     
 }//GEN-LAST:event_jMExtraHolidaysActionPerformed
 
 private void jMLocalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMLocalConfigActionPerformed
-
-    java.awt.EventQueue.invokeLater(new Runnable() {//GEN-LAST:event_jMLocalConfigActionPerformed
-
-    public void run() {
-       new LocalConfig(root).setVisible(true);
-    }
-  }); 
-
-}
+    
+    invokeDialog(new LocalConfig(root) );
+    
+}//GEN-LAST:event_jMLocalConfigActionPerformed
 
 
 
 private void jMMonthBlocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthBlocksActionPerformed
 
-   java.awt.EventQueue.invokeLater(new Runnable() {                                             
-
-    public void run() {
-       new MonthBlocks(root).setVisible(true);
-    }
-  }); 
-    
+   invokeDialog( new MonthBlocks(root) );
     
 }//GEN-LAST:event_jMMonthBlocksActionPerformed
 
 private void jMInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMInfoActionPerformed
-// TODO add your handling code here:
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-            new About(root).setVisible(true);
-        }
-    });
+    invokeDialog( new About(root) );
+
 }//GEN-LAST:event_jMInfoActionPerformed
 
 private void jMMemInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMemInfoActionPerformed
-// TODO add your handling code here:
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-            new MemInfo(root).setVisible(true);
-        }
-    });
+    invokeDialog(new MemInfo(root));
+
 }//GEN-LAST:event_jMMemInfoActionPerformed
 
 private void jMChangeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMChangeLogActionPerformed
-    // TODO add your handling code here:
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new LocalHelpWin(root,"ChangeLog").setVisible(true);
-        }
-    });
+    
+    invokeDialog( new LocalHelpWin(root,"ChangeLog") );
+    
 }//GEN-LAST:event_jMChangeLogActionPerformed
 
 private void jBErrorLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBErrorLogActionPerformed
-    // TODO add your handling code here:
 
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new LogWin( root, "Fehlermeldungen", month_stuff.getError() ).setVisible(true);
-        }
-    });
-
+    invokeDialog( new LogWin( root, "Fehlermeldungen", month_stuff.getError() ) );
+    
 }//GEN-LAST:event_jBErrorLogActionPerformed
 
 private void JMCustomersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMCustomersActionPerformed
-    // TODO add your handling code here:
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-            public void run() {
-                new Customers(root).setVisible(true);
-            }
-        });
-
+    invokeDialog(new Customers(root));
+    
 }//GEN-LAST:event_JMCustomersActionPerformed
 
 private void jMLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMLogoutActionPerformed
@@ -772,6 +707,33 @@ private void jMCreateDesktopIconActionPerformed(java.awt.event.ActionEvent evt) 
         JOptionPane.showMessageDialog(this, "Das Desktopicon konnte leider nicht erzeugt werden.");
     }
 }//GEN-LAST:event_jMCreateDesktopIconActionPerformed
+
+private void jMSetupWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMSetupWizardActionPerformed
+
+    final MainWin mw = this;
+
+    setWaitCursor();
+
+    ConfigWizard wizard = new ConfigWizard(root, new WizardListener() {
+
+            public boolean onStateChange(WizardStatus currentWizardStatus) {
+                if( currentWizardStatus == WizardStatus.CLOSED )
+                {
+                    mw.setVisible(true);
+                    mw.repaint();
+                    mw.toFront();
+                    return false;
+                }
+                
+                return true;
+            }
+        });
+    wizard.startWizard();
+
+    setVisible(false);
+    setNormalCursor();
+
+}//GEN-LAST:event_jMSetupWizardActionPerformed
 
 
 
@@ -873,6 +835,7 @@ public void close()
     private javax.swing.JMenuItem jMMemInfo;
     private javax.swing.JMenuItem jMMonthBlocks;
     private javax.swing.JMenuItem jMMonthReport;
+    private javax.swing.JMenuItem jMSetupWizard;
     private javax.swing.JMenu jMUser;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;

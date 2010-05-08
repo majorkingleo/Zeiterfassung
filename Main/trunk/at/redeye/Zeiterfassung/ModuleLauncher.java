@@ -115,16 +115,27 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		configureLogging();
 
-		if (check_config.shouldPopUpWizard()) {
+            if (check_config.shouldPopUpWizard()) {
 
-			ConfigWizard config_wizard = new ConfigWizard(root, this);
+                ConfigWizard config_wizard = new ConfigWizard(root, new WizardListener() {
 
-			config_wizard.startWizard();
+                    public boolean onStateChange(WizardStatus currentWizardStatus) {
+                        if (currentWizardStatus == WizardStatus.CLOSED) {
+                            openLoginDialog();
+                            return false;
+                        }
 
-                        closeSplash();
-                        
-			wizardStarted = true;
-		}
+                        return true;
+                    }
+                });
+
+
+                config_wizard.startWizard();
+
+                closeSplash();
+
+                wizardStarted = true;
+            }
 
 		if (!failed_connect_db) {
 			PrmDBInit prmDBInit = new PrmDBInit(root);

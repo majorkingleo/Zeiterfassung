@@ -13,8 +13,6 @@ import at.redeye.Setup.wizard.impl.WizardStepDBSetup;
 import at.redeye.Setup.wizard.impl.WizardStepFinished;
 import at.redeye.Setup.wizard.impl.WizardStepUserData;
 import at.redeye.Setup.wizard.impl.WizardStepWelcome;
-import at.redeye.Zeiterfassung.ModuleLauncher;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -22,16 +20,25 @@ import org.apache.log4j.Logger;
  */
 
 public class ConfigWizard
-{
-    private static Logger logger = Logger.getLogger (ConfigWizard.class.getSimpleName());
+{    
+    private Root root;
+    private WizardListener wizard_listener;
 
-    Root root;
-    ModuleLauncher module_launcher;
-
-    public ConfigWizard( Root root, ModuleLauncher module_launcher)
+    public ConfigWizard( Root root )
     {
         this.root = root;
-        this.module_launcher = module_launcher;
+    }
+
+    /**
+     * Starts the config Wizard
+     * @param root
+     * @param wizard_listener can be null, if not null the wizard_listener will be informed,
+     * when the configuration step is finished.
+     */
+    public ConfigWizard( Root root, WizardListener wizard_listener)
+    {
+        this.root = root;
+        this.wizard_listener = wizard_listener;
     }
 
     
@@ -40,19 +47,8 @@ public class ConfigWizard
        
         WizardProperties props = new WizardProperties();
         props.setButtonNextText("Vorwärts");        
-        final Wizard wizard = new Wizard(props);
-        wizard.addWizardListener( new WizardListener() {
-
-            public boolean onStateChange(WizardStatus currentWizardStatus) {
-                if (currentWizardStatus == WizardStatus.CLOSED) {
-                    module_launcher.openLoginDialog();
-                    return false;
-                }
-
-                return true;
-            }
-
-        });
+        Wizard wizard = new Wizard(props);
+        wizard.addWizardListener(wizard_listener);
         WizardStepDBSetup dbSetup = new WizardStepDBSetup(root, wizard);
         WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);
         WizardStepUserData user = new WizardStepUserData(root, wizard);
