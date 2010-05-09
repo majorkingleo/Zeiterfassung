@@ -16,6 +16,7 @@ import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.ConnectionDialog;
+import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
 import at.redeye.FrameWork.base.prm.impl.gui.LocalConfig;
 import at.redeye.FrameWork.base.LogWin;
@@ -714,6 +715,8 @@ private void jMSetupWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
     setWaitCursor();
 
+    final DBConnection con = root.getDBConnection();
+
     ConfigWizard wizard = new ConfigWizard(root, new WizardListener() {
 
             public boolean onStateChange(WizardStatus currentWizardStatus) {
@@ -722,6 +725,11 @@ private void jMSetupWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                     mw.setVisible(true);
                     mw.repaint();
                     mw.toFront();
+
+                    // reopen Programm with the new Database connection
+                    if( !root.getDBConnection().equals(con) )
+                        TimecontrolMain.relogin(true);
+
                     return false;
                 }
                 

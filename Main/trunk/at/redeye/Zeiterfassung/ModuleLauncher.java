@@ -74,9 +74,17 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		root.setWebStartUlr(url);
 	}
 
-	public void relogin() {
+        public void relogin()
+        {
+            relogin(false);
+        }
+
+	public void relogin(boolean try_auto_login) {
 		root.closeAllWindowsNoAppExit();
-		um.setAutoLogin(false);
+
+                if( !try_auto_login )
+                    um.setAutoLogin(false);
+
 		invoke();
 	}
 
