@@ -41,7 +41,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 	public ModuleLauncher(String[] args) {
             super(args);
 
-		String name = "MOMM";
+		String name = getStartupParam("appname", "appname", "APPNAME","MOMM");
 
 		String url = "";
 		String title;
@@ -55,8 +55,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                             splash = new StartupWindow(
 					"/at/redeye/Zeiterfassung/resources/icons/redeye15b-dev.png");
                         }
-			url = "http://redeye.hoffer.cx/Zeiterfassung-developer/launch.jnlp";
-			title = "ZES-DEV";
+			url = getWebStartUrl("http://redeye.hoffer.cx/Zeiterfassung-developer/launch.jnlp");
+			title = getStartupParam("apptitle", "apptitle", "APPTITLE","ZES-DEV");
 		} else {
 
                         if( splashEnabled() )
@@ -65,13 +65,15 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                             		"/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
                         }
 
-			url = "http://redeye.hoffer.cx/Zeiterfassung/launch.jnlp";
-			title = "Zeiterfassung";
+			url = getWebStartUrl("http://redeye.hoffer.cx/Zeiterfassung/launch.jnlp");
+			title = getStartupParam("apptitle", "apptitle", "APPTITLE","Zeiterfassung");
 		}
 
 		root = new LocalRoot(name, title);
 		um = new UserDataHandling(root);
 		root.setWebStartUlr(url);
+
+                initDBConnectionFromParams();
 	}
 
         public void relogin()
