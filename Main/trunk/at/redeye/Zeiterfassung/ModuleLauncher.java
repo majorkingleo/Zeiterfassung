@@ -94,7 +94,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		boolean wizardStarted = false;
 
-		CheckConfigBase check_config = new CheckConfig(root);
+		CheckConfigBase check_config = new CheckConfig(root, this);
 
 		setCommonLoggingLevel();
 
