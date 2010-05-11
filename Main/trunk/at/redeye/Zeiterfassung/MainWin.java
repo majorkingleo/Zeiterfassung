@@ -122,7 +122,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         if( !DesktopLauncher.canCreateDesktopIcon() )
             jMCreateDesktopIcon.setVisible(false);
         
-        updateMonthSumInfo();
+        updateMonthSumInfo( false );
     }
 
     /** This method is called from within the constructor to
@@ -948,16 +948,17 @@ public void close()
         }
     }        
     
-    public void updateMonthSumInfo() {       
+    private void updateMonthSumInfo( final boolean call_set_month ) {
        
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 
-                if( cache != null )                
-                    cache.setOutdated();                
+                if( cache != null && call_set_month )
+                    cache.setOutdated();
                 
-                month.setMonth(mon, year);
+                if( call_set_month )
+                    month.setMonth(mon, year);
                 
                 jLSum.setText("");
 
@@ -1012,6 +1013,10 @@ public void close()
         });
 
 
+    }
+
+    public void updateMonthSumInfo() {
+        updateMonthSumInfo(true);
     }
 
 }

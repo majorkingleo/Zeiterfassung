@@ -12,17 +12,18 @@ import java.util.Vector;
 
 import org.joda.time.DateMidnight;
 
-import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.HMSTime;
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import at.redeye.FrameWork.widgets.calendarday.InfoRenderer;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -41,6 +42,7 @@ public class TimeEntryRenderer implements InfoRenderer
     protected TimeEntryCache cache = null;
     protected OvertimeInterface calc_overtime = null;
     protected Holidays holidays = null;
+    protected static Logger logger = Logger.getLogger(TimeEntryRenderer.class.getName());
     
     public TimeEntryRenderer( Transaction trans, Root root, TimeEntryCache cache, Holidays holidays )
     {
@@ -70,11 +72,8 @@ public class TimeEntryRenderer implements InfoRenderer
         if( day == null )
             return;
         
-        new AutoLogger("TimeEntryRenderer") {
-
-            @Override
-            public void do_stuff() throws Exception {                                
-                     
+        try
+        {
                 if( cache != null )
                 {
                     rows = cache.getEntries(trans, root.getUserId(), day);
@@ -96,10 +95,10 @@ public class TimeEntryRenderer implements InfoRenderer
                         + " order by " + trans.markColumn("from");
             	
                        rows = trans.fetchTable(new DBTimeEntries(), where);
-                }            		                      
-            }
-        };
-        
+                }
+        } catch( Exception ex ) {
+            logger.error(StringUtils.ExceptionToString(ex));
+        }
         
     }
 
