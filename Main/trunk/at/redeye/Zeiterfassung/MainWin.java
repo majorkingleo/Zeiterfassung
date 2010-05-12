@@ -40,6 +40,7 @@ import at.redeye.UserManagement.impl.UserDataHandling;
 import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import java.util.Locale;
 
 /**
  *
@@ -68,6 +69,25 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         
         year = today.getYear();        
         mon = today.getMonthOfYear();
+
+        if (root.getSetup().initialRun()) {
+            // Wurde das Programm zum ersten mal gestartet, dann
+            // die Feitertage aufgrund des Ländercodes gleich
+            // einstellen
+
+            Locale l = Locale.getDefault();
+            String country = l.getCountry();
+
+            if (country.equals("AT")) {
+                root.getSetup().setLocalConfig("MainHolidaysAustria", "true");
+            } else if (country.equals("DE")) {
+                root.getSetup().setLocalConfig("MainHolidaysGermany", "true");
+            } else if (country.equals("CH")) {
+                root.getSetup().setLocalConfig("HolidaysSwitzerland", "true");
+            } else {
+                logger.info("Unbekannter Ländercode: '" + country + " Keine Feiertage vorbelegt.");
+            }
+        }
 
         month_stuff = new CalcMonthStuff(month, getTransaction(), root);
         
