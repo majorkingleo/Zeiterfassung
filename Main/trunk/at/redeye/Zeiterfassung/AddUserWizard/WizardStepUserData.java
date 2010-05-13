@@ -2,36 +2,36 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.redeye.Zeiterfassung.ConfigWizard;
+package at.redeye.Zeiterfassung.AddUserWizard;
 
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardWindowInterface;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
-import at.redeye.Setup.ConfigCheck.Checks.AdminUserExists;
 import java.awt.Dimension;
 
 /**
  *
  * @author Mario
  */
-public class WizardStepLogin extends WizardBaseWindow implements WizardWindowInterface {
+public class WizardStepUserData extends WizardBaseWindow implements WizardWindowInterface {
 
 	private static final long serialVersionUID = 1L;
-	private LoginPanel dlg = null;
+	private UserData dlg = null;
     private Wizard parentWizard = null;
 
-    public WizardStepLogin(Root root, Wizard parent) {
+    public WizardStepUserData(Root root, Wizard parent) {
 
-        super(root, "Anmeldung");
+        super(root, "Name");
         this.parentWizard = parent;
-        dlg = new LoginPanel(root, parent);
+
+        dlg = new UserData(root, this );
 
     }
 
     public boolean allowJumpNextWindow() {
-        return false;
+        return true;
     }
 
     public boolean allowJumpPrevWindow() {
@@ -53,15 +53,6 @@ public class WizardStepLogin extends WizardBaseWindow implements WizardWindowInt
     public void onInit() {
         setGuestContent();
         super.setVisible(true);
-
-        AdminUserExists check = new AdminUserExists(root);
-
-        if( !check.doIHaveRequiredFeature() )
-        {
-            setSkipThisStep(true);
-        } else {
-            setSkipThisStep(false);
-        }
     }
 
     @Override

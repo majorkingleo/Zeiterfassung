@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -33,44 +34,55 @@ import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
  */
 public class JobTypes extends BaseDialog {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(JobTypes.class.getSimpleName());
-	TableManipulator tm;
+    private static final long serialVersionUID = 1L;
+    TableManipulator tm;
     Vector<DBStrukt> values = new Vector<DBStrukt>();
-    
+
     /** Creates new form JobTypes
      * @param root 
      */
     public JobTypes( Root root ) {
         super(root, "Tätigkeiten");
         initComponents();
-        
+
+        initCommon();
+    }
+
+    public JobTypes(Root root, Wizard parent) {
+        super(root, "Tätigkeiten");
+        initComponents();
+
+        jBClose.setVisible(false);
+
+        initCommon();
+    }
+
+    private void initCommon()
+    {
         DBJobType jt = new DBJobType();
-        
-        tm = new TableManipulator(root,jTContent,jt);
-        
+
+        tm = new TableManipulator(root, jTContent, jt);
+
         tm.hide(jt.id);
         tm.hide(jt.hist.lo_user);
         tm.hide(jt.hist.lo_zeit);
-        
+
         tm.setEditable(jt.name);
         tm.setEditable(jt.type);
         tm.setEditable(jt.help);
         tm.setEditable(jt.locked);
         tm.setEditable(jt.is_holliday);
-        
-        
-        tm.prepareTable();
-        
-        feed_table(false);
-        
-        if( values.size() == 0 )
-            newEntry(false);
 
-		tm.autoResize();
+
+        tm.prepareTable();
+
+        feed_table(false);
+
+        if (values.size() == 0) {
+            newEntry(false);
+        }
+
+        tm.autoResize();
     }
 
     private boolean check_entries() {

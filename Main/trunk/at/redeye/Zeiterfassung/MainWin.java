@@ -37,6 +37,7 @@ import at.redeye.FrameWork.widgets.calendarday.DayEventListener;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.impl.UserDataHandling;
+import at.redeye.Zeiterfassung.AddUserWizard.AddUserWizard;
 import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
@@ -126,7 +127,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             jMDatabase.setVisible(false);
             jMGlobalConfig.setVisible(false);
             jMJobTypes.setVisible(false);
-            JMUserPerMonth.setVisible(false);                             
+            JMUserPerMonth.setVisible(false);
+            jMAddUser.setVisible(false);
         }
         
         if( root.getUserPermissionLevel() < UserManagementInterface.UM_PERMISSIONLEVEL_PRIVILEGED )
@@ -167,6 +169,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMDatabase = new javax.swing.JMenuItem();
         jMCreateDesktopIcon = new javax.swing.JMenuItem();
         jMSetupWizard = new javax.swing.JMenuItem();
+        jMAddUser = new javax.swing.JMenuItem();
         jMLogout = new javax.swing.JMenuItem();
         jMenuQuit = new javax.swing.JMenuItem();
         jMUser = new javax.swing.JMenu();
@@ -303,6 +306,14 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
         jMenuProgram.add(jMSetupWizard);
+
+        jMAddUser.setText("Neuen Benutzer anlegen");
+        jMAddUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMAddUserActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMAddUser);
 
         jMLogout.setText("Abmelden");
         jMLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -763,6 +774,17 @@ private void jMSetupWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
 }//GEN-LAST:event_jMSetupWizardActionPerformed
 
+private void jMAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMAddUserActionPerformed
+
+    setWaitCursor();
+
+    AddUserWizard wizard = new AddUserWizard(root);
+    wizard.startWizard();
+
+    setNormalCursor();
+
+}//GEN-LAST:event_jMAddUserActionPerformed
+
 
 
 
@@ -851,6 +873,7 @@ public void close()
     private javax.swing.JCheckBoxMenuItem jCBHolidaysGermany;
     private javax.swing.JCheckBoxMenuItem jCBHolidaysSwitzerland;
     private javax.swing.JLabel jLSum;
+    private javax.swing.JMenuItem jMAddUser;
     private javax.swing.JMenuItem jMChangeLog;
     private javax.swing.JMenuItem jMCreateDesktopIcon;
     private javax.swing.JMenuItem jMDatabase;

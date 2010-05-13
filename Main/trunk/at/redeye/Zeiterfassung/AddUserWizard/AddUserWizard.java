@@ -3,15 +3,13 @@
  * and open the template in the editor.
  */
 
-package at.redeye.Zeiterfassung.ConfigWizard;
+package at.redeye.Zeiterfassung.AddUserWizard;
 
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.wizards.WizardProperties;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
-import at.redeye.Setup.wizard.impl.WizardStepDBSetup;
 import at.redeye.Setup.wizard.impl.WizardStepFinished;
-import at.redeye.Setup.wizard.impl.WizardStepUserData;
 import at.redeye.Setup.wizard.impl.WizardStepWelcome;
 
 /**
@@ -19,12 +17,12 @@ import at.redeye.Setup.wizard.impl.WizardStepWelcome;
  * @author Mario
  */
 
-public class ConfigWizard
+public class AddUserWizard
 {    
     private Root root;
     private WizardListener wizard_listener;
 
-    public ConfigWizard( Root root )
+    public AddUserWizard( Root root )
     {
         this.root = root;
     }
@@ -35,7 +33,7 @@ public class ConfigWizard
      * @param wizard_listener can be null, if not null the wizard_listener will be informed,
      * when the configuration step is finished.
      */
-    public ConfigWizard( Root root, WizardListener wizard_listener)
+    public AddUserWizard( Root root, WizardListener wizard_listener)
     {
         this.root = root;
         this.wizard_listener = wizard_listener;
@@ -43,24 +41,19 @@ public class ConfigWizard
 
     
     public void startWizard()
-    {
-       
+    {       
         WizardProperties props = new WizardProperties();
         props.setButtonNextText("Vorwärts");        
         Wizard wizard = new Wizard(props);
-        wizard.addWizardListener(wizard_listener);
-        WizardStepDBSetup dbSetup = new WizardStepDBSetup(root, wizard);
-        WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);
-        WizardStepLogin login = new WizardStepLogin(root, wizard);
-        WizardStepUserData user = new WizardStepUserData(root, wizard);
+        wizard.addWizardListener(wizard_listener);        
+        WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);                
         WizardStepFinished finish = new WizardStepFinished(root, wizard);
-        WizardStepCreateJobTypes job_types = new WizardStepCreateJobTypes(root, wizard);
-        
+        WizardStepUserData user = new WizardStepUserData(root, wizard);
+        WizardStepMonthSettingsForUser month = new WizardStepMonthSettingsForUser(root,wizard);
+
         wizard.addWindow(welcome);
-        wizard.addWindow(dbSetup);
-        wizard.addWindow(login);
         wizard.addWindow(user);
-        wizard.addWindow(job_types);
+        wizard.addWindow(month);
         wizard.addWindow(finish);
 
         wizard.start();       

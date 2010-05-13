@@ -8,6 +8,7 @@ package at.redeye.Zeiterfassung;
 
 import at.redeye.FrameWork.base.tablemanipulator.validators.DateValidator;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.Zeiterfassung.AddUserWizard.WizardStepMonthSettingsForUser;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -43,19 +44,36 @@ public class UserPerMonth extends BaseDialog {
     TableManipulator tm;        
     
     /** Creates new form UserPerMonth */
-    public UserPerMonth( Root root ) {
+    public UserPerMonth( Root root )
+    {
         super( root, "Monatseinstellungen für die Benutzer");
         
         initComponents();
         
+        initCommon();
+    }
+
+    public UserPerMonth(Root root, WizardStepMonthSettingsForUser aThis)
+    {
+       super( root, "Monatseinstellungen für die Benutzer");
+
+        initComponents();
+
+        jBClose.setVisible(false);
+
+        initCommon();
+    }
+
+    private void initCommon()
+    {
         DBUserPerMonth upm = new DBUserPerMonth( new UserQuery( getTransaction() ));
-        
+
         tm = new TableManipulator(root,jTContent, upm);
-        
+
         tm.hide(upm.id);
         tm.hide(upm.hist.lo_user);
         tm.hide(upm.hist.lo_zeit);
-        
+
         tm.setEditable(upm.from);
         tm.setEditable(upm.locked);
         tm.setEditable(upm.to);
@@ -67,7 +85,7 @@ public class UserPerMonth extends BaseDialog {
         tm.setEditable(upm.hours_overtime);
         tm.setEditable(upm.days_per_week);
         tm.setEditable(upm.overtime_rule);
-        
+
         tm.setValidator(upm.from, new DateValidator());
         tm.setValidator(upm.to, new DateValidator());
         tm.setValidator(upm.days_holidays, new TableValidator() {
@@ -81,11 +99,11 @@ public class UserPerMonth extends BaseDialog {
                 public boolean loadToValue(DBValue val, String s, int row) {
                     if( !val.acceptString(s) )
                         return false;
-                    
-                    val.loadFromString(s);                                       
-                    
+
+                    val.loadFromString(s);
+
                     DBUserPerMonth u = (DBUserPerMonth) values.get(row);
-                    
+
                     if( u == null )
                         return false;
 
@@ -96,13 +114,13 @@ public class UserPerMonth extends BaseDialog {
 
                     Double days_holidays = (Double) val.getValue();
                     Double hh = Rounding.RndDouble(days_holidays * hpd,3);
-                    u.hours_holidays.loadFromCopy(hh);                    
-                    
-                    tm.updateValue(u.hours_holidays, row);                    
+                    u.hours_holidays.loadFromCopy(hh);
+
+                    tm.updateValue(u.hours_holidays, row);
 
                     return true;
-                }                                
-                
+                }
+
             });
 
         tm.setValidator(upm.hours_holidays, new TableValidator() {
@@ -117,7 +135,7 @@ public class UserPerMonth extends BaseDialog {
                     if( !val.acceptString(s) )
                         return false;
 
-                    val.loadFromString(s);                    
+                    val.loadFromString(s);
 
                     DBUserPerMonth u = (DBUserPerMonth) values.get(row);
 
@@ -128,13 +146,13 @@ public class UserPerMonth extends BaseDialog {
 
                     if( hpd == 0 )
                         hpd = 8;
-                    
+
 
                     Double hours_holidays = (Double) val.getValue();
                     Double hh = Rounding.RndDouble(hours_holidays / hpd,3);
                     u.days_holidays.loadFromCopy(hh);
 
-                    tm.updateValue(u.days_holidays, row);                    
+                    tm.updateValue(u.days_holidays, row);
 
                     return true;
                 }
@@ -143,9 +161,9 @@ public class UserPerMonth extends BaseDialog {
 
 
         tm.prepareTable();
-        
+
         feed_table(false);
-        
+
         tm.autoResize();
     }
 

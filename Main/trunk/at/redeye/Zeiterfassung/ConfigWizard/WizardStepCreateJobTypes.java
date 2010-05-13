@@ -10,28 +10,31 @@ import at.redeye.FrameWork.base.wizards.WizardWindowInterface;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
 import at.redeye.Setup.ConfigCheck.Checks.AdminUserExists;
+import at.redeye.UserManagement.UserManagementInterface;
+import at.redeye.UserManagement.bindtypes.DBPermissionLevel.PERMISSIONLEVEL;
+import at.redeye.Zeiterfassung.JobTypes;
 import java.awt.Dimension;
 
 /**
  *
  * @author Mario
  */
-public class WizardStepLogin extends WizardBaseWindow implements WizardWindowInterface {
+public class WizardStepCreateJobTypes extends WizardBaseWindow implements WizardWindowInterface {
 
 	private static final long serialVersionUID = 1L;
-	private LoginPanel dlg = null;
+	private JobTypes dlg = null;
     private Wizard parentWizard = null;
 
-    public WizardStepLogin(Root root, Wizard parent) {
+    public WizardStepCreateJobTypes(Root root, Wizard parent) {
 
-        super(root, "Anmeldung");
+        super(root, "Tätigkeiten");
         this.parentWizard = parent;
-        dlg = new LoginPanel(root, parent);
+        dlg = new JobTypes(root,parent);
 
     }
 
     public boolean allowJumpNextWindow() {
-        return false;
+        return true;
     }
 
     public boolean allowJumpPrevWindow() {
@@ -54,12 +57,12 @@ public class WizardStepLogin extends WizardBaseWindow implements WizardWindowInt
         setGuestContent();
         super.setVisible(true);
 
-        AdminUserExists check = new AdminUserExists(root);
-
-        if( !check.doIHaveRequiredFeature() )
+        if( root.getUserPermissionLevel() != UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN )
         {
             setSkipThisStep(true);
-        } else {
+        }
+        else
+        {
             setSkipThisStep(false);
         }
     }
@@ -67,14 +70,14 @@ public class WizardStepLogin extends WizardBaseWindow implements WizardWindowInt
     @Override
     protected void setGuestContent() {
 
-        super.panelGuestContent.add(dlg);
+        super.panelGuestContent.add(dlg.getContentPane());
         super.panelGuestContent.setPreferredSize(new Dimension(300, 200));
         super.panelGuestContent.updateUI();        
     }
 
     @Override
     protected String getHelptext() {
-        return "\n In diesem Setup-Abschnitt müssen Sie sich anmelden";
+        return "\n Hier werden neue Tätigkeiten angelgt und eingerichtet.";
     }
 
     @Override
