@@ -483,14 +483,9 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_jBCloseActionPerformed
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-// TODO add your handling code here:
-    
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-            new LocalHelpWin(root, "UserPerMonth").setVisible(true);
-        }
-    });
+    invokeDialogUnique(new LocalHelpWin(root, "UserPerMonth"));
+
 }//GEN-LAST:event_jBHelpActionPerformed
 
 

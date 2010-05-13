@@ -290,14 +290,9 @@ new AutoMBox(getTitle()) {
 }//GEN-LAST:event_jBCloseActionPerformed
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-// TODO add your handling code here:
+      
+     invokeDialogUnique(new LocalHelpWin(root, "MonthBlocks"));
     
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new LocalHelpWin(root, "MonthBlocks").setVisible(true);
-        }
-    });
 }//GEN-LAST:event_jBHelpActionPerformed
 
 private void jBSetAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSetAllActionPerformed

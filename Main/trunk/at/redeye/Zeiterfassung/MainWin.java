@@ -539,7 +539,7 @@ private void jMenuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 
 private void jMDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMDatabaseActionPerformed
     
-    invokeDialog(new ConnectionDialog( root ));
+    invokeDialogUnique(new ConnectionDialog( root ));
 }//GEN-LAST:event_jMDatabaseActionPerformed
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -639,7 +639,7 @@ private void jRBHolidaysSwitzerlandActionPerformed(java.awt.event.ActionEvent ev
 
 private void jMJobTypesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMJobTypesActionPerformed
          
-   invokeDialog(new JobTypes(root));
+   invokeDialogUnique(new JobTypes(root));
      
 }//GEN-LAST:event_jMJobTypesActionPerformed
 
@@ -651,7 +651,7 @@ private void jMUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
 private void JMUserPerMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMUserPerMonthActionPerformed
 
-   invokeDialog(new UserPerMonth(root));
+   invokeDialogUnique(new UserPerMonth(root));
     
 }//GEN-LAST:event_JMUserPerMonthActionPerformed
 
@@ -664,26 +664,26 @@ private void jMMonthReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-    invokeDialog(new LocalHelpWin(root,"MainWin"));
+    invokeDialogUnique(new LocalHelpWin(root,"MainWin"));
     
 }//GEN-LAST:event_jBHelpActionPerformed
 
 private void jMGlobalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGlobalConfigActionPerformed
             
-    invokeDialog(new GlobalConfig(root));
+    invokeDialogUnique(new GlobalConfig(root));
     
 }//GEN-LAST:event_jMGlobalConfigActionPerformed
 
         
 private void jMExtraHolidaysActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMExtraHolidaysActionPerformed
     
-    invokeDialog(new ExtraHolidays(root, this));
+    invokeDialogUnique(new ExtraHolidays(root, this));
     
 }//GEN-LAST:event_jMExtraHolidaysActionPerformed
 
 private void jMLocalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMLocalConfigActionPerformed
     
-    invokeDialog(new LocalConfig(root) );
+    invokeDialogUnique(new LocalConfig(root) );
     
 }//GEN-LAST:event_jMLocalConfigActionPerformed
 
@@ -691,37 +691,37 @@ private void jMLocalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
 private void jMMonthBlocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthBlocksActionPerformed
 
-   invokeDialog( new MonthBlocks(root) );
+   invokeDialogUnique( new MonthBlocks(root) );
     
 }//GEN-LAST:event_jMMonthBlocksActionPerformed
 
 private void jMInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMInfoActionPerformed
 
-    invokeDialog( new About(root) );
+    invokeDialogUnique( new About(root) );
 
 }//GEN-LAST:event_jMInfoActionPerformed
 
 private void jMMemInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMemInfoActionPerformed
 
-    invokeDialog(new MemInfo(root));
+    invokeDialogUnique(new MemInfo(root));
 
 }//GEN-LAST:event_jMMemInfoActionPerformed
 
 private void jMChangeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMChangeLogActionPerformed
     
-    invokeDialog( new LocalHelpWin(root,"ChangeLog") );
+    invokeDialogUnique( new LocalHelpWin(root,"ChangeLog") );
     
 }//GEN-LAST:event_jMChangeLogActionPerformed
 
 private void jBErrorLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBErrorLogActionPerformed
 
-    invokeDialog( new LogWin( root, "Fehlermeldungen", month_stuff.getError() ) );
+    invokeDialogUnique( new LogWin( root, "Fehlermeldungen", month_stuff.getError() ) );
     
 }//GEN-LAST:event_jBErrorLogActionPerformed
 
 private void JMCustomersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMCustomersActionPerformed
 
-    invokeDialog(new Customers(root));
+    invokeDialogUnique(new Customers(root));
     
 }//GEN-LAST:event_JMCustomersActionPerformed
 
@@ -982,12 +982,12 @@ public void close()
         if( checkJobTypes() == true && checkMonthSettings() == true )
         {        
             // System.out.println("Clicked on day " + month.isWhatDayOfMonth(day) );
-            BookDay book_day = new BookDay(root,
+            invokeDialogUnique(new BookDay(root,
                     new DateMidnight(year, mon, month.isWhatDayOfMonth(day)),
                     month.getDay(day), this,
                     month_stuff.hours_per_day,
-                    cache);
-            book_day.setVisible(true);            
+                    cache));
+                  
         }
     }        
     

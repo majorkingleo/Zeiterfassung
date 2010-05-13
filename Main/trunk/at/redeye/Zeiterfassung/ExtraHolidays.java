@@ -237,14 +237,9 @@ public class ExtraHolidays extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-// TODO add your handling code here:
-    
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-            new LocalHelpWin(root, "ExtraHolidays").setVisible(true);
-        }
-    });
+    invokeDialogUnique(new LocalHelpWin(root, "ExtraHolidays"));
+
 }//GEN-LAST:event_jBHelpActionPerformed
 
 private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCloseActionPerformed

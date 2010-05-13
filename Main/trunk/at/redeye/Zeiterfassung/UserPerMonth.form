@@ -25,7 +25,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jScrollPane1" alignment="1" pref="832" max="32767" attributes="2"/>
+                  <Component id="jScrollPane1" alignment="1" pref="865" max="32767" attributes="2"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jBSave" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -36,7 +36,7 @@
                       <Component id="jBClose" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jLTitle" pref="788" max="32767" attributes="0"/>
+                      <Component id="jLTitle" pref="821" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jBHelp" min="-2" pref="32" max="-2" attributes="0"/>
                   </Group>

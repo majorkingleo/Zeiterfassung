@@ -353,14 +353,9 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_jBDelActionPerformed
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-// TODO add your handling code here:
-    
-    java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-            new LocalHelpWin(root, "CustomerAddresses").setVisible(true);
-        }
-    });
+ invokeDialogUnique(new LocalHelpWin(root, "CustomerAddresses"));
+
 }//GEN-LAST:event_jBHelpActionPerformed
 
 
