@@ -39,7 +39,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 	private boolean first_run = true;
 
 	public ModuleLauncher(String[] args) {
-            super(args);
+            super(args);            
 
 		String name = getStartupParam("appname", "appname", "APPNAME","MOMM");
 
@@ -72,6 +72,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		root = new LocalRoot(name, title);
 		um = new UserDataHandling(root);
 		root.setWebStartUlr(url);
+
+                configureLogging();
 
                 initDBConnectionFromParams();
 	}
