@@ -1,5 +1,8 @@
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
+import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
+import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
 import at.redeye.Setup.ConfigCheck.CheckConfigBase;
 import at.redeye.FrameWork.base.BaseModuleLauncher;
 import java.io.IOException;
@@ -10,8 +13,10 @@ import org.apache.log4j.RollingFileAppender;
 
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.LocalRoot;
+import at.redeye.FrameWork.base.prm.PrmListener;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.prm.impl.PrmDBInit;
+import at.redeye.FrameWork.base.prm.impl.PrmDefaultCheckSuite;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -76,6 +81,34 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                 configureLogging();
 
                 initDBConnectionFromParams();
+
+            FrameWorkConfigDefinitions.LookAndFeel.addPrmListener(new PrmListener() {
+
+                PrmDefaultCheckSuite checker = new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LOOKANDFEEL);
+
+                void onChange(PrmActionEvent event) {
+
+                    if( checker.doChecks(event) == true )
+                    {
+                        java.awt.EventQueue.invokeLater(new Runnable() {
+
+                            public void run() {
+                                setLookAndFeel(root);
+                                reopen();
+                            }
+                        });
+                    }
+                }
+
+                public void onChange(PrmDefaultChecksInterface defaultChecks, PrmActionEvent event) {
+                    onChange(event);
+                }
+
+                public void onChange(PrmCustomChecksInterface customChecks, PrmActionEvent event) {
+                    onChange(event);
+                }
+            });
+
 	}
 
         public void relogin()
@@ -91,6 +124,12 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		invoke();
 	}
+
+        public void reopen()
+        {
+            root.closeAllWindowsNoAppExit();
+            accessGranted();
+        }
 
 	protected void invoke() {
 
@@ -151,7 +190,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		
             PrmDBInit prmDBInit = new PrmDBInit(root);
             prmDBInit.initDb();
-            
+
             setLookAndFeel(root);
 		
 

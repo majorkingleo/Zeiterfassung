@@ -16,6 +16,11 @@ public class TimecontrolMain {
         ml.relogin(try_autologin);
     }
 
+    public static void reopen()
+    {
+        ml.reopen();
+    }
+
 	public static void main(String[] args) {
 		
         // Proxyeinstellungen von Java Ausschalten, sonst versucht sich 
