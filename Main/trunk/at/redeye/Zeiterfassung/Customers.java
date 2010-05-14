@@ -538,7 +538,7 @@ private void jBProjectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     // End of variables declaration//GEN-END:variables
 
     @Override
-    protected boolean canClose() {
+    public boolean canClose() {
         int ret = checkSave(tm);
 
         if (ret == 1) {

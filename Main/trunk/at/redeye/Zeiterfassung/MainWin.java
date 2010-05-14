@@ -15,6 +15,7 @@ import org.joda.time.DateMidnight;
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.ConnectionDialog;
 import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
@@ -41,6 +42,7 @@ import at.redeye.Zeiterfassung.AddUserWizard.AddUserWizard;
 import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import java.awt.Dialog.ModalityType;
 import java.util.Locale;
 
 /**
@@ -697,7 +699,7 @@ private void jMMonthBlocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
 private void jMInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMInfoActionPerformed
 
-    invokeDialogUnique( new About(root) );
+    invokeDialogModal( new About(this,root) );
 
 }//GEN-LAST:event_jMInfoActionPerformed
 
@@ -716,7 +718,7 @@ private void jMChangeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 private void jBErrorLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBErrorLogActionPerformed
 
     invokeDialogUnique( new LogWin( root, "Fehlermeldungen", month_stuff.getError() ) );
-    
+
 }//GEN-LAST:event_jBErrorLogActionPerformed
 
 private void JMCustomersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMCustomersActionPerformed

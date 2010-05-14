@@ -48,7 +48,7 @@ public class CustomersAddresses extends BaseDialog {
         
         this.cust = cust;
 
-        jLTitle.setText(title);
+        jLTitle.setText(getTitle());
 
         DBCustomerAddresses cust_addr = new DBCustomerAddresses();
         
@@ -371,7 +371,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     // End of variables declaration//GEN-END:variables
 
     @Override
-    protected boolean canClose() {
+    public boolean canClose() {
         int ret = checkSave(tm);
 
         if (ret == 1) {

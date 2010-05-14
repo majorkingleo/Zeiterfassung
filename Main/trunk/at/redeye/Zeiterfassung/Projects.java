@@ -48,7 +48,7 @@ public class Projects extends BaseDialog {
         
         this.cust = cust;
 
-        jLTitle.setText(title);
+        jLTitle.setText(getTitle());
 
         DBProjects projects = new DBProjects();
         
@@ -419,7 +419,7 @@ private void jBSubProjectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     // End of variables declaration//GEN-END:variables
 
     @Override
-    protected boolean canClose() {
+    public boolean canClose() {
         int ret = checkSave(tm);
 
         if (ret == 1) {

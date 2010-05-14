@@ -6,19 +6,20 @@
 
 package at.redeye.Zeiterfassung;
 
-import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.Root;
+import javax.swing.JFrame;
 
 /**
  *
  * @author  martin
  */
-public class About extends BaseDialog {
+public class About extends BaseDialogDialog {
 
     /** Creates new form About */
-    public About(Root root) 
+    public About(JFrame owner, Root root)
     {
-        super(root,"Über");
+        super(owner, root,"Über");
         initComponents();
         
         jLVersion.setText("Version " + Version.getVersion());
