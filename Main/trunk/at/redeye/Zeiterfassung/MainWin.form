@@ -129,7 +129,7 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="jMExtraHolidays">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="zus&#xe4;tzliche Feitertage"/>
+                    <Property name="text" type="java.lang.String" value="zus&#xe4;tzliche Feiertage"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMExtraHolidaysActionPerformed"/>

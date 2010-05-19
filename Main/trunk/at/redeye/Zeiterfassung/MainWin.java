@@ -15,7 +15,6 @@ import org.joda.time.DateMidnight;
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
-import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.ConnectionDialog;
 import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
@@ -42,7 +41,6 @@ import at.redeye.Zeiterfassung.AddUserWizard.AddUserWizard;
 import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
-import java.awt.Dialog.ModalityType;
 import java.util.Locale;
 
 /**
@@ -75,7 +73,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 
         if (root.getSetup().initialRun()) {
             // Wurde das Programm zum ersten mal gestartet, dann
-            // die Feitertage aufgrund des Ländercodes gleich
+            // die Feiertage aufgrund des Ländercodes gleich
             // einstellen
 
             Locale l = Locale.getDefault();
@@ -396,7 +394,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         });
         jMenuHollidays.add(jCBHolidaysSwitzerland);
 
-        jMExtraHolidays.setText("zusätzliche Feitertage");
+        jMExtraHolidays.setText("zusätzliche Feiertage");
         jMExtraHolidays.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMExtraHolidaysActionPerformed(evt);
