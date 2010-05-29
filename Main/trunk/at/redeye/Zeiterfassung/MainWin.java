@@ -6,6 +6,9 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
+import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
+import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -24,6 +27,8 @@ import at.redeye.FrameWork.base.MemInfo;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher;
+import at.redeye.FrameWork.base.prm.PrmListener;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.Rounding;
@@ -39,6 +44,7 @@ import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.impl.UserDataHandling;
 import at.redeye.Zeiterfassung.AddUserWizard.AddUserWizard;
 import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
+import at.redeye.Zeiterfassung.bindtypes.DBCustomers;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import java.util.Locale;
@@ -55,6 +61,10 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
     private HolidayMerger merger = new HolidayMerger();
     private TimeEntryCache cache = new TimeEntryCache();
     private CalcMonthStuff month_stuff = null;
+
+    private boolean job_types_checked= false;
+    private boolean customers_checked= false;
+    private boolean upm_checked= false;
 
         /** Creates new form MainWin
          * @param root 
@@ -143,8 +153,44 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 
         if( !DesktopLauncher.canCreateDesktopIcon() )
             jMCreateDesktopIcon.setVisible(false);
-        
+
+
+
+        AppConfigDefinitions.UseCustomersAndProjects.addPrmListener(new PrmListener() {
+
+            void onChange(final PrmActionEvent event)
+            {
+                java.awt.EventQueue.invokeLater(new Runnable() {
+
+                    public void run() {
+                        checkCustomersAndProjects(event.getNewPrmValue().toString());
+                    }
+
+                });
+            }
+
+            public void onChange(PrmDefaultChecksInterface defaultChecks, PrmActionEvent event) {
+                onChange(event);
+            }
+
+            public void onChange(PrmCustomChecksInterface customChecks, PrmActionEvent event) {
+                onChange(event);
+            }
+        });
+
+        checkCustomersAndProjects(root.getSetup().getConfig(AppConfigDefinitions.UseCustomersAndProjects));
+
         updateMonthSumInfo( false );
+    }
+
+    private void checkCustomersAndProjects(String value)
+    {
+        if( !StringUtils.isYes(value) )
+        {
+            JMDefaultData.setVisible(false);
+        } else {
+            JMDefaultData.setVisible(true);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -907,9 +953,11 @@ public void close()
 
     boolean checkJobTypes()
     {
+        if( job_types_checked )
+            return true;
+
         AutoLogger al = new AutoLogger("checkJobTypes")
         {
-
             @Override
             public void do_stuff() throws Exception {
                 
@@ -936,12 +984,64 @@ public void close()
             }
             
         };
-        
+
+        if( (Boolean)al.result )
+            job_types_checked = true;
+
+        return (Boolean)al.result;
+    }
+
+    boolean checkCustomers()
+    {
+        if( customers_checked )
+            return true;
+
+        if( !StringUtils.isYes(root.getSetup().getConfig(AppConfigDefinitions.UseCustomersAndProjects)) )
+            return true;
+            
+        AutoLogger al = new AutoLogger("checkCustomers")
+        {
+
+            @Override
+            public void do_stuff() throws Exception {
+
+                result = new Boolean(false);
+
+                Vector<DBStrukt> entries = getTransaction().fetchTable(new DBCustomers(),
+                        "where " + getTransaction().markColumn("locked") + "='NEIN'");
+
+                if( entries.size() == 0 )
+                {
+                    JOptionPane.showMessageDialog(null,
+                    	StringUtils.autoLineBreak(
+                            "Sie müssen zuerst Kunden anlegen, oder diese Funktionalität deaktivieren." +
+                            "Unter dem Menüpunkt Stammdaten -> Kunden können Sie neue Kunden anlegen. Und unter " +
+                            "Menüpunkt: Einstellungen -> Globale Einstellungen.\n" +
+                            "Können Sie die Kunden und Projektfunktionalität komplett deaktivieren. " +
+                            "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich " +
+                            "bitte an Ihren Administrator.", 40),
+                            "Fehler",
+                            JOptionPane.OK_OPTION);
+
+                } else {
+                    result = new Boolean(true)                    ;
+                }
+            }
+
+        };
+
+
+        if( (Boolean)al.result )
+            customers_checked = true;
+
         return (Boolean)al.result;
     }
     
     boolean checkMonthSettings()
     {
+        if( upm_checked )
+            return true;
+
         AutoLogger al = new AutoLogger("checkMonthSettings")
         {
 
@@ -973,13 +1073,16 @@ public void close()
             }
             
         };
-        
+
+        if( (Boolean)al.result )
+            upm_checked = true;
+
         return (Boolean)al.result;
     }
     
     public void onClicked(CalendarDay day) {        
         
-        if( checkJobTypes() == true && checkMonthSettings() == true )
+        if( checkJobTypes() == true && checkMonthSettings() == true && checkCustomers() )
         {        
             // System.out.println("Clicked on day " + month.isWhatDayOfMonth(day) );
             invokeDialogUnique(new BookDay(root,

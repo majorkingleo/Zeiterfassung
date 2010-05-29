@@ -27,7 +27,10 @@ public class AppConfigDefinitions extends BaseAppConfigDefinitions {
             "einem Zeiteintrag eingeben muß. Null bedeuted das kein Kommentar eingegeben werden muß.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG));
     public static DBConfig AutoCreateSupProjectDefaultValue = new DBConfig("Standardwert für das Automatische anlengen von Unterprojekten", "JA",
             "Der Voreingestellte Wert bei neu angelegt Projekten.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
-    
+    public static DBConfig UseCustomersAndProjects = new DBConfig( "UseCustomersAndProjects", "JA", 
+            "Kunde, Projekte und Unterprojekte verwenden",
+            new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE) );
+
     public static void registerDefinitions() {
 
         BaseRegisterDefinitions();
@@ -39,6 +42,7 @@ public class AppConfigDefinitions extends BaseAppConfigDefinitions {
         add(DaysPerWeek);
         add(NumberOfMinimumCommentChars);
         add(AutoCreateSupProjectDefaultValue);
+        add(UseCustomersAndProjects);
 
         GlobalConfigDefinitions.add_help_path("/at/redeye/Zeiterfassung/resources/Help/Params/");
         LocalConfigDefinitions.add_help_path("/at/redeye/Zeiterfassung/resources/Help/Params/");

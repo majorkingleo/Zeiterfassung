@@ -74,20 +74,33 @@ public class BookDay extends BaseDialog {
 
 		tm = new TableManipulator(root,jTContent, te);
 
-		tm.hide(te.id);
-		tm.hide(te.user);		
-		tm.hide(te.locked);
-        tm.hide(te.hist.lo_user);
-        tm.hide(te.hist.lo_zeit);
-        
-		tm.setEditable(te.comment);
-		tm.setEditable(te.to);
-		tm.setEditable(te.from);
-        tm.setEditable(te.jobtype);
-        
-        tm.setEditable(te.customer);
-        tm.setEditable(te.project);
-        tm.setEditable(te.sub_project);
+            tm.hide(te.id);
+            tm.hide(te.user);
+            tm.hide(te.locked);
+            tm.hide(te.hist.lo_user);
+            tm.hide(te.hist.lo_zeit);
+
+            boolean use_projects = StringUtils.isYes(root.getSetup().getConfig(AppConfigDefinitions.UseCustomersAndProjects));
+
+            if (!use_projects) {
+                tm.hide(te.customer);
+                tm.hide(te.project);
+                tm.hide(te.sub_project);
+
+            }
+
+
+            tm.setEditable(te.comment);
+            tm.setEditable(te.to);
+            tm.setEditable(te.from);
+            tm.setEditable(te.jobtype);
+
+
+            if (use_projects) {
+                tm.setEditable(te.customer);
+                tm.setEditable(te.project);
+                tm.setEditable(te.sub_project);
+            }
 
 		tm.setValidator(te.to, new TimeHourMinuteValidator());
 		tm.setValidator(te.from, new TimeHourMinuteValidator());
