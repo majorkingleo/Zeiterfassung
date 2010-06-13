@@ -97,7 +97,7 @@ public class TimeEntryRenderer implements InfoRenderer
                        rows = trans.fetchTable(new DBTimeEntries(), where);
                 }
         } catch( Exception ex ) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
         }
         
     }

@@ -598,9 +598,9 @@ public class CalcMonthStuff
         logger.info(String.format("overal working hours from %s to %s: %.3f regular working hours: %.3f result: %.3f",
                 DBDateTime.getDateStr(from),
                 DBDateTime.getDateStr(to),
-                Rounding.RndDouble(lovertime/60/60/1000.0, 3),
-                Rounding.RndDouble(regular_work_time, 3),
-                Rounding.RndDouble(overtime_result,3)));
+                Rounding.rndDouble(lovertime/60/60/1000.0, 3),
+                Rounding.rndDouble(regular_work_time, 3),
+                Rounding.rndDouble(overtime_result,3)));
 
         overtime.setTime((long)(overtime_result*60*60*1000));
 

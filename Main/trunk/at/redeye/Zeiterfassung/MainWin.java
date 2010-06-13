@@ -1148,7 +1148,7 @@ public void close()
                         text.append(month_stuff.remaining_leave.toString("HH:mm"));
 
                         if(  month_stuff.hours_per_day > 0 )
-                            text.append(" (" + Rounding.RndDouble(month_stuff.remaining_leave.getHours() / month_stuff.hours_per_day,1) + " Tage)" );
+                            text.append(" (" + Rounding.rndDouble(month_stuff.remaining_leave.getHours() / month_stuff.hours_per_day,1) + " Tage)" );
 
                         jLSum.setText(text.toString());
 
