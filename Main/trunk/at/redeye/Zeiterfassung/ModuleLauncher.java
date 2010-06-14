@@ -21,6 +21,7 @@ import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
+import at.redeye.Setup.dbexport.DoDBExport;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
@@ -260,9 +261,13 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		checkTableVersions();
 
+
+
 		// Don't start as thread, because BaseDialog attempts wrong closing of
 		// application
 		new MainWin(root).setVisible(true);
+
+                //DoDBExport.exportDB(root,"/home/martin/test_db.zip");
 
 	}
 
