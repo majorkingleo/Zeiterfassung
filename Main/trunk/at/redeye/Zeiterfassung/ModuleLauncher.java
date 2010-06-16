@@ -21,7 +21,6 @@ import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
-import at.redeye.Setup.dbexport.DoDBExport;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
@@ -165,7 +164,10 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		root.getBindtypeManager().register(new DBProjects());
 		root.getBindtypeManager().register(new DBSubProjects());
 
-		configureLogging();
+		configureLogging();                                
+
+                //DoDBImport.importDBSilent(root,"/home/martin/zes.zip");
+                
 
             if (check_config.shouldPopUpWizard()) {
 
@@ -221,6 +223,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		first_run = false;
 
 		updateJnlp();
+                  
+                 
 	}
 
 	@Override
@@ -267,8 +271,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		// application
 		new MainWin(root).setVisible(true);
 
-                //DoDBExport.exportDB(root,"/home/martin/test_db.zip");
-
+                //DoDBExport.exportDBSilent(root,"/home/martin/test_db.zip");                
 	}
 
 	@Override

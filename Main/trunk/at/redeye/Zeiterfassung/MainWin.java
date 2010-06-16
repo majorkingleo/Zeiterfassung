@@ -40,6 +40,7 @@ import at.redeye.FrameWork.widgets.calendarday.CalendarDay;
 import at.redeye.FrameWork.widgets.calendarday.DayEventListener;
 import at.redeye.Setup.dbexport.DatabaseExport;
 import at.redeye.Setup.dbexport.ExportDialog;
+import at.redeye.Setup.dbexport.ImportDialog;
 import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.impl.UserDataHandling;
@@ -141,6 +142,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             JMUserPerMonth.setVisible(false);
             jMAddUser.setVisible(false);
             jMDBExport.setVisible(false);
+            jMDBImport.setVisible(false);
         }
         
         if( root.getUserPermissionLevel() < UserManagementInterface.UM_PERMISSIONLEVEL_PRIVILEGED )
@@ -219,6 +221,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         jMSetupWizard = new javax.swing.JMenuItem();
         jMAddUser = new javax.swing.JMenuItem();
         jMDBExport = new javax.swing.JMenuItem();
+        jMDBImport = new javax.swing.JMenuItem();
         jMLogout = new javax.swing.JMenuItem();
         jMenuQuit = new javax.swing.JMenuItem();
         jMUser = new javax.swing.JMenu();
@@ -371,6 +374,14 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
         jMenuProgram.add(jMDBExport);
+
+        jMDBImport.setText("Datenbank importieren");
+        jMDBImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMDBImportActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMDBImport);
 
         jMLogout.setText("Abmelden");
         jMLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -846,11 +857,47 @@ private void jMDBExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
     ExportDialog exporter = new ExportDialog(root);
 
-    invokeDialog(exporter);
+    invokeDialogUnique(exporter);
 
+    exporter.setExImportFactory(new DBLocalExportFactory());
     exporter.doExport();
 
 }//GEN-LAST:event_jMDBExportActionPerformed
+
+private void jMDBImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMDBImportActionPerformed
+    
+    int ret = JOptionPane.showConfirmDialog(this,
+                StringUtils.autoLineBreak("Wollen Sie tasächlich eine andere Datenbank importieren und die existierende Löschen?"),
+                "Datenbankimport",
+                JOptionPane.OK_CANCEL_OPTION);
+    
+    if( ret != JOptionPane.OK_OPTION )
+        return;
+
+    logger.error("User " + root.getUserName() + " will einen Datenbankimport Starten und hat die erste Frage mit Ja beantwortet" );
+
+    ret = JOptionPane.showConfirmDialog(this,
+                StringUtils.autoLineBreak("Die existierende Datenbank wird tatsächlich gelöscht! Wollen Sie trotzdem weitermachen?"),
+                "Datenbankimport",
+                JOptionPane.OK_CANCEL_OPTION);
+
+    logger.error("User " + root.getUserName() + " will einen Datenbankimport Starten und hat die zweite Frage auch mit Ja beantwortet" );
+
+    if( ret != JOptionPane.OK_OPTION )
+        return;
+
+    ImportDialog importer = new ImportDialog(root);
+
+    importer.setFinishedListener(new Runnable() {
+
+            public void run() {
+                 TimecontrolMain.relogin(true);
+            }
+        });
+
+    invokeDialogModal(importer);
+
+}//GEN-LAST:event_jMDBImportActionPerformed
 
 
 
@@ -944,6 +991,7 @@ public void close()
     private javax.swing.JMenuItem jMChangeLog;
     private javax.swing.JMenuItem jMCreateDesktopIcon;
     private javax.swing.JMenuItem jMDBExport;
+    private javax.swing.JMenuItem jMDBImport;
     private javax.swing.JMenuItem jMDatabase;
     private javax.swing.JMenuItem jMExtraHolidays;
     private javax.swing.JMenuItem jMGlobalConfig;
