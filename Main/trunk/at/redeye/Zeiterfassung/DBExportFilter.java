@@ -28,7 +28,8 @@ public class DBExportFilter extends DatabaseExport
         super( root, file_name );
     }
 
-    public int inserValues( DBStrukt table ) throws UnsupportedDBDataTypeException, WrongBindFileFormatException, SQLException, IOException
+    @Override
+    public int insertValues( DBStrukt table ) throws UnsupportedDBDataTypeException, WrongBindFileFormatException, SQLException, IOException
     {
         Vector<DBValue> values = table.getAllValues();
 

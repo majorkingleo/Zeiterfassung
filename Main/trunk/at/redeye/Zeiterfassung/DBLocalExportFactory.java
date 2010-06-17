@@ -15,7 +15,8 @@ import at.redeye.Setup.dbexport.DatabaseExport;
  */
 public class DBLocalExportFactory extends DBExImpFactory
 {
-    DatabaseExport getNewExporter( Root root, String target_file_name )
+    @Override
+    public DatabaseExport getNewExporter( Root root, String target_file_name )
     {
         return new DBExportFilter( root, target_file_name );
     }
