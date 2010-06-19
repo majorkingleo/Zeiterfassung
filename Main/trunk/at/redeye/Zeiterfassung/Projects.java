@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 
-import org.apache.log4j.Logger;
 
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
@@ -31,17 +30,11 @@ import at.redeye.Zeiterfassung.bindtypes.DBProjects;
  */
 public class Projects extends BaseDialog {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(Projects.class.getSimpleName());
-	TableManipulator tm;
+    private static final long serialVersionUID = 1L;
+    TableManipulator tm;
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     DBCustomers cust;
-    /** Creates new form JobTypes
-     * @param root 
-     */
+
     public Projects( Root root, DBCustomers cust ) {
         super(root, getTitle(cust));
         initComponents();
@@ -102,7 +95,7 @@ public class Projects extends BaseDialog {
                 values = trans.fetchTable(
                         projects,
                         "where " +
-                        trans.markColumn(projects.customer) + "='" + cust.id.toString() + "'"
+                        trans.markColumn(projects.customer) + "=" + cust.id.toString()
                         );
                 
 				for (DBStrukt entry : values) { 
@@ -370,7 +363,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
             
             getTransaction().updateValues(
                 "delete from " + entry.getName() + " where " +
-                getTransaction().markColumn("id") + " = '" + ((Integer)entry.id.getValue()).toString() + "'"
+                getTransaction().markColumn("id") + " = " + ((Integer)entry.id.getValue()).toString()
                 );
             
             values.remove(i);
