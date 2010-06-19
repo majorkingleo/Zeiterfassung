@@ -1,7 +1,5 @@
 package at.redeye.Zeiterfassung;
 
-import at.redeye.Setup.dbexport.AutoImportDB;
-import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
 import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
 import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
@@ -201,6 +199,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		
             PrmDBInit prmDBInit = new PrmDBInit(root);
             prmDBInit.initDb();
+
+           initIfSet("LOOKANDFEEL", false);
 
             setLookAndFeel(root);
 		
