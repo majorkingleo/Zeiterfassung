@@ -119,26 +119,7 @@ public class JobTypes extends BaseDialog {
                       return false;
                    }
                // }
-           }
-           
-           if( !type.name.toString().matches("....*") )
-           {
-        	   logger.error("Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
-            				   "oder der eingegebene Text '" + 
-            				   (type.name.getValue().toString().isEmpty() ?
-            						   "   " : type.name.getValue()) + 
-                       			"' ist zu kurz.");
-               JOptionPane.showMessageDialog(null,
-            		   StringUtils.autoLineBreak(
-            				   "Bei Eintrag " + counter1 + " fehlt der Kommentar, " +
-            				   "oder der eingegebene Text '" + 
-            				   (type.name.getValue().toString().isEmpty() ?
-            						   "   " : type.name.getValue()) + 
-                       			"' ist zu kurz."),
-                       "Fehler",
-                       JOptionPane.OK_OPTION);
-               return false;
-           }
+           }          
        }
         
        return true;
