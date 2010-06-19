@@ -23,7 +23,7 @@ public class CheckConfig extends CheckConfigBase
     {
         super( root );
 
-        if( !StringUtils.isYes(module_launcher.getStartupParam(null, null, "DONT_WIZARD_ON_INITIAL_RUN") ) )
+        if( !StringUtils.isYes(module_launcher.getStartupParam(null, "DONT_WIZARD_ON_INITIAL_RUN", "DONT_WIZARD_ON_INITIAL_RUN") ) )
         {
             addCheck( new InitialRun(root) );
         }

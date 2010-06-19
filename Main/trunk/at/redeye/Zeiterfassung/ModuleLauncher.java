@@ -1,5 +1,7 @@
 package at.redeye.Zeiterfassung;
 
+import at.redeye.Setup.dbexport.AutoImportDB;
+import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
 import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
 import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
@@ -41,7 +43,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		at.redeye.UserManagement.UserManagementListener {
 
 	private UserManagementInterface um = null;
-	private boolean first_run = true;
+	private boolean first_run = true;        
 
 	public ModuleLauncher(String[] args) {
             super(args);            
@@ -81,6 +83,9 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                 configureLogging();
 
                 initDBConnectionFromParams();
+
+                if( !autoImportDBStep1() )
+                    return;
 
             FrameWorkConfigDefinitions.LookAndFeel.addPrmListener(new PrmListener() {
 
@@ -165,6 +170,9 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		root.getBindtypeManager().register(new DBSubProjects());
 
 		configureLogging();                                
+
+                if( !autoImportDBStep2() )
+                    return;
 
                 //DoDBImport.importDBSilent(root,"/home/martin/zes.zip");
                 

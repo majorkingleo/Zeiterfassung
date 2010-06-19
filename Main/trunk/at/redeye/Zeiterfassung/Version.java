@@ -13,7 +13,7 @@ public class Version {
     
     public static String getVersion()
     {		
-        return "0.6.5";
+        return "0.7";
     }
     
 }
