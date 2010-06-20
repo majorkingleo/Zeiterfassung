@@ -291,11 +291,34 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		checkTableVersions();
 
 
+                // Das wird benötigt, für den Demo mode.
+                String startup_mon = getStartupParam("INITIAL_MON");
+                String startup_year = getStartupParam("INITIAL_YEAR");
 
-		// Don't start as thread, because BaseDialog attempts wrong closing of
-		// application
-		new MainWin(root).setVisible(true);
+                boolean failed = true;
 
+                if( startup_mon != null &&
+                    startup_year != null )
+                {
+                    try {
+                        int mon = Integer.parseInt(startup_mon);
+                        int year = Integer.parseInt(startup_year);
+
+                        new MainWin(root,mon,year).setVisible(true);
+
+                        failed = false;
+
+                    } catch ( NumberFormatException ex ) {
+                        logger.error(StringUtils.exceptionToString(ex));
+                    }
+                }
+
+                if( failed )
+                {
+                    // Don't start as thread, because BaseDialog attempts wrong closing of
+                    // application
+                    new MainWin(root).setVisible(true);
+                }
                 //DoDBExport.exportDBSilent(root,"/home/martin/test_db.zip");                
 	}
 

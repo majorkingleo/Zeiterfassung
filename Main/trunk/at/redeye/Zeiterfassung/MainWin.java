@@ -67,6 +67,17 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
     private boolean customers_checked= false;
     private boolean upm_checked= false;
 
+    public MainWin(Root root, int mon, int year ) {
+        super( root, "Zeiterfassung" );
+
+        initComponents();
+
+        this.year = year;
+        this.mon = mon;
+
+        initCommon();
+    }
+
         /** Creates new form MainWin
          * @param root 
          */
@@ -74,13 +85,18 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         super( root, "Zeiterfassung" );
         
         initComponents();
-        
-        month.setInfoRenderer(new TimeEntryRenderer(getTransaction(), root, cache,merger));
-        
+
         DateMidnight today = new DateMidnight();
-        
-        year = today.getYear();        
+
+        year = today.getYear();
         mon = today.getMonthOfYear();
+
+        initCommon();
+    }
+
+    private void initCommon()
+    {
+        month.setInfoRenderer(new TimeEntryRenderer(getTransaction(), root, cache,merger));                      
 
         if (root.getSetup().initialRun()) {
             // Wurde das Programm zum ersten mal gestartet, dann
