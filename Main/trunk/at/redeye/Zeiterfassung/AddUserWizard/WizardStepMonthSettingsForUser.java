@@ -54,6 +54,7 @@ public class WizardStepMonthSettingsForUser extends WizardBaseWindow implements 
     public void onInit() {
         setGuestContent();
         super.setVisible(true);
+        dlg.reload();
     }
 
     @Override

@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -42,7 +44,8 @@ public class UserPerMonth extends BaseDialog {
 
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     TableManipulator tm;        
-    
+    UserQuery user_query;
+
     /** Creates new form UserPerMonth */
     public UserPerMonth( Root root )
     {
@@ -66,7 +69,9 @@ public class UserPerMonth extends BaseDialog {
 
     private void initCommon()
     {
-        DBUserPerMonth upm = new DBUserPerMonth( new UserQuery( getTransaction() ));
+        user_query = new UserQuery( getTransaction() );
+
+        DBUserPerMonth upm = new DBUserPerMonth( user_query );
 
         tm = new TableManipulator(root,jTContent, upm);
 
@@ -241,6 +246,24 @@ public class UserPerMonth extends BaseDialog {
         }
         
         return true;
+    }
+
+    public void reload()
+    {
+        reload(false);
+    }
+
+    public void reload( boolean autombox )
+    {
+        user_query.refresh();
+
+        tm.prepareTable();
+
+        feed_table(autombox);
+
+        tm.autoResize();
+
+        
     }
 
     private void feed_table() {
@@ -454,7 +477,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
             
             getTransaction().updateValues(
                 "delete from " + entry.getName() + " where " +
-                getTransaction().markColumn("id") + " = '" + ((Integer)entry.id.getValue()).toString() + "'"
+                getTransaction().markColumn("id") + " = " + ((Integer)entry.id.getValue()).toString()
                 );             
             
             values.remove(i);
