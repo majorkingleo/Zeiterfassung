@@ -549,7 +549,6 @@ public class BookDay extends BaseDialog {
 }//GEN-LAST:event_jBCloseActionPerformed
 
 private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
-    // TODO add your handling code here:
 
     if( !checkAnyAndSingleSelection(jTContent))
         return;
@@ -570,7 +569,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
             
             getTransaction().updateValues(
                 "delete from " + entry.getName() + " where " +
-                getTransaction().markColumn("id") + " = '" + ((Integer)entry.id.getValue()).toString() + "'"
+                getTransaction().markColumn("id") + " = " + ((Integer)entry.id.getValue()).toString() 
                 );
             
             setEdited();
