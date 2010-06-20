@@ -1,10 +1,12 @@
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
 import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
 import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
 import at.redeye.Setup.ConfigCheck.CheckConfigBase;
 import at.redeye.FrameWork.base.BaseModuleLauncher;
+import at.redeye.FrameWork.base.DBConnection;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -18,6 +20,7 @@ import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.prm.impl.PrmDBInit;
 import at.redeye.FrameWork.base.prm.impl.PrmDefaultCheckSuite;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
+import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
@@ -36,6 +39,8 @@ import at.redeye.Zeiterfassung.bindtypes.DBProjects;
 import at.redeye.Zeiterfassung.bindtypes.DBSubProjects;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class ModuleLauncher extends BaseModuleLauncher implements
 		at.redeye.UserManagement.UserManagementListener {
@@ -138,7 +143,11 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		boolean wizardStarted = false;
 
-		CheckConfigBase check_config = new CheckConfig(root, this);
+                CheckConfigBase check_config = null;
+
+                // der Wizard wird im Singleuser Mode nicht benötigt.
+                if( !at.redeye.Dongle.AppliactionModes.getAppliactionModes().isSingleUser() )
+                    check_config = new CheckConfig(root, this);
 
 		setCommonLoggingLevel();
 
@@ -175,7 +184,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                 //DoDBImport.importDBSilent(root,"/home/martin/zes.zip");
                 
 
-            if (check_config.shouldPopUpWizard()) {
+            if (check_config != null && check_config.shouldPopUpWizard()) {
 
                 ConfigWizard config_wizard = new ConfigWizard(root, new WizardListener() {
 
@@ -202,8 +211,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
            initIfSet("LOOKANDFEEL", false);
 
-            setLookAndFeel(root);
-		
+           setLookAndFeel(root);
 
 		if (first_run)
 			um.addUMListener(this);
@@ -221,7 +229,16 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 						.setLogo("/at/redeye/Zeiterfassung/resources/icons/redeye15b.png");
 			}
 			if (wizardStarted == false) {
+
+                            if( at.redeye.Dongle.AppliactionModes.getAppliactionModes().isSingleUser() )
+                            {
+                                loadDefaultUser( "user" );
+                                accessGranted();
+                            }
+                            else
+                            {
 				um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
+                            }
 			}
 
 		} else {
@@ -290,6 +307,47 @@ public class ModuleLauncher extends BaseModuleLauncher implements
     public void openLoginDialog() {
         if( um != null )
             um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
+    }
+
+    public void loadDefaultUser( final String user )
+    {
+        AutoLogger al = new AutoLogger(BaseModuleLauncher.class.getName() ) {
+
+            @Override
+            public void do_stuff() throws Exception {
+                DBConnection con = root.getDBConnection();
+
+                Transaction trans = con.getDefaultTransaction();
+                DBPb pb = new DBPb();
+                Vector<DBPb> res = trans.fetchTable2(pb, "where " + trans.markColumn(pb.login) + "='" + user +"'" );
+
+                if( res.size() > 0 )
+                {
+                    root.setAktivUser(res.get(0));
+                }
+                else
+                {
+                    logger.info("user " + user + " not found in database. Creating default user.");
+                    logical_failure = true;
+                }
+            }
+        };
+
+        if( al.isFailed() )
+        {
+            logger.error("loading default user failed, createing one");
+
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            DBPb pb = new DBPb();
+            map.put("name", "Initiales Setup");
+            map.put("pwd", "  ---  ");
+            map.put("login", user);
+            map.put("plevel",
+                    UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN);
+            map.put("locked", UserManagementInterface.UM_ACCOUNT_UNLOCKED);
+            pb.consume(map);
+            root.setAktivUser(pb);
+        }
     }
 
 }

@@ -38,7 +38,6 @@ import at.redeye.FrameWork.utilities.calendar.HolidayMerger;
 import at.redeye.FrameWork.utilities.calendar.SwitzerlandHolidays;
 import at.redeye.FrameWork.widgets.calendarday.CalendarDay;
 import at.redeye.FrameWork.widgets.calendarday.DayEventListener;
-import at.redeye.Setup.dbexport.DatabaseExport;
 import at.redeye.Setup.dbexport.ExportDialog;
 import at.redeye.Setup.dbexport.ImportDialog;
 import at.redeye.UserManagement.UserManagementDialogs;
@@ -150,7 +149,15 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             jMMonthBlocks.setVisible(false);
             jMExtraHolidays.setVisible(false);
         }
-        
+
+        if( at.redeye.Dongle.AppliactionModes.getAppliactionModes().isSingleUser() )
+        {
+            jMDatabase.setVisible(false);
+            jMAddUser.setVisible(false);
+            jMLogout.setVisible(false);
+            jMSetupWizard.setVisible(false);
+        }
+
         handleHolidays();
         
         month.setListener(this);
@@ -612,10 +619,18 @@ private void jMDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
 
-    setWaitCursor();
-    UserManagementInterface um = new UserDataHandling (root);
-    um.requestDialog(UserManagementDialogs.UM_ADMINISTRATION_DIALOG);
-    setNormalCursor();
+
+    if( at.redeye.Dongle.AppliactionModes.getAppliactionModes().isSingleUser() )
+    {
+        invokeDialogUnique(new ChangeUserName(root));
+    }
+    else
+    {
+        setWaitCursor();
+        UserManagementInterface um = new UserDataHandling(root);
+        um.requestDialog(UserManagementDialogs.UM_ADMINISTRATION_DIALOG);
+        setNormalCursor();
+    }
 
 }//GEN-LAST:event_jMenuItem1ActionPerformed
 
