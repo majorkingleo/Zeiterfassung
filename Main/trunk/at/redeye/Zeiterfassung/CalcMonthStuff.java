@@ -482,7 +482,7 @@ public class CalcMonthStuff
             // der letzte Tag des aktuellen Monats
             GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(), month.getMonth()-1, month.getDaysOfMonth());
             to = gdate2.getTime();
-            logger.info("Setting to to:" +  DBDateTime.getDateStr(to));
+            logger.trace("Setting to to:" +  DBDateTime.getDateStr(to));
         }
 
         Vector<DBStrukt> res = trans.fetchTable(
@@ -501,7 +501,7 @@ public class CalcMonthStuff
         Double dovertime = upm.hours_overtime.getValue();
         long lovertime = dovertime.longValue() * 60*60*1000;
 
-        logger.info(trans.getSql());
+        logger.trace(trans.getSql());
 
         Vector<DBTimeEntries> last_day = new Vector<DBTimeEntries>();
 
@@ -530,7 +530,7 @@ public class CalcMonthStuff
 
                     if( ot > 0 )
                     {
-                        logger.info( DBDateTime.getDateStr(entry.from.getValue()) + " added " + ot + " to overtime.");
+                        logger.trace( DBDateTime.getDateStr(entry.from.getValue()) + " added " + ot + " to overtime.");
                     }
 
                     lovertime += ot;
@@ -545,7 +545,7 @@ public class CalcMonthStuff
                         new HMSTime(entry.calcDuration()).toString("HH:mm"),
                         entry.comment.getValue());
 
-            logger.info(msg);
+            logger.trace(msg);
         }
 
         if( last_day.size() > 0 )
@@ -554,7 +554,7 @@ public class CalcMonthStuff
 
             if( ot > 0 )
             {
-                  logger.info( DBDateTime.getDateStr(last_day.get(0).from.getValue()) + " added " + ot + " to overtime.");
+                  logger.trace( DBDateTime.getDateStr(last_day.get(0).from.getValue()) + " added " + ot + " to overtime.");
             }
 
             lovertime += ot;
