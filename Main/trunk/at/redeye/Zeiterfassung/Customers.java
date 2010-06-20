@@ -505,7 +505,7 @@ private void jBAddressesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 }//GEN-LAST:event_jBAddressesActionPerformed
 
 private void jBProjectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBProjectsActionPerformed
-    // TODO add your handling code here:
+    
     if (!checkAnyAndSingleSelection(jTContent)) {
         return;
     }

@@ -114,7 +114,7 @@ public class CustomersAddresses extends BaseDialog {
                 values = trans.fetchTable(
                         cust_addr,
                         "where " +
-                        trans.markColumn(cust_addr.customer) + "='" + cust.id.toString() + "'"
+                        trans.markColumn(cust_addr.customer) + "=" + cust.id.toString()
                         );
                 
 				for (DBStrukt entry : values) { 
