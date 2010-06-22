@@ -889,8 +889,7 @@ private void jMDBExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     ExportDialog exporter = new ExportDialog(root);
 
     invokeDialogUnique(exporter);
-
-    exporter.setExImportFactory(new DBLocalExportFactory());
+    
     exporter.doExport();
 
 }//GEN-LAST:event_jMDBExportActionPerformed
