@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package at.redeye.Zeiterfassung;
+package at.redeye.Zeiterfassung.reports;
 
 import java.sql.Time;
 import java.util.Date;

@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.Zeiterfassung.reports.MonthReportPerUser;
 import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
 import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
 import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
@@ -48,6 +49,7 @@ import at.redeye.Zeiterfassung.ConfigWizard.ConfigWizard;
 import at.redeye.Zeiterfassung.bindtypes.DBCustomers;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import at.redeye.Zeiterfassung.reports.activity.MonthlyReportActivity;
 import java.util.Locale;
 
 /**
@@ -215,8 +217,10 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         if( !StringUtils.isYes(value) )
         {
             JMDefaultData.setVisible(false);
+            jMMonthActivity.setVisible(false);
         } else {
             JMDefaultData.setVisible(true);
+            jMMonthActivity.setVisible(true);
         }
     }
 
@@ -267,6 +271,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         JMCustomers = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMMonthReport = new javax.swing.JMenuItem();
+        jMMonthActivity = new javax.swing.JMenuItem();
         jMenuInfo = new javax.swing.JMenu();
         jMInfo = new javax.swing.JMenuItem();
         jMMemInfo = new javax.swing.JMenuItem();
@@ -566,6 +571,14 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
             }
         });
         jMenu1.add(jMMonthReport);
+
+        jMMonthActivity.setText("Monatsübersicht Aktivitäten");
+        jMMonthActivity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMMonthActivityActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMMonthActivity);
 
         jMenuBar1.add(jMenu1);
 
@@ -929,6 +942,14 @@ private void jMDBImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
 }//GEN-LAST:event_jMDBImportActionPerformed
 
+private void jMMonthActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthActivityActionPerformed
+
+    MonthlyReportActivity mra = new MonthlyReportActivity(root,month.getMonth(), month.getYear());
+    
+    invokeDialogUnique(mra);
+
+}//GEN-LAST:event_jMMonthActivityActionPerformed
+
 
 
 
@@ -1030,6 +1051,7 @@ public void close()
     private javax.swing.JMenuItem jMLocalConfig;
     private javax.swing.JMenuItem jMLogout;
     private javax.swing.JMenuItem jMMemInfo;
+    private javax.swing.JMenuItem jMMonthActivity;
     private javax.swing.JMenuItem jMMonthBlocks;
     private javax.swing.JMenuItem jMMonthReport;
     private javax.swing.JMenuItem jMSetupWizard;

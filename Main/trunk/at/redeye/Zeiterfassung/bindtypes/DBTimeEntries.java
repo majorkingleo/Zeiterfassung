@@ -128,8 +128,8 @@ public class DBTimeEntries extends DBStrukt {
                     ((DBSqlAsInteger)sub_project).query);
     }
     
-    /*
-     * return the duraction in millis between from an to
+    /**
+     * @return the duraction in millis between from an to
      */ 
     public long calcDuration()
     {

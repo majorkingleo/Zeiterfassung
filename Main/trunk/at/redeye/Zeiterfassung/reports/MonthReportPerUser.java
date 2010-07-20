@@ -4,11 +4,10 @@
  * Created on 6. März 2009, 10:26
  */
 
-package at.redeye.Zeiterfassung;
+package at.redeye.Zeiterfassung.reports;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Locale;
 import java.util.Vector;
 
 import org.joda.time.DateMidnight;
@@ -168,7 +167,7 @@ public class MonthReportPerUser extends BaseDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(minusMon)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
