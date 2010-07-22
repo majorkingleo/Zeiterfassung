@@ -63,7 +63,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                         //+ " like '" 
                         //+ new DateMidnight(year, mon, 1).toString("yyyy-MM-") + "%'"
                         + trans.getPeriodStmt("from", new DateMidnight(year, mon, 1), 
-                        		new DateMidnight(year, mon+1, 1))
+                        		new DateMidnight(year, mon, 1).plusMonths(1))
                         + " order by " + trans.markColumn("from");
 
                 data = trans.fetchTable(new DBTimeEntries(), where);
