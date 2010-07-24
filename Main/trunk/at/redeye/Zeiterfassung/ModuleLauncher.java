@@ -46,7 +46,10 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		at.redeye.UserManagement.UserManagementListener {
 
 	private UserManagementInterface um = null;
-	private boolean first_run = true;        
+	private boolean first_run = true;
+        private long start = System.currentTimeMillis();
+        private MainWin main_win;
+        private Thread prefetch_main_win_thread;
 
 	public ModuleLauncher(String[] args) {
             super(args);            
@@ -54,7 +57,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		String name = getStartupParam("appname", "appname", "APPNAME","MOMM");
 
 		String url = "";
-		String title;
+		String title;                 
 
 		if (at.redeye.Dongle.AppliactionModes.getAppliactionModes()
 				.isDemoVersion()) {
@@ -127,6 +130,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 	public void relogin(boolean try_auto_login) {
 		root.closeAllWindowsNoAppExit();
 
+                main_win = null;
+
                 if( !try_auto_login )
                     um.setAutoLogin(false);
 
@@ -135,6 +140,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
         public void reopen()
         {
+            main_win = null;
+            prefetch_main_win_thread = null;
             root.closeAllWindowsNoAppExit();
             accessGranted();
         }
@@ -145,13 +152,50 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
                 CheckConfigBase check_config = null;
 
+            prefetch_main_win_thread = new Thread() {
+
+                @Override
+                public void run() {
+
+                    initIfSet("LOOKANDFEEL", false);
+                    setLookAndFeel(root);
+ 
+                    main_win = new MainWin(root, true);
+
+               }
+            };
+
+            prefetch_main_win_thread.start();            
+
+
                 // der Wizard wird im Singleuser Mode nicht benötigt.
                 if( !at.redeye.Dongle.AppliactionModes.getAppliactionModes().isSingleUser() )
                     check_config = new CheckConfig(root, this);
 
+                 System.out.println("before setCommonLoggingLevel time: " + (System.currentTimeMillis() - start ));
+
 		setCommonLoggingLevel();
 
+                AppConfigDefinitions.registerDefinitions();
+                FrameWorkConfigDefinitions.registerDefinitions();
+            root.getBindtypeManager().register(new DBPb());
+            root.getBindtypeManager().register(new DBSequences());
+            root.getBindtypeManager().register(new DBTimeEntries());
+            root.getBindtypeManager().register(new DBJobType());
+            root.getBindtypeManager().register(new DBUserPerMonth());
+            root.getBindtypeManager().register(new DBConfig());
+            root.getBindtypeManager().register(new DBExtraHolidays());
+            root.getBindtypeManager().register(new DBMonthBlocks());
+            root.getBindtypeManager().register(new DBCustomers());
+            root.getBindtypeManager().register(new DBCustomerAddresses());
+            root.getBindtypeManager().register(new DBProjects());
+            root.getBindtypeManager().register(new DBSubProjects());
+
+                    configureLogging();
+
 		boolean failed_connect_db = true;
+
+                System.out.println("before loadDBConnectionFromSetup time: " + (System.currentTimeMillis() - start ));
 
 		try {
 			if (root.loadDBConnectionFromSetup()) {
@@ -159,30 +203,15 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 			}
 		} catch (NoClassDefFoundError ex) {
 			System.out.println(ex);
-		}
+		}                   
 
-		AppConfigDefinitions.registerDefinitions();
-		FrameWorkConfigDefinitions.registerDefinitions();
-		root.getBindtypeManager().register(new DBPb());
-		root.getBindtypeManager().register(new DBSequences());
-		root.getBindtypeManager().register(new DBTimeEntries());
-		root.getBindtypeManager().register(new DBJobType());
-		root.getBindtypeManager().register(new DBUserPerMonth());
-		root.getBindtypeManager().register(new DBConfig());
-		root.getBindtypeManager().register(new DBExtraHolidays());
-		root.getBindtypeManager().register(new DBMonthBlocks());
-		root.getBindtypeManager().register(new DBCustomers());
-		root.getBindtypeManager().register(new DBCustomerAddresses());
-		root.getBindtypeManager().register(new DBProjects());
-		root.getBindtypeManager().register(new DBSubProjects());
-
-		configureLogging();                                
+                System.out.println("before autoImportDBStep2 time: " + (System.currentTimeMillis() - start ));
 
                 if( !autoImportDBStep2() )
                     return;
 
                 //DoDBImport.importDBSilent(root,"/home/martin/zes.zip");
-                
+                 System.out.println("before check_config time: " + (System.currentTimeMillis() - start ));
 
             if (check_config != null && check_config.shouldPopUpWizard()) {
 
@@ -205,13 +234,10 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
                 wizardStarted = true;
             }
-		
-            PrmDBInit prmDBInit = new PrmDBInit(root);
-            prmDBInit.initDb();
 
-           initIfSet("LOOKANDFEEL", false);
+            System.out.println("PrmDBInit time: " + (System.currentTimeMillis() - start ));
 
-           setLookAndFeel(root);
+           System.out.println("before UM time: " + (System.currentTimeMillis() - start ));
 
 		if (first_run)
 			um.addUMListener(this);
@@ -236,7 +262,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                                 accessGranted();
                             }
                             else
-                            {
+                            {                               
 				um.requestDialog(UserManagementDialogs.UM_LOGIN_DIALOG);
                             }
 			}
@@ -254,6 +280,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 	@Override
 	public void accessGranted() {
+
+            System.out.println("accessGranted time: " + (System.currentTimeMillis() - start ));
 
 		// Now the user is known - apply allowed value to AutoLoginUser-PRM
 		String[] autoLoginValues = { root.getLogin(), "" }; // myself or nothing
@@ -288,14 +316,28 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		}
 
-		checkTableVersions();
+                Thread t = new Thread(){
 
+                    @Override
+                    public void run()
+                    {
+                        checkTableVersions();
+
+                        PrmDBInit prmDBInit = new PrmDBInit(root);
+                        prmDBInit.initDb();
+                    }
+                };
+
+                t.start();
+		
 
                 // Das wird benötigt, für den Demo mode.
                 String startup_mon = getStartupParam("INITIAL_MON");
                 String startup_year = getStartupParam("INITIAL_YEAR");
 
                 boolean failed = true;
+
+                System.out.println("XXXXXXXXX time: " + (System.currentTimeMillis() - start ));
 
                 if( startup_mon != null &&
                     startup_year != null )
@@ -304,7 +346,9 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                         int mon = Integer.parseInt(startup_mon);
                         int year = Integer.parseInt(startup_year);
 
-                        new MainWin(root,mon,year).setVisible(true);
+                        wait_for_main_win_thread();
+                        main_win.initAllNow(mon, year);
+                        main_win.setVisible(true);
 
                         failed = false;
 
@@ -317,7 +361,10 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                 {
                     // Don't start as thread, because BaseDialog attempts wrong closing of
                     // application
-                    new MainWin(root).setVisible(true);
+                    // new MainWin(root).setVisible(true);
+                    wait_for_main_win_thread();
+                    main_win.initAllNow();
+                    main_win.setVisible(true);
                 }
                 //DoDBExport.exportDBSilent(root,"/home/martin/test_db.zip");                
 	}
@@ -373,4 +420,17 @@ public class ModuleLauncher extends BaseModuleLauncher implements
         }
     }
 
+    private void wait_for_main_win_thread()
+    {
+        try {
+            if( main_win == null && prefetch_main_win_thread == null ) {
+                main_win = new MainWin(root);
+            }  else if (main_win == null) {
+                prefetch_main_win_thread.join();
+            }
+
+        } catch( InterruptedException ex ) {
+            logger.error(StringUtils.exceptionToString(ex));
+        }
+    }
 }

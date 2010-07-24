@@ -96,6 +96,40 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         initCommon();
     }
 
+     public MainWin(Root root, boolean no_init ) {
+        super( root, "Zeiterfassung" );
+
+        initComponents();
+
+        if( !no_init )
+        {
+            DateMidnight today = new DateMidnight();
+
+            year = today.getYear();
+            mon = today.getMonthOfYear();
+
+            initCommon();
+         }
+    }
+
+    public void initAllNow() {
+        DateMidnight today = new DateMidnight();
+
+        year = today.getYear();
+        mon = today.getMonthOfYear();
+
+        initCommon();
+    }
+
+    public void initAllNow(int mon, int year)
+    {
+        this.year = year;
+        this.mon = mon;
+
+        initCommon();
+    }
+
+
     private void initCommon()
     {
         month.setInfoRenderer(new TimeEntryRenderer(getTransaction(), root, cache,merger));                      
