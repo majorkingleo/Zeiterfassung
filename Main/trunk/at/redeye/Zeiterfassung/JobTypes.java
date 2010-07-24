@@ -45,7 +45,7 @@ public class JobTypes extends BaseDialog {
         super(root, "Tätigkeiten");
         initComponents();
 
-        initCommon();
+        initCommon(false);
     }
 
     public JobTypes(Root root, Wizard parent) {
@@ -54,10 +54,10 @@ public class JobTypes extends BaseDialog {
 
         jBClose.setVisible(false);
 
-        initCommon();
+        initCommon(true);
     }
 
-    private void initCommon()
+    private void initCommon(boolean no_new_entry)
     {
         DBJobType jt = new DBJobType();
 
@@ -79,7 +79,8 @@ public class JobTypes extends BaseDialog {
         feed_table(false);
 
         if (values.size() == 0) {
-            newEntry(false);
+            if( !no_new_entry )
+                newEntry(false);
         }
 
         tm.autoResize();
