@@ -160,8 +160,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                     initIfSet("LOOKANDFEEL", false);
                     setLookAndFeel(root);
  
-                    main_win = new MainWin(root, true);
-
+                    main_win = new MainWin(root, true );
                }
             };
 
@@ -227,7 +226,10 @@ public class ModuleLauncher extends BaseModuleLauncher implements
                     }
                 });
 
-
+                wait_for_main_win_thread();
+                // weil wir sonst asynchron auf der event queue rumfuhrwerken..
+                // is nix gut.
+                
                 config_wizard.startWizard();
 
                 closeSplash();

@@ -96,8 +96,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         initCommon();
     }
 
-     public MainWin(Root root, boolean no_init ) {
-        super( root, "Zeiterfassung" );
+     public MainWin(Root root, boolean no_init) {
+        super( root, "Zeiterfassung",  no_init );
 
         initComponents();
 
@@ -118,6 +118,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         year = today.getYear();
         mon = today.getMonthOfYear();
 
+        root.informWindowOpened(this);
+
         initCommon();
     }
 
@@ -125,6 +127,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
     {
         this.year = year;
         this.mon = mon;
+
+        root.informWindowOpened(this);
 
         initCommon();
     }
