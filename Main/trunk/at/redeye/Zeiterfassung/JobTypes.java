@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.BaseDialogBase;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -421,7 +422,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-    invokeDialogUnique(new LocalHelpWin(root, "JobTypes"));
+    invokeDialogUnique( new LocalHelpWin(root, "JobTypes"));
 
 }//GEN-LAST:event_jBHelpActionPerformed
 

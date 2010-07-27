@@ -6,6 +6,8 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.BaseDialogBase;
+import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher2;
 import at.redeye.Zeiterfassung.reports.MonthReportPerUser;
 import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
 import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
@@ -814,7 +816,7 @@ private void jMMonthReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-    invokeDialogUnique(new LocalHelpWin(root,"MainWin"));
+    invokeDialogUnique((BaseDialogBase) new LocalHelpWin(root,"MainWin"));
     
 }//GEN-LAST:event_jBHelpActionPerformed
 
@@ -883,7 +885,7 @@ private void jMLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
 private void jMCreateDesktopIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMCreateDesktopIconActionPerformed
 
-    DesktopLauncher launcher = new DesktopLauncher(root.getAppName(), root.getWebStartUrl(), root.getAppTitle() );
+    DesktopLauncher launcher = new DesktopLauncher2( root );
 
     if( !launcher.createDesktopIcon() ) {
         JOptionPane.showMessageDialog(this, "Das Desktopicon konnte leider nicht erzeugt werden.");
@@ -1323,6 +1325,11 @@ public void close()
 
     public void updateMonthSumInfo() {
         updateMonthSumInfo(true);
+    }
+
+    public void setCreateDesktopIconEnabled( boolean state )
+    {
+        jMCreateDesktopIcon.setEnabled( state );
     }
 
 }

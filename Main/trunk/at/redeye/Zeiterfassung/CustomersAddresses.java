@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.BaseDialogBase;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -354,7 +355,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
- invokeDialogUnique(new LocalHelpWin(root, "CustomerAddresses"));
+ invokeDialogUnique( new LocalHelpWin(root, "CustomerAddresses"));
 
 }//GEN-LAST:event_jBHelpActionPerformed
 

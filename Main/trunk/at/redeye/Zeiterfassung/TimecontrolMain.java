@@ -23,13 +23,9 @@ public class TimecontrolMain {
 
 	public static void main(String[] args) {
 		
-        // Proxyeinstellungen von Java Ausschalten, sonst versucht sich 
-        // der oracle Treiber über den Proxy zu DB zu verbinden.
-        ProxySelector.setDefault(null);
+            ml = new ModuleLauncher(args);
 
-		ml = new ModuleLauncher(args);
-
-        ml.invoke();
+            ml.invoke();
 	}
 
 }

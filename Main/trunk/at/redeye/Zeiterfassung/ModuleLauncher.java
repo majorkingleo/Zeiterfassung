@@ -19,6 +19,7 @@ import at.redeye.FrameWork.base.prm.PrmListener;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.prm.impl.PrmDBInit;
 import at.redeye.FrameWork.base.prm.impl.PrmDefaultCheckSuite;
+import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.FrameWork.base.sequence.bindtypes.DBSequences;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
@@ -88,6 +89,11 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
                 configureLogging();
 
+                // das machen wir hier, noch vor der ersten DB Verbindung,
+                // da sonst oracle über den default Proxy geht :-(
+
+                new AutoProxyHandler(root);
+
                 initDBConnectionFromParams();
 
                 if( !autoImportDBStep1() )
@@ -152,20 +158,19 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
                 CheckConfigBase check_config = null;
 
-            prefetch_main_win_thread = new Thread() {
+                prefetch_main_win_thread = new Thread() {
 
                 @Override
                 public void run() {
 
                     initIfSet("LOOKANDFEEL", false);
                     setLookAndFeel(root);
- 
-                    main_win = new MainWin(root, true );
+
+                    main_win = new MainWin(root, true );                    
                }
             };
 
             prefetch_main_win_thread.start();            
-
 
                 // der Wizard wird im Singleuser Mode nicht benötigt.
                 if( !at.redeye.Dongle.AppliactionModes.getAppliactionModes().isSingleUser() )
@@ -275,8 +280,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		first_run = false;
 
-		updateJnlp();
-                  
+		updateJnlp2();
                  
 	}
 
@@ -434,5 +438,13 @@ public class ModuleLauncher extends BaseModuleLauncher implements
         } catch( InterruptedException ex ) {
             logger.error(StringUtils.exceptionToString(ex));
         }
+    }
+
+    
+
+    @Override
+    public void jnlpUpdated()
+    {
+        main_win.setCreateDesktopIconEnabled(true);
     }
 }

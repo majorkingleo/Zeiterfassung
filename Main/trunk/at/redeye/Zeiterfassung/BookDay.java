@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.base.BaseDialogBase;
 import at.redeye.FrameWork.base.tablemanipulator.validators.TimeHourMinuteValidator;
 import at.redeye.FrameWork.base.AutoLogger;
 import java.io.IOException;
@@ -582,7 +583,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-    invokeDialogUnique(new LocalHelpWin(root, "BookDay"));
+    invokeDialogUnique( new LocalHelpWin(root, "BookDay"));
 
 }//GEN-LAST:event_jBHelpActionPerformed
 
