@@ -6,7 +6,6 @@
 
 package at.redeye.Zeiterfassung;
 
-import at.redeye.FrameWork.base.BaseDialogBase;
 import at.redeye.FrameWork.base.tablemanipulator.validators.TimeHourMinuteValidator;
 import at.redeye.FrameWork.base.AutoLogger;
 import java.io.IOException;
@@ -22,6 +21,7 @@ import org.joda.time.DateMidnight;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.UniqueDialogHelper;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
@@ -689,6 +689,25 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
         return times;
      }
+
+
+    @Override
+    public String getUniqueDialogIdentifier(Object requester) {
+
+        if( requester instanceof String )
+        {
+            String reason = (String) requester;
+
+            // der is dafür zuständig, dass ein dialog nur einmal geöffnet werden kann,
+            // aber in unserem Fall er den Dialog mehrfach öffnen, aber dor größen sollen
+            // alle gleich sein.
+            if( reason.equals(UniqueDialogHelper.ID_STRING) )
+                return super.getUniqueDialogIdentifier(requester);
+        }
+
+        return this.getClass().getName();
+    }
+
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
