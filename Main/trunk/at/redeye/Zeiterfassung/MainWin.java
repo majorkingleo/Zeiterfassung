@@ -888,7 +888,13 @@ private void jMCreateDesktopIconActionPerformed(java.awt.event.ActionEvent evt) 
     DesktopLauncher launcher = new DesktopLauncher2( root );
 
     if( !launcher.createDesktopIcon() ) {
-        JOptionPane.showMessageDialog(this, "Das Desktopicon konnte leider nicht erzeugt werden.");
+
+        launcher = new DesktopLauncher2( root );
+
+            if( !launcher.createDesktopIcon() ) {
+
+                JOptionPane.showMessageDialog(this, "Das Desktopicon konnte leider nicht erzeugt werden.");
+            }
     }
 }//GEN-LAST:event_jMCreateDesktopIconActionPerformed
 
