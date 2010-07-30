@@ -53,7 +53,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
         private Thread prefetch_main_win_thread;
 
 	public ModuleLauncher(String[] args) {
-            super(args);            
+            super(args);           
 
 		String name = getStartupParam("appname", "appname", "APPNAME","MOMM");
 
@@ -89,12 +89,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
                 configureLogging();
 
-                // das machen wir hier, noch vor der ersten DB Verbindung,
-                // da sonst oracle über den default Proxy geht :-(
-
-                new AutoProxyHandler(root);
-
-                initDBConnectionFromParams();
+               initDBConnectionFromParams();
 
                 if( !autoImportDBStep1() )
                     return;

@@ -1,7 +1,5 @@
 package at.redeye.Zeiterfassung;
 
-import java.net.ProxySelector;
-
 public class TimecontrolMain {
 
     private static ModuleLauncher ml;
