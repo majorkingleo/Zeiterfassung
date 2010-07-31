@@ -8,8 +8,8 @@ package at.redeye.Zeiterfassung;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Vector;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -26,363 +26,395 @@ import at.redeye.Zeiterfassung.bindtypes.DBProjects;
 import at.redeye.Zeiterfassung.bindtypes.DBSubProjects;
 
 /**
- *
- * @author  martin
+ * 
+ * @author martin
  */
 public class SubProjects extends BaseDialog {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(SubProjects.class.getSimpleName());
+	private static Logger logger = Logger.getLogger(SubProjects.class
+			.getSimpleName());
 	TableManipulator tm;
-    Vector<DBStrukt> values = new Vector<DBStrukt>();
-    DBProjects project;
-    /** Creates new form JobTypes
-     * @param root 
-     */
-    public SubProjects( Root root, DBProjects project ) {
-        super(root, getTitle(project));
-        initComponents();
-        
-        this.project = project;
+	List<DBStrukt> values = new ArrayList<DBStrukt>();
+	DBProjects project;
 
-        jLTitle.setText(getTitle());
+	/**
+	 * Creates new form JobTypes
+	 * 
+	 * @param root
+	 */
+	public SubProjects(Root root, DBProjects project) {
+		super(root, getTitle(project));
+		initComponents();
 
-        DBSubProjects sub_projects = new DBSubProjects();
-        
-        tm = new TableManipulator(root,jTContent,sub_projects);
-        
-        tm.hide(sub_projects.id);
-        tm.hide(sub_projects.hist.lo_user);
-        tm.hide(sub_projects.hist.lo_zeit);
-        tm.hide(sub_projects.project);
+		this.project = project;
 
-        tm.setEditable(sub_projects.name);
-        tm.setEditable(sub_projects.currency);
-        tm.setEditable(sub_projects.hourly_rate);
-        tm.setEditable(sub_projects.locked);        
-        
-        tm.prepareTable();
-        
-        feed_table(false);
-        
-        if( values.size() == 0 )
-            newEntry(false);
+		jLTitle.setText(getTitle());
+
+		DBSubProjects sub_projects = new DBSubProjects();
+
+		tm = new TableManipulator(root, jTContent, sub_projects);
+
+		tm.hide(sub_projects.id);
+		tm.hide(sub_projects.hist.lo_user);
+		tm.hide(sub_projects.hist.lo_zeit);
+		tm.hide(sub_projects.project);
+
+		tm.setEditable(sub_projects.name);
+		tm.setEditable(sub_projects.currency);
+		tm.setEditable(sub_projects.hourly_rate);
+		tm.setEditable(sub_projects.locked);
+
+		tm.prepareTable();
+
+		feed_table(false);
+
+		if (values.size() == 0)
+			newEntry(false);
 
 		tm.autoResize();
-    }
+	}
 
-    private static String getTitle(DBProjects project)
-    {
-        return "Unterprojekte " + project.name.toString();
-    }
+	private static String getTitle(DBProjects project) {
+		return "Unterprojekte " + project.name.toString();
+	}
 
-    
-    
-    private void feed_table()
-    {
-        feed_table(true);
-    }
+	private void feed_table() {
+		feed_table(true);
+	}
 
-    private void feed_table(boolean autombox) {
-        new AutoMBox(getTitle(), autombox) {
+	private void feed_table(boolean autombox) {
+		new AutoMBox(getTitle(), autombox) {
 
 			@Override
 			public void do_stuff() throws Exception {
 
-                tm.clear();
-                clearEdited();
+				tm.clear();
+				clearEdited();
 
-                DBSubProjects subprojects = new DBSubProjects();
+				DBSubProjects subprojects = new DBSubProjects();
 
-                Transaction trans = getTransaction();
-                values = trans.fetchTable(
-                        subprojects,
-                        "where " +
-                        trans.markColumn(subprojects.project) + "='" + project.id.toString() + "'"
-                        );
-                
-				for (DBStrukt entry : values) { 
+				Transaction trans = getTransaction();
+				values = trans.fetchTable(subprojects,
+						"where " + trans.markColumn(subprojects.project) + "='"
+								+ project.id.toString() + "'");
+
+				for (DBStrukt entry : values) {
 					tm.add(entry);
 				}
 			}
 		};
-    }
+	}
 
-    private void newEntry() {
-        newEntry(true);
-    }
-    
-    private void newEntry(boolean autombox) {
+	private void newEntry() {
+		newEntry(true);
+	}
 
-        DBSubProjects jt = createNewSubProjectEntry(this, project, autombox);
+	private void newEntry(boolean autombox) {
 
-        if (jt != null) {
-            tm.add(jt, true);
-            values.add(jt);
-        }
-    }
+		DBSubProjects jt = createNewSubProjectEntry(this, project, autombox);
 
-    public static DBSubProjects createNewSubProjectEntry(final BaseDialog dlg, final DBProjects parent_project, boolean display_error_box)
-    {
-        final DBSubProjects jt = new DBSubProjects();
+		if (jt != null) {
+			tm.add(jt, true);
+			values.add(jt);
+		}
+	}
 
-        AutoMBox al = new AutoMBox(getTitle(parent_project), display_error_box) {
+	public static DBSubProjects createNewSubProjectEntry(final BaseDialog dlg,
+			final DBProjects parent_project, boolean display_error_box) {
+		final DBSubProjects jt = new DBSubProjects();
 
-            @Override
-            public void do_stuff() throws Exception {
+		AutoMBox al = new AutoMBox(getTitle(parent_project), display_error_box) {
 
-                jt.id.loadFromCopy(new Integer(dlg.getNewSequenceValue(jt.getName())));
-                jt.project.loadFromCopy(parent_project.id.getValue());
-                jt.hourly_rate.loadFromCopy(parent_project.hourly_rate.getValue());
-                jt.currency.loadFromCopy(parent_project.currency.getValue());
-                jt.hist.setAnHist(dlg.getRoot().getUserName());
+			@Override
+			public void do_stuff() throws Exception {
 
-            }
-        };
+				jt.id.loadFromCopy(new Integer(dlg.getNewSequenceValue(jt
+						.getName())));
+				jt.project.loadFromCopy(parent_project.id.getValue());
+				jt.hourly_rate.loadFromCopy(parent_project.hourly_rate
+						.getValue());
+				jt.currency.loadFromCopy(parent_project.currency.getValue());
+				jt.hist.setAnHist(dlg.getRoot().getUserName());
 
-        if (al.isFailed()) {
-            return null;
-        }
+			}
+		};
 
-        return jt;
-    }
-    
-    private void insertOrUpdateValues(DBSubProjects entry)
-            throws
-            UnsupportedDBDataTypeException,
-            WrongBindFileFormatException,
-            SQLException,
-            TableBindingNotRegisteredException, 
-            IOException {
+		if (al.isFailed()) {
+			return null;
+		}
 
-        DBSubProjects e = new DBSubProjects();
+		return jt;
+	}
 
-        e.loadFromCopy(entry);
+	private void insertOrUpdateValues(DBSubProjects entry)
+			throws UnsupportedDBDataTypeException,
+			WrongBindFileFormatException, SQLException,
+			TableBindingNotRegisteredException, IOException {
 
-        if (getTransaction().fetchTableWithPrimkey(e) == false) {
-            getTransaction().insertValues(e);
-        } else {
-            getTransaction().updateValues(entry);
-        }
-    }
-  
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+		DBSubProjects e = new DBSubProjects();
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTContent = new javax.swing.JTable();
-        jBSave = new javax.swing.JButton();
-        jBNew = new javax.swing.JButton();
-        jBDel = new javax.swing.JButton();
-        jBClose = new javax.swing.JButton();
-        jLTitle = new javax.swing.JLabel();
-        jBHelp = new javax.swing.JButton();
+		e.loadFromCopy(entry);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+		if (getTransaction().fetchTableWithPrimkey(e) == false) {
+			getTransaction().insertValues(e);
+		} else {
+			getTransaction().updateValues(entry);
+		}
+	}
 
-        jTContent.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTContent);
+	/**
+	 * This method is called from within the constructor to initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is always
+	 * regenerated by the Form Editor.
+	 */
 
-        jBSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/button_ok.gif"))); // NOI18N
-        jBSave.setText("Speichern");
-        jBSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBSaveActionPerformed(evt);
-            }
-        });
+	// <editor-fold defaultstate="collapsed"
+	// desc="Generated Code">//GEN-BEGIN:initComponents
+	private void initComponents() {
 
-        jBNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/bookmark.png"))); // NOI18N
-        jBNew.setText("Neu");
-        jBNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBNewActionPerformed(evt);
-            }
-        });
+		jScrollPane1 = new javax.swing.JScrollPane();
+		jTContent = new javax.swing.JTable();
+		jBSave = new javax.swing.JButton();
+		jBNew = new javax.swing.JButton();
+		jBDel = new javax.swing.JButton();
+		jBClose = new javax.swing.JButton();
+		jLTitle = new javax.swing.JLabel();
+		jBHelp = new javax.swing.JButton();
 
-        jBDel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/edittrash.gif"))); // NOI18N
-        jBDel.setText("Löschen");
-        jBDel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBDelActionPerformed(evt);
-            }
-        });
+		setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
-        jBClose.setText("Schließen");
-        jBClose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBCloseActionPerformed(evt);
-            }
-        });
+		jTContent.setModel(new javax.swing.table.DefaultTableModel(
+				new Object[][] { { null, null, null, null },
+						{ null, null, null, null }, { null, null, null, null },
+						{ null, null, null, null } }, new String[] { "Title 1",
+						"Title 2", "Title 3", "Title 4" }));
+		jScrollPane1.setViewportView(jTContent);
 
-        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLTitle.setText("Unterprojekte");
+		jBSave.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/button_ok.gif"))); // NOI18N
+		jBSave.setText("Speichern");
+		jBSave.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jBSaveActionPerformed(evt);
+			}
+		});
 
-        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
-        jBHelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBHelpActionPerformed(evt);
-            }
-        });
+		jBNew.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/bookmark.png"))); // NOI18N
+		jBNew.setText("Neu");
+		jBNew.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jBNewActionPerformed(evt);
+			}
+		});
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jBSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBNew)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBDel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
-                        .addComponent(jBClose))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jBHelp)
-                    .addComponent(jLTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBSave)
-                    .addComponent(jBNew)
-                    .addComponent(jBClose)
-                    .addComponent(jBDel))
-                .addContainerGap())
-        );
+		jBDel.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/edittrash.gif"))); // NOI18N
+		jBDel.setText("Löschen");
+		jBDel.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jBDelActionPerformed(evt);
+			}
+		});
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+		jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
+		jBClose.setText("Schließen");
+		jBClose.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jBCloseActionPerformed(evt);
+			}
+		});
 
-private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
-// TODO add your handling code here:    
-        
+		jLTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+		jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+		jLTitle.setText("Unterprojekte");
+
+		jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
+		jBHelp.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jBHelpActionPerformed(evt);
+			}
+		});
+
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
+				getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.TRAILING)
+												.addComponent(
+														jScrollPane1,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														596, Short.MAX_VALUE)
+												.addGroup(
+														javax.swing.GroupLayout.Alignment.LEADING,
+														layout.createSequentialGroup()
+																.addComponent(
+																		jBSave)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(
+																		jBNew)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(
+																		jBDel)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																		150,
+																		Short.MAX_VALUE)
+																.addComponent(
+																		jBClose))
+												.addGroup(
+														layout.createSequentialGroup()
+																.addComponent(
+																		jLTitle,
+																		javax.swing.GroupLayout.DEFAULT_SIZE,
+																		552,
+																		Short.MAX_VALUE)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(
+																		jBHelp,
+																		javax.swing.GroupLayout.PREFERRED_SIZE,
+																		32,
+																		javax.swing.GroupLayout.PREFERRED_SIZE)))
+								.addContainerGap()));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(jBHelp)
+												.addComponent(
+														jLTitle,
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														22,
+														javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(jScrollPane1,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										303, Short.MAX_VALUE)
+								.addGap(18, 18, 18)
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.BASELINE)
+												.addComponent(jBSave)
+												.addComponent(jBNew)
+												.addComponent(jBClose)
+												.addComponent(jBDel))
+								.addContainerGap()));
+
+		pack();
+	}// </editor-fold>//GEN-END:initComponents
+
+	private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBSaveActionPerformed
+	// TODO add your handling code here:
+
 		new AutoMBox(getTitle()) {
 
 			@Override
 			public void do_stuff() throws Exception {
 				for (Integer i : tm.getEditedRows()) {
-                    
+
 					DBSubProjects entry = (DBSubProjects) values.get(i);
-                    
-                    entry.hist.setAeHist(root.getUserName());
-                    
+
+					entry.hist.setAeHist(root.getUserName());
+
 					insertOrUpdateValues(entry);
 				}
 
-				getTransaction().commit();    
-                feed_table();
+				getTransaction().commit();
+				feed_table();
 			}
-		};    
-}//GEN-LAST:event_jBSaveActionPerformed
+		};
+	}// GEN-LAST:event_jBSaveActionPerformed
 
-private void jBNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBNewActionPerformed
-// TODO add your handling code here:
-    newEntry();
-}//GEN-LAST:event_jBNewActionPerformed
+	private void jBNewActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBNewActionPerformed
+	// TODO add your handling code here:
+		newEntry();
+	}// GEN-LAST:event_jBNewActionPerformed
 
-private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCloseActionPerformed
-// TODO add your handling code here:
-    if( canClose() )
-    {
-        close();
-    }
-}//GEN-LAST:event_jBCloseActionPerformed
+	private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBCloseActionPerformed
+	// TODO add your handling code here:
+		if (canClose()) {
+			close();
+		}
+	}// GEN-LAST:event_jBCloseActionPerformed
 
-private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
-// TODO add your handling code here:
-    if( !checkAnyAndSingleSelection(jTContent) )
-        return;
-    
-    final int i = jTContent.getSelectedRow();
-    
-    if( i < 0 || i >= values.size() )
-        return;        
-    
-    
-    new AutoMBox( getTitle() ) {
-    
-        public void do_stuff() throws Exception
-        {
-            DBSubProjects entry = (DBSubProjects)values.get(i);
-            
-            getTransaction().updateValues(
-                "delete from " + entry.getName() + " where " +
-                getTransaction().markColumn("id") + " = '" + ((Integer)entry.id.getValue()).toString() + "'"
-                );
-            
-            values.remove(i);
-            tm.remove(i);
-            setEdited();
-        }
-    };        
-    
-}//GEN-LAST:event_jBDelActionPerformed
+	private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBDelActionPerformed
+	// TODO add your handling code here:
+		if (!checkAnyAndSingleSelection(jTContent))
+			return;
 
-private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
+		final int i = jTContent.getSelectedRow();
 
-    invokeDialogUnique(new LocalHelpWin(root, "Projects"));
-}//GEN-LAST:event_jBHelpActionPerformed
+		if (i < 0 || i >= values.size())
+			return;
 
+		new AutoMBox(getTitle()) {
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBClose;
-    private javax.swing.JButton jBDel;
-    private javax.swing.JButton jBHelp;
-    private javax.swing.JButton jBNew;
-    private javax.swing.JButton jBSave;
-    private javax.swing.JLabel jLTitle;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTContent;
-    // End of variables declaration//GEN-END:variables
+			public void do_stuff() throws Exception {
+				DBSubProjects entry = (DBSubProjects) values.get(i);
 
-    @Override
-    public boolean canClose() {
-        int ret = checkSave(tm);
+				getTransaction().updateValues(
+						"delete from " + entry.getName() + " where "
+								+ getTransaction().markColumn("id") + " = '"
+								+ ((Integer) entry.id.getValue()).toString()
+								+ "'");
 
-        if (ret == 1) {
-            jBSaveActionPerformed(null);
-        } else if (ret == -1) {
-            return false;
-        }
-        return true;
-    }
+				values.remove(i);
+				tm.remove(i);
+				setEdited();
+			}
+		};
 
+	}// GEN-LAST:event_jBDelActionPerformed
 
+	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBHelpActionPerformed
+
+		invokeDialogUnique(new LocalHelpWin(root, "Projects"));
+	}// GEN-LAST:event_jBHelpActionPerformed
+
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JButton jBClose;
+	private javax.swing.JButton jBDel;
+	private javax.swing.JButton jBHelp;
+	private javax.swing.JButton jBNew;
+	private javax.swing.JButton jBSave;
+	private javax.swing.JLabel jLTitle;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JTable jTContent;
+
+	// End of variables declaration//GEN-END:variables
+
+	@Override
+	public boolean canClose() {
+		int ret = checkSave(tm);
+
+		if (ret == 1) {
+			jBSaveActionPerformed(null);
+		} else if (ret == -1) {
+			return false;
+		}
+		return true;
+	}
 
 }

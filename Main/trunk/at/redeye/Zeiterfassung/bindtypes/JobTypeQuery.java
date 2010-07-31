@@ -5,64 +5,66 @@
 
 package at.redeye.Zeiterfassung.bindtypes;
 
+import java.util.List;
 import java.util.Vector;
 
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
-import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger.SqlQuery;
+import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
 
 /**
- *
+ * 
  * @author martin
  */
 public class JobTypeQuery extends DBSqlAsInteger.SqlQuery {
 
-    Vector<SqlQuery.Pair> pairs = new Vector<SqlQuery.Pair>();
-    Transaction trans;
+	Vector<SqlQuery.Pair> pairs = new Vector<SqlQuery.Pair>();
+	Transaction trans;
 
-    public JobTypeQuery( Transaction trans )
-    {
-        this.trans = trans;
-        refresh();
-    }
-    
-    @Override
-    public Vector<SqlQuery.Pair> getPossibleValues() {
-        return pairs;
-    }
+	public JobTypeQuery(Transaction trans) {
+		this.trans = trans;
+		refresh();
+	}
 
-    @Override
-    public int getDefaultValue() {
-        if( pairs.size() > 0 )
-            return pairs.get(0).val;
-        
-        return 0;
-    }
+	@Override
+	public Vector<SqlQuery.Pair> getPossibleValues() {
+		return pairs;
+	}
 
-    @Override
-    public void refresh() {
-        new AutoLogger("jobTypeQuery") {
+	@Override
+	public int getDefaultValue() {
+		if (pairs.size() > 0)
+			return pairs.get(0).val;
 
-            public void do_stuff() throws Exception {
+		return 0;
+	}
 
-                Vector<DBStrukt> res = trans.fetchTable(new DBJobType(), "where " + trans.markColumn("locked") + " = 'NEIN'");
+	@Override
+	public void refresh() {
+		new AutoLogger("jobTypeQuery") {
 
-                for (DBStrukt s : res) {
-                    DBJobType jt = (DBJobType) s;
+			public void do_stuff() throws Exception {
 
-                    String text = jt.name.toString();
+				List<DBStrukt> res = trans.fetchTable(new DBJobType(), "where "
+						+ trans.markColumn("locked") + " = 'NEIN'");
 
-                    /*
-                    if( !jt.help.toString().isEmpty() )
-                    text += " ... " + jt.help.toString();
-                     */
+				for (DBStrukt s : res) {
+					DBJobType jt = (DBJobType) s;
 
-                    pairs.add(new SqlQuery.Pair((Integer) jt.id.getValue(), text));
-                }
-            }
-        };
-    }
+					String text = jt.name.toString();
+
+					/*
+					 * if( !jt.help.toString().isEmpty() ) text += " ... " +
+					 * jt.help.toString();
+					 */
+
+					pairs.add(new SqlQuery.Pair((Integer) jt.id.getValue(),
+							text));
+				}
+			}
+		};
+	}
 
 }

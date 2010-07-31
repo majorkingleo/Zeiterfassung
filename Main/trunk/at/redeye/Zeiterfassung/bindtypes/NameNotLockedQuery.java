@@ -5,75 +5,74 @@
 
 package at.redeye.Zeiterfassung.bindtypes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger.SqlQuery;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import java.util.Vector;
 
 /**
- *
+ * 
  * @author martin
  */
-public class NameNotLockedQuery extends DBSqlAsInteger.SqlQuery
-{
-    Vector<SqlQuery.Pair> pairs = new Vector<SqlQuery.Pair>();
-    int default_value = 0;
-    Transaction trans;
-    NameIdLockedInterface strukt;    
+public class NameNotLockedQuery extends DBSqlAsInteger.SqlQuery {
 
-    public NameNotLockedQuery( Transaction trans, NameIdLockedInterface strukt )
-    {
-        this.trans = trans;
-        this.strukt = strukt;
+	List<SqlQuery.Pair> pairs = new ArrayList<SqlQuery.Pair>();
+	int default_value = 0;
+	Transaction trans;
+	NameIdLockedInterface strukt;
 
-        refresh();
-    }
-    
-    public void refresh()
-    {        
-        new AutoLogger(NameNotLockedQuery.class.getName()) {
+	public NameNotLockedQuery(Transaction trans, NameIdLockedInterface strukt) {
+		this.trans = trans;
+		this.strukt = strukt;
 
-            public void do_stuff() throws Exception {
-                
-                pairs.clear();
+		refresh();
+	}
 
-                Vector<DBStrukt> res = trans.fetchTable( strukt.getNewOne(),
-                            "where " +
-                            trans.markColumn(strukt.getLockedName()) +
-                            "= 'NEIN' " + getExtraSql() );
+	public void refresh() {
+		new AutoLogger(NameNotLockedQuery.class.getName()) {
 
-                // System.out.println( "sql: " + trans.getSql() );
+			public void do_stuff() throws Exception {
 
-                for( DBStrukt s : res )
-                {
-                    NameIdLockedInterface sub = (NameIdLockedInterface)s;
+				pairs.clear();
 
-                    String text =  sub.getNameValue().toString();
+				List<DBStrukt> res = trans.fetchTable(strukt.getNewOne(),
+						"where " + trans.markColumn(strukt.getLockedName())
+								+ "= 'NEIN' " + getExtraSql());
 
-                    pairs.add( new SqlQuery.Pair( (Integer)sub.getIdValue(), text ) );
-                }
-            }
-        };
-    }
+				// System.out.println( "sql: " + trans.getSql() );
 
-    @Override
-    public Vector<SqlQuery.Pair> getPossibleValues() {
-        return pairs;
-    }
+				for (DBStrukt s : res) {
+					NameIdLockedInterface sub = (NameIdLockedInterface) s;
 
-    @Override
-    public int getDefaultValue() {
-        if( pairs.size() > 0 )
-            return pairs.get(default_value).val;
+					String text = sub.getNameValue().toString();
 
-        return 0;
-    }
+					pairs.add(new SqlQuery.Pair((Integer) sub.getIdValue(),
+							text));
+				}
+			}
+		};
+	}
 
-    public void setNullEntryAsDefault()
-    {
-        pairs.insertElementAt(new SqlQuery.Pair(0,""), 0);
-        default_value = 0;
-    }
+	@Override
+	public List<SqlQuery.Pair> getPossibleValues() {
+		return pairs;
+	}
+
+	@Override
+	public int getDefaultValue() {
+		if (pairs.size() > 0)
+			return pairs.get(default_value).val;
+
+		return 0;
+	}
+
+	public void setNullEntryAsDefault() {
+		pairs.add(0, new SqlQuery.Pair(0, ""));
+
+		default_value = 0;
+	}
 }

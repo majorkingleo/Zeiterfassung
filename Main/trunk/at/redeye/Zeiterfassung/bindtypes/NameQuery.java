@@ -5,66 +5,67 @@
 
 package at.redeye.Zeiterfassung.bindtypes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger.SqlQuery;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import java.util.Vector;
 
 /**
- *
+ * 
  * @author martin
  */
-public class NameQuery extends DBSqlAsInteger.SqlQuery
-{
-    Vector<SqlQuery.Pair> pairs = new Vector<SqlQuery.Pair>();
-    int default_value = 0;
-    Transaction trans;
-    NameIdInterface strukt;
+public class NameQuery extends DBSqlAsInteger.SqlQuery {
 
-    public NameQuery( Transaction trans, NameIdInterface strukt )
-    {
-        this.trans = trans;
-        this.strukt = strukt;
-        refresh();
-    }
+	List<SqlQuery.Pair> pairs = new ArrayList<SqlQuery.Pair>();
+	int default_value = 0;
+	Transaction trans;
+	NameIdInterface strukt;
 
-    @Override
-    public Vector<SqlQuery.Pair> getPossibleValues() {
-        return pairs;
-    }
+	public NameQuery(Transaction trans, NameIdInterface strukt) {
+		this.trans = trans;
+		this.strukt = strukt;
+		refresh();
+	}
 
-    @Override
-    public int getDefaultValue() {
-        if( pairs.size() > 0 )
-            return pairs.get(default_value).val;
+	@Override
+	public List<SqlQuery.Pair> getPossibleValues() {
+		return pairs;
+	}
 
-        return 0;
-    }
+	@Override
+	public int getDefaultValue() {
+		if (pairs.size() > 0)
+			return pairs.get(default_value).val;
 
-    public void setNullEntryAsDefault()
-    {
-        pairs.insertElementAt(new SqlQuery.Pair(0,""), 0);
-        default_value = 0;
-    }
+		return 0;
+	}
 
-    @Override
-    public void refresh() {
-        new AutoLogger(NameQuery.class.getName()) {
+	public void setNullEntryAsDefault() {
+		pairs.add(0, new SqlQuery.Pair(0, ""));
+		default_value = 0;
+	}
 
-            public void do_stuff() throws Exception {
+	@Override
+	public void refresh() {
+		new AutoLogger(NameQuery.class.getName()) {
 
-                Vector<DBStrukt> res = trans.fetchTable(strukt.getNewOne());
+			public void do_stuff() throws Exception {
 
-                for (DBStrukt s : res) {
-                    NameIdLockedInterface sub = (NameIdLockedInterface) s;
+				List<DBStrukt> res = trans.fetchTable(strukt.getNewOne());
 
-                    String text = sub.getNameValue().toString();
+				for (DBStrukt s : res) {
+					NameIdLockedInterface sub = (NameIdLockedInterface) s;
 
-                    pairs.add(new SqlQuery.Pair((Integer) sub.getIdValue(), text));
-                }
-            }
-        };
-    }
+					String text = sub.getNameValue().toString();
+
+					pairs.add(new SqlQuery.Pair((Integer) sub.getIdValue(),
+							text));
+				}
+			}
+		};
+	}
 }
