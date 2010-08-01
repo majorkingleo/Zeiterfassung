@@ -354,6 +354,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 				wait_for_main_win_thread();
 				main_win.initAllNow(mon, year);
 				main_win.setVisible(true);
+                                main_win.toFront();
 
 				failed = false;
 
@@ -370,6 +371,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 			wait_for_main_win_thread();
 			main_win.initAllNow();
 			main_win.setVisible(true);
+                        main_win.toFront();
 		}
 		// DoDBExport.exportDBSilent(root,"/home/martin/test_db.zip");
 	}
