@@ -51,6 +51,22 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 	private MainWin main_win;
 	private Thread prefetch_main_win_thread;
 
+    class PrefetchMainThread extends Thread {
+
+        public PrefetchMainThread() {
+            setName(PrefetchMainThread.class.getCanonicalName());
+        }
+
+        @Override
+        public void run() {
+
+            initIfSet("LOOKANDFEEL", false);
+            setLookAndFeel(root);
+
+            main_win = new MainWin(root, true);
+        }
+    };
+
 	public ModuleLauncher(String[] args) {
 		super(args);
 
@@ -154,18 +170,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		CheckConfigBase check_config = null;
 
-		prefetch_main_win_thread = new Thread() {
-
-			@Override
-			public void run() {
-
-				initIfSet("LOOKANDFEEL", false);
-				setLookAndFeel(root);
-
-				main_win = new MainWin(root, true);
-			}
-		};
-
+		prefetch_main_win_thread = new PrefetchMainThread();
 		prefetch_main_win_thread.start();
 
 		// der Wizard wird im Singleuser Mode nicht benötigt.
@@ -328,6 +333,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 			@Override
 			public void run() {
+                                setName("checkTableVersions");
+
 				checkTableVersions();
 
 				PrmDBInit prmDBInit = new PrmDBInit(root);
