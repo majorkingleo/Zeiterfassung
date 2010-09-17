@@ -269,7 +269,7 @@ public class AbsenceTimeBooking extends BaseDialog {
         );
 
         jBSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/button_ok.gif"))); // NOI18N
-        jBSave.setText("Speichern");
+        jBSave.setText("Buchen");
         jBSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBSaveActionPerformed(evt);
@@ -290,7 +290,7 @@ public class AbsenceTimeBooking extends BaseDialog {
                         .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jBSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 199, Short.MAX_VALUE)
                         .addComponent(jBClose)))
                 .addContainerGap())
         );
@@ -315,7 +315,7 @@ public class AbsenceTimeBooking extends BaseDialog {
 
     private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-
+        invokeDialogUnique(new LocalHelpWin(root, "AbsenceTimeBooking"));
 
     }//GEN-LAST:event_jBHelpActionPerformed
 
