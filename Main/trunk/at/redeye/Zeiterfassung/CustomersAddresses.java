@@ -46,7 +46,7 @@ public class CustomersAddresses extends BaseDialog {
 	 * 
 	 * @param root
 	 */
-	public CustomersAddresses(Root root, DBCustomers cust) {
+	public CustomersAddresses(final Root root, DBCustomers cust) {
 		super(root, getTitle(cust));
 		initComponents();
 
@@ -84,6 +84,13 @@ public class CustomersAddresses extends BaseDialog {
 			newEntry(false);
 
 		tm.autoResize();
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique(new LocalHelpWin(root, "CustomerAddresses"));
+                }
+            });
 	}
 
 	private static String getTitle(DBCustomers cust) {
@@ -386,7 +393,7 @@ public class CustomersAddresses extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique(new LocalHelpWin(root, "CustomerAddresses"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 

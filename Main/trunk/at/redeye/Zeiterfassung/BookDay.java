@@ -136,6 +136,14 @@ public class BookDay extends BaseDialog {
 				min_num_of_chars = num;
 			}
 		};
+
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique(new LocalHelpWin(root, "BookDay"));
+                }
+            });
 	}
 
 	protected static String getTitle(DateMidnight d) {
@@ -636,7 +644,7 @@ public class BookDay extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique(new LocalHelpWin(root, "BookDay"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 

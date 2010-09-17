@@ -83,6 +83,13 @@ public class JobTypes extends BaseDialog {
 		}
 
 		tm.autoResize();
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique(new LocalHelpWin(root, "JobTypes"));
+                }
+            });
 	}
 
 	private boolean check_entries() {
@@ -453,7 +460,7 @@ public class JobTypes extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique(new LocalHelpWin(root, "JobTypes"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 

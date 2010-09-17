@@ -256,6 +256,13 @@ public class MainWin extends BaseDialog implements DayEventListener,
 				AppConfigDefinitions.UseCustomersAndProjects));
 
 		updateMonthSumInfo(false);
+
+            registerHelpWin(new Runnable() {
+                public void run() {
+                    invokeDialogUnique((BaseDialogBase) new LocalHelpWin(root, "MainWin"));
+                }
+            });
+
 	}
 
 	private void checkCustomersAndProjects(String value) {
@@ -853,7 +860,7 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique((BaseDialogBase) new LocalHelpWin(root, "MainWin"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 

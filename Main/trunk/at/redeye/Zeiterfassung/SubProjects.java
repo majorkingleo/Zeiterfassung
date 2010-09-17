@@ -31,22 +31,12 @@ import at.redeye.Zeiterfassung.bindtypes.DBSubProjects;
  */
 public class SubProjects extends BaseDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(SubProjects.class
-			.getSimpleName());
 	TableManipulator tm;
 	List<DBStrukt> values = new ArrayList<DBStrukt>();
 	DBProjects project;
 
-	/**
-	 * Creates new form JobTypes
-	 * 
-	 * @param root
-	 */
-	public SubProjects(Root root, DBProjects project) {
+	public SubProjects(final Root root, DBProjects project) {
 		super(root, getTitle(project));
 		initComponents();
 
@@ -76,6 +66,13 @@ public class SubProjects extends BaseDialog {
 			newEntry(false);
 
 		tm.autoResize();
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique(new LocalHelpWin(root, "SubProjects"));
+                }
+            });
 	}
 
 	private static String getTitle(DBProjects project) {
@@ -389,7 +386,8 @@ public class SubProjects extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique(new LocalHelpWin(root, "Projects"));
+		callHelpWin();
+                
 	}//GEN-LAST:event_jBHelpActionPerformed
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables

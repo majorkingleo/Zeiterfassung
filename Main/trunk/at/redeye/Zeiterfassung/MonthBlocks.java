@@ -38,7 +38,7 @@ public class MonthBlocks extends BaseDialog {
 	StringBuffer date_all = new StringBuffer();
 
 	/** Creates new form MonthBlocks */
-	public MonthBlocks(Root root) {
+	public MonthBlocks(final Root root) {
 		super(root, "Editierbarkeit der Monate");
 
 		initComponents();
@@ -67,6 +67,14 @@ public class MonthBlocks extends BaseDialog {
 		bindVar(jTDateAll, date_all);
 
 		var_to_gui();
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique(new LocalHelpWin(root, "MonthBlocks"));
+                }
+            });
+
 	}
 
 	/**
@@ -350,7 +358,7 @@ public class MonthBlocks extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique(new LocalHelpWin(root, "MonthBlocks"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 

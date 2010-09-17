@@ -164,6 +164,13 @@ public class UserPerMonth extends BaseDialog {
 		feed_table(false);
 
 		tm.autoResize();
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique(new LocalHelpWin(root, "UserPerMonth"));
+                }
+            });
 	}
 
 	private boolean check_entries() {
@@ -523,7 +530,7 @@ public class UserPerMonth extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique(new LocalHelpWin(root, "UserPerMonth"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 

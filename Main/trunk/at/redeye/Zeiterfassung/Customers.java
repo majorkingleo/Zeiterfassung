@@ -50,7 +50,7 @@ public class Customers extends BaseDialog {
 	 * 
 	 * @param root
 	 */
-	public Customers(Root root) {
+	public Customers(final Root root) {
 		super(root, "Kunden");
 		initComponents();
 
@@ -77,6 +77,13 @@ public class Customers extends BaseDialog {
 			newEntry(false);
 
 		tm.autoResize();
+
+               registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique((BaseDialogBase) new LocalHelpWin(root, "Customers"));
+                }
+                });
 	}
 
 	private boolean check_entries() {
@@ -549,7 +556,7 @@ public class Customers extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique((BaseDialogBase) new LocalHelpWin(root, "Customers"));
+		callHelpWin();
 	}//GEN-LAST:event_jBHelpActionPerformed
 
 	private void jBAddressesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBAddressesActionPerformed

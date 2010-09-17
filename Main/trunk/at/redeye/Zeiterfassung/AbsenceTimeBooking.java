@@ -124,6 +124,13 @@ public class AbsenceTimeBooking extends BaseDialog {
             jCWholeDay.setVisible(false);
         }
 
+        registerHelpWin(new Runnable() {
+
+            public void run() {
+                 invokeDialogUnique(new LocalHelpWin(root, "AbsenceTimeBooking"));
+            }
+        });
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -315,7 +322,7 @@ public class AbsenceTimeBooking extends BaseDialog {
 
     private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-        invokeDialogUnique(new LocalHelpWin(root, "AbsenceTimeBooking"));
+       callHelpWin();
 
     }//GEN-LAST:event_jBHelpActionPerformed
 

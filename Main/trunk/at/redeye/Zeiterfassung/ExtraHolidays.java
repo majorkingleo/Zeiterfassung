@@ -38,7 +38,7 @@ public class ExtraHolidays extends BaseDialog {
 	MainWin mainwin;
 
 	/** Creates new form ExtraHolidays */
-	public ExtraHolidays(Root root, MainWin mainwin) {
+	public ExtraHolidays(final Root root, MainWin mainwin) {
 		super(root, "Zusätzliche Feiertage");
 
 		this.mainwin = mainwin;
@@ -67,6 +67,13 @@ public class ExtraHolidays extends BaseDialog {
 			newEntry();
 
 		tm.autoResize();
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialogUnique(new LocalHelpWin(root, "ExtraHolidays"));
+                }
+            });
 	}
 
 	private boolean check_entries() {
@@ -275,7 +282,7 @@ public class ExtraHolidays extends BaseDialog {
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-		invokeDialogUnique(new LocalHelpWin(root, "ExtraHolidays"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 
