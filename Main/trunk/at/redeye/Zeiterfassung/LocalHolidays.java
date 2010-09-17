@@ -7,6 +7,7 @@ package at.redeye.Zeiterfassung;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -75,12 +76,17 @@ public class LocalHolidays implements Holidays {
 		}
 
 		for (HolidayInfo hi : last_used_holidays) {
-			if (hi.date.equals(date)) {
+			if (hi.date.isEqual(date) )
+                        {
 				return hi;
 			}
 		}
 
 		return null;
 	}
+
+    public HolidayInfo getHolidayForDay(Calendar cal) {
+        return getHolidayForDay( new DateMidnight(cal) );
+    }
 
 }

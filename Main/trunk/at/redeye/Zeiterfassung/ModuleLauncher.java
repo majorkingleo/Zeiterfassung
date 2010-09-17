@@ -64,6 +64,8 @@ public class ModuleLauncher extends BaseModuleLauncher implements
             setLookAndFeel(root);
 
             main_win = new MainWin(root, true);
+
+            root.registerPlugin(new at.redeye.Plugins.JDatePicker.Plugin());
         }
     };
 

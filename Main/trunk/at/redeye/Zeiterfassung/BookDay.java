@@ -403,8 +403,8 @@ public class BookDay extends BaseDialog {
 				if (other.equals(entry))
 					continue;
 
-				Date ofrom = (Date) other.from.getValue();
-				Date oto = (Date) other.to.getValue();
+				Date ofrom = other.from.getValue();
+				Date oto = other.to.getValue();
 
 				long otfrom = ofrom.getTime();
 				long otto = oto.getTime();

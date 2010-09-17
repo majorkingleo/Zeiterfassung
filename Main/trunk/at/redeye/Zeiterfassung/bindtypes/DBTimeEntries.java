@@ -139,4 +139,30 @@ public class DBTimeEntries extends DBStrukt {
           return (time_to.getTime() - time_from.getTime());
     }
 
+    public static boolean overlap( DBTimeEntries a, DBTimeEntries b)
+    {
+        long otfrom = a.from.getValue().getTime();
+        long otto = a.to.getValue().getTime();
+        long etfrom = b.from.getValue().getTime();
+        long etto = b.to.getValue().getTime();
+
+        boolean failed = false;
+
+        if (etfrom < otfrom && etto > otfrom) // links überlappend
+        {
+            failed = true;
+        } else if (etfrom > otfrom && etto < otfrom) // mittig
+        {
+            failed = true;
+        } else if (etfrom > otfrom && etfrom < otto) // rechts überlappend
+        {
+            failed = true;
+        } else if (etfrom == otfrom) {
+            failed = true;
+        } else if (etto == otto) {
+            failed = true;
+        }
+
+        return failed;
+    }
 }

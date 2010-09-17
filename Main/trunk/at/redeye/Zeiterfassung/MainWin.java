@@ -6,6 +6,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.Plugin.AboutPlugins;
 import java.util.List;
 import java.util.Locale;
 
@@ -274,511 +275,458 @@ public class MainWin extends BaseDialog implements DayEventListener,
 	 */
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed"
-	// desc="Generated Code">//GEN-BEGIN:initComponents
-	private void initComponents() {
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-		jPanel1 = new javax.swing.JPanel();
-		month = new at.redeye.FrameWork.widgets.calendar.CalendarComponent();
-		jPanel2 = new javax.swing.JPanel();
-		jBErrorLog = new javax.swing.JButton();
-		plusMon = new javax.swing.JButton();
-		minusMon = new javax.swing.JButton();
-		jBHelp = new javax.swing.JButton();
-		jLSum = new javax.swing.JLabel();
-		jMenuBar1 = new javax.swing.JMenuBar();
-		jMenuProgram = new javax.swing.JMenu();
-		jMDatabase = new javax.swing.JMenuItem();
-		jMCreateDesktopIcon = new javax.swing.JMenuItem();
-		jMSetupWizard = new javax.swing.JMenuItem();
-		jMAddUser = new javax.swing.JMenuItem();
-		jMDBExport = new javax.swing.JMenuItem();
-		jMDBImport = new javax.swing.JMenuItem();
-		jMLogout = new javax.swing.JMenuItem();
-		jMenuQuit = new javax.swing.JMenuItem();
-		jMUser = new javax.swing.JMenu();
-		Hauptfeiertage = new javax.swing.JMenu();
-		jRBHolidaysAustria = new javax.swing.JRadioButtonMenuItem();
-		jRBHolidaysGermany = new javax.swing.JRadioButtonMenuItem();
-		jRBHolidaysSwitzerland = new javax.swing.JRadioButtonMenuItem();
-		jMenuHollidays = new javax.swing.JMenu();
-		jCBHolidaysAustria = new javax.swing.JCheckBoxMenuItem();
-		jCBHolidaysGermany = new javax.swing.JCheckBoxMenuItem();
-		jCBHolidaysSwitzerland = new javax.swing.JCheckBoxMenuItem();
-		jMExtraHolidays = new javax.swing.JMenuItem();
-		jMenuItem1 = new javax.swing.JMenuItem();
-		jMJobTypes = new javax.swing.JMenuItem();
-		JMUserPerMonth = new javax.swing.JMenuItem();
-		jMMonthBlocks = new javax.swing.JMenuItem();
-		jMGlobalConfig = new javax.swing.JMenuItem();
-		jMLocalConfig = new javax.swing.JMenuItem();
-		JMDefaultData = new javax.swing.JMenu();
-		JMCustomers = new javax.swing.JMenuItem();
-		jMenu1 = new javax.swing.JMenu();
-		jMMonthReport = new javax.swing.JMenuItem();
-		jMMonthActivity = new javax.swing.JMenuItem();
-		jMenuInfo = new javax.swing.JMenu();
-		jMInfo = new javax.swing.JMenuItem();
-		jMMemInfo = new javax.swing.JMenuItem();
-		jMChangeLog = new javax.swing.JMenuItem();
+        jPanel1 = new javax.swing.JPanel();
+        month = new at.redeye.FrameWork.widgets.calendar.CalendarComponent();
+        jPanel2 = new javax.swing.JPanel();
+        jBErrorLog = new javax.swing.JButton();
+        plusMon = new javax.swing.JButton();
+        minusMon = new javax.swing.JButton();
+        jBHelp = new javax.swing.JButton();
+        jLSum = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenuProgram = new javax.swing.JMenu();
+        jMDatabase = new javax.swing.JMenuItem();
+        jMCreateDesktopIcon = new javax.swing.JMenuItem();
+        jMSetupWizard = new javax.swing.JMenuItem();
+        jMAddUser = new javax.swing.JMenuItem();
+        jMDBExport = new javax.swing.JMenuItem();
+        jMDBImport = new javax.swing.JMenuItem();
+        jMLogout = new javax.swing.JMenuItem();
+        jMenuQuit = new javax.swing.JMenuItem();
+        jMUser = new javax.swing.JMenu();
+        Hauptfeiertage = new javax.swing.JMenu();
+        jRBHolidaysAustria = new javax.swing.JRadioButtonMenuItem();
+        jRBHolidaysGermany = new javax.swing.JRadioButtonMenuItem();
+        jRBHolidaysSwitzerland = new javax.swing.JRadioButtonMenuItem();
+        jMenuHollidays = new javax.swing.JMenu();
+        jCBHolidaysAustria = new javax.swing.JCheckBoxMenuItem();
+        jCBHolidaysGermany = new javax.swing.JCheckBoxMenuItem();
+        jCBHolidaysSwitzerland = new javax.swing.JCheckBoxMenuItem();
+        jMExtraHolidays = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMJobTypes = new javax.swing.JMenuItem();
+        JMUserPerMonth = new javax.swing.JMenuItem();
+        jMMonthBlocks = new javax.swing.JMenuItem();
+        jMGlobalConfig = new javax.swing.JMenuItem();
+        jMLocalConfig = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMAbsenceTimeBooking = new javax.swing.JMenuItem();
+        JMDefaultData = new javax.swing.JMenu();
+        JMCustomers = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        jMMonthReport = new javax.swing.JMenuItem();
+        jMMonthActivity = new javax.swing.JMenuItem();
+        jMenuInfo = new javax.swing.JMenu();
+        jMInfo = new javax.swing.JMenuItem();
+        jMMemInfo = new javax.swing.JMenuItem();
+        jMChangeLog = new javax.swing.JMenuItem();
+        jMPlugin = new javax.swing.JMenuItem();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-		month.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        month.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(
-				jPanel1);
-		jPanel1.setLayout(jPanel1Layout);
-		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addComponent(month,
-				javax.swing.GroupLayout.DEFAULT_SIZE, 1109, Short.MAX_VALUE));
-		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				jPanel1Layout
-						.createSequentialGroup()
-						.addComponent(month,
-								javax.swing.GroupLayout.DEFAULT_SIZE, 643,
-								Short.MAX_VALUE).addContainerGap()));
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 1109, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(month, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
-		jBErrorLog.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/info.png"))); // NOI18N
-		jBErrorLog.setBorderPainted(false);
-		jBErrorLog.setContentAreaFilled(false);
-		jBErrorLog.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jBErrorLogActionPerformed(evt);
-			}
-		});
+        jBErrorLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/info.png"))); // NOI18N
+        jBErrorLog.setBorderPainted(false);
+        jBErrorLog.setContentAreaFilled(false);
+        jBErrorLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBErrorLogActionPerformed(evt);
+            }
+        });
 
-		plusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/next.png"))); // NOI18N
-		plusMon.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				plusMonActionPerformed(evt);
-			}
-		});
+        plusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/next.png"))); // NOI18N
+        plusMon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                plusMonActionPerformed(evt);
+            }
+        });
 
-		minusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/prev.png"))); // NOI18N
-		minusMon.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minusMonActionPerformed(evt);
-			}
-		});
+        minusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/prev.png"))); // NOI18N
+        minusMon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minusMonActionPerformed(evt);
+            }
+        });
 
-		jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
-		jBHelp.setText("Hilfe");
-		jBHelp.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jBHelpActionPerformed(evt);
-			}
-		});
+        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
+        jBHelp.setText("Hilfe");
+        jBHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBHelpActionPerformed(evt);
+            }
+        });
 
-		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(
-				jPanel2);
-		jPanel2.setLayout(jPanel2Layout);
-		jPanel2Layout
-				.setHorizontalGroup(jPanel2Layout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								jPanel2Layout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addComponent(
-												minusMon,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												50,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(
-												plusMon,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												54,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(
-												jLSum,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												671,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(
-												jBErrorLog,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												31,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-												169, Short.MAX_VALUE)
-										.addComponent(jBHelp)));
-		jPanel2Layout
-				.setVerticalGroup(jPanel2Layout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								jPanel2Layout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addGroup(
-												jPanel2Layout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(
-																jPanel2Layout
-																		.createSequentialGroup()
-																		.addComponent(
-																				jBHelp)
-																		.addContainerGap())
-														.addGroup(
-																jPanel2Layout
-																		.createParallelGroup(
-																				javax.swing.GroupLayout.Alignment.LEADING)
-																		.addGroup(
-																				jPanel2Layout
-																						.createSequentialGroup()
-																						.addComponent(
-																								minusMon)
-																						.addContainerGap())
-																		.addGroup(
-																				jPanel2Layout
-																						.createParallelGroup(
-																								javax.swing.GroupLayout.Alignment.LEADING)
-																						.addGroup(
-																								jPanel2Layout
-																										.createSequentialGroup()
-																										.addComponent(
-																												plusMon)
-																										.addContainerGap())
-																						.addComponent(
-																								jLSum,
-																								javax.swing.GroupLayout.Alignment.TRAILING,
-																								javax.swing.GroupLayout.DEFAULT_SIZE,
-																								44,
-																								Short.MAX_VALUE)
-																						.addComponent(
-																								jBErrorLog,
-																								javax.swing.GroupLayout.Alignment.TRAILING,
-																								javax.swing.GroupLayout.DEFAULT_SIZE,
-																								44,
-																								Short.MAX_VALUE))))));
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(minusMon, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(plusMon, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLSum, javax.swing.GroupLayout.PREFERRED_SIZE, 671, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jBErrorLog, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 169, Short.MAX_VALUE)
+                .addComponent(jBHelp))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jBHelp)
+                        .addContainerGap())
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(minusMon)
+                            .addContainerGap())
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(plusMon)
+                                .addContainerGap())
+                            .addComponent(jLSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                            .addComponent(jBErrorLog, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)))))
+        );
 
-		jMenuProgram.setText("Programm");
+        jMenuProgram.setText("Programm");
 
-		jMDatabase.setText("Datenbankverbindung");
-		jMDatabase.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMDatabaseActionPerformed(evt);
-			}
-		});
-		jMenuProgram.add(jMDatabase);
+        jMDatabase.setText("Datenbankverbindung");
+        jMDatabase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMDatabaseActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMDatabase);
 
-		jMCreateDesktopIcon.setText("Desktop Icon erstellen");
-		jMCreateDesktopIcon
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						jMCreateDesktopIconActionPerformed(evt);
-					}
-				});
-		jMenuProgram.add(jMCreateDesktopIcon);
+        jMCreateDesktopIcon.setText("Desktop Icon erstellen");
+        jMCreateDesktopIcon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMCreateDesktopIconActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMCreateDesktopIcon);
 
-		jMSetupWizard.setText("Programm erneut einrichten");
-		jMSetupWizard.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMSetupWizardActionPerformed(evt);
-			}
-		});
-		jMenuProgram.add(jMSetupWizard);
+        jMSetupWizard.setText("Programm erneut einrichten");
+        jMSetupWizard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMSetupWizardActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMSetupWizard);
 
-		jMAddUser.setText("Neuen Benutzer anlegen");
-		jMAddUser.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMAddUserActionPerformed(evt);
-			}
-		});
-		jMenuProgram.add(jMAddUser);
+        jMAddUser.setText("Neuen Benutzer anlegen");
+        jMAddUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMAddUserActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMAddUser);
 
-		jMDBExport.setText("Datenbank exportieren");
-		jMDBExport.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMDBExportActionPerformed(evt);
-			}
-		});
-		jMenuProgram.add(jMDBExport);
+        jMDBExport.setText("Datenbank exportieren");
+        jMDBExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMDBExportActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMDBExport);
 
-		jMDBImport.setText("Datenbank importieren");
-		jMDBImport.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMDBImportActionPerformed(evt);
-			}
-		});
-		jMenuProgram.add(jMDBImport);
+        jMDBImport.setText("Datenbank importieren");
+        jMDBImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMDBImportActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMDBImport);
 
-		jMLogout.setText("Abmelden");
-		jMLogout.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMLogoutActionPerformed(evt);
-			}
-		});
-		jMenuProgram.add(jMLogout);
+        jMLogout.setText("Abmelden");
+        jMLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMLogoutActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMLogout);
 
-		jMenuQuit.setText("Beenden");
-		jMenuQuit.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMenuQuitActionPerformed(evt);
-			}
-		});
-		jMenuProgram.add(jMenuQuit);
+        jMenuQuit.setText("Beenden");
+        jMenuQuit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuQuitActionPerformed(evt);
+            }
+        });
+        jMenuProgram.add(jMenuQuit);
 
-		jMenuBar1.add(jMenuProgram);
+        jMenuBar1.add(jMenuProgram);
 
-		jMUser.setText("Einstellungen");
-		jMUser.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMUserActionPerformed(evt);
-			}
-		});
+        jMUser.setText("Einstellungen");
+        jMUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMUserActionPerformed(evt);
+            }
+        });
 
-		Hauptfeiertage.setText("Standort Feiertage");
+        Hauptfeiertage.setText("Standort Feiertage");
 
-		jRBHolidaysAustria.setText("Österreich");
-		jRBHolidaysAustria
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						jRBHolidaysAustriaActionPerformed(evt);
-					}
-				});
-		Hauptfeiertage.add(jRBHolidaysAustria);
+        jRBHolidaysAustria.setText("Österreich");
+        jRBHolidaysAustria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRBHolidaysAustriaActionPerformed(evt);
+            }
+        });
+        Hauptfeiertage.add(jRBHolidaysAustria);
 
-		jRBHolidaysGermany.setText("Deutschland");
-		jRBHolidaysGermany
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						jRBHolidaysGermanyActionPerformed(evt);
-					}
-				});
-		Hauptfeiertage.add(jRBHolidaysGermany);
+        jRBHolidaysGermany.setText("Deutschland");
+        jRBHolidaysGermany.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRBHolidaysGermanyActionPerformed(evt);
+            }
+        });
+        Hauptfeiertage.add(jRBHolidaysGermany);
 
-		jRBHolidaysSwitzerland.setText("Schweiz");
-		jRBHolidaysSwitzerland
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						jRBHolidaysSwitzerlandActionPerformed(evt);
-					}
-				});
-		Hauptfeiertage.add(jRBHolidaysSwitzerland);
+        jRBHolidaysSwitzerland.setText("Schweiz");
+        jRBHolidaysSwitzerland.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRBHolidaysSwitzerlandActionPerformed(evt);
+            }
+        });
+        Hauptfeiertage.add(jRBHolidaysSwitzerland);
 
-		jMUser.add(Hauptfeiertage);
+        jMUser.add(Hauptfeiertage);
 
-		jMenuHollidays.setText("zusätzliche Feiertage");
+        jMenuHollidays.setText("zusätzliche Feiertage");
 
-		jCBHolidaysAustria.setText("Österreich");
-		jCBHolidaysAustria
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						jCBHolidaysAustriaActionPerformed(evt);
-					}
-				});
-		jMenuHollidays.add(jCBHolidaysAustria);
+        jCBHolidaysAustria.setText("Österreich");
+        jCBHolidaysAustria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCBHolidaysAustriaActionPerformed(evt);
+            }
+        });
+        jMenuHollidays.add(jCBHolidaysAustria);
 
-		jCBHolidaysGermany.setText("Deutschland");
-		jCBHolidaysGermany
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						jCBHolidaysGermanyActionPerformed(evt);
-					}
-				});
-		jMenuHollidays.add(jCBHolidaysGermany);
+        jCBHolidaysGermany.setText("Deutschland");
+        jCBHolidaysGermany.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCBHolidaysGermanyActionPerformed(evt);
+            }
+        });
+        jMenuHollidays.add(jCBHolidaysGermany);
 
-		jCBHolidaysSwitzerland.setText("Schweiz");
-		jCBHolidaysSwitzerland
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						jCBHolidaysSwitzerlandActionPerformed(evt);
-					}
-				});
-		jMenuHollidays.add(jCBHolidaysSwitzerland);
+        jCBHolidaysSwitzerland.setText("Schweiz");
+        jCBHolidaysSwitzerland.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCBHolidaysSwitzerlandActionPerformed(evt);
+            }
+        });
+        jMenuHollidays.add(jCBHolidaysSwitzerland);
 
-		jMExtraHolidays.setText("zusätzliche Feiertage");
-		jMExtraHolidays.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMExtraHolidaysActionPerformed(evt);
-			}
-		});
-		jMenuHollidays.add(jMExtraHolidays);
+        jMExtraHolidays.setText("zusätzliche Feiertage");
+        jMExtraHolidays.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMExtraHolidaysActionPerformed(evt);
+            }
+        });
+        jMenuHollidays.add(jMExtraHolidays);
 
-		jMUser.add(jMenuHollidays);
+        jMUser.add(jMenuHollidays);
 
-		jMenuItem1.setText("Benutzer");
-		jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMenuItem1ActionPerformed(evt);
-			}
-		});
-		jMUser.add(jMenuItem1);
+        jMenuItem1.setText("Benutzer");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMUser.add(jMenuItem1);
 
-		jMJobTypes.setText("Tätigkeiten");
-		jMJobTypes.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMJobTypesActionPerformed(evt);
-			}
-		});
-		jMUser.add(jMJobTypes);
+        jMJobTypes.setText("Tätigkeiten");
+        jMJobTypes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMJobTypesActionPerformed(evt);
+            }
+        });
+        jMUser.add(jMJobTypes);
 
-		JMUserPerMonth.setText("Monatseinstellungen für die Benutzer");
-		JMUserPerMonth.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				JMUserPerMonthActionPerformed(evt);
-			}
-		});
-		jMUser.add(JMUserPerMonth);
+        JMUserPerMonth.setText("Monatseinstellungen für die Benutzer");
+        JMUserPerMonth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JMUserPerMonthActionPerformed(evt);
+            }
+        });
+        jMUser.add(JMUserPerMonth);
 
-		jMMonthBlocks.setText("Editierbarkeit der Monate");
-		jMMonthBlocks.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMMonthBlocksActionPerformed(evt);
-			}
-		});
-		jMUser.add(jMMonthBlocks);
+        jMMonthBlocks.setText("Editierbarkeit der Monate");
+        jMMonthBlocks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMMonthBlocksActionPerformed(evt);
+            }
+        });
+        jMUser.add(jMMonthBlocks);
 
-		jMGlobalConfig.setText("Globale Einstellungen");
-		jMGlobalConfig.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMGlobalConfigActionPerformed(evt);
-			}
-		});
-		jMUser.add(jMGlobalConfig);
+        jMGlobalConfig.setText("Globale Einstellungen");
+        jMGlobalConfig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMGlobalConfigActionPerformed(evt);
+            }
+        });
+        jMUser.add(jMGlobalConfig);
 
-		jMLocalConfig.setText("Lokale Einstellungen");
-		jMLocalConfig.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMLocalConfigActionPerformed(evt);
-			}
-		});
-		jMUser.add(jMLocalConfig);
+        jMLocalConfig.setText("Lokale Einstellungen");
+        jMLocalConfig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMLocalConfigActionPerformed(evt);
+            }
+        });
+        jMUser.add(jMLocalConfig);
 
-		jMenuBar1.add(jMUser);
+        jMenuBar1.add(jMUser);
 
-		JMDefaultData.setText("Stammdaten");
+        jMenu2.setText("Bearbeiten");
 
-		JMCustomers.setText("Kunden");
-		JMCustomers.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				JMCustomersActionPerformed(evt);
-			}
-		});
-		JMDefaultData.add(JMCustomers);
+        jMAbsenceTimeBooking.setText("Abwesenheitsbuchung");
+        jMAbsenceTimeBooking.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMAbsenceTimeBookingActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMAbsenceTimeBooking);
 
-		jMenuBar1.add(JMDefaultData);
+        jMenuBar1.add(jMenu2);
 
-		jMenu1.setText("Berichte");
+        JMDefaultData.setText("Stammdaten");
 
-		jMMonthReport.setText("Monatsbericht");
-		jMMonthReport.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMMonthReportActionPerformed(evt);
-			}
-		});
-		jMenu1.add(jMMonthReport);
+        JMCustomers.setText("Kunden");
+        JMCustomers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JMCustomersActionPerformed(evt);
+            }
+        });
+        JMDefaultData.add(JMCustomers);
 
-		jMMonthActivity.setText("Monatsübersicht Aktivitäten");
-		jMMonthActivity.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMMonthActivityActionPerformed(evt);
-			}
-		});
-		jMenu1.add(jMMonthActivity);
+        jMenuBar1.add(JMDefaultData);
 
-		jMenuBar1.add(jMenu1);
+        jMenu1.setText("Berichte");
 
-		jMenuInfo.setText("Info");
+        jMMonthReport.setText("Monatsbericht");
+        jMMonthReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMMonthReportActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMMonthReport);
 
-		jMInfo.setText("Über");
-		jMInfo.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMInfoActionPerformed(evt);
-			}
-		});
-		jMenuInfo.add(jMInfo);
+        jMMonthActivity.setText("Monatsübersicht Aktivitäten");
+        jMMonthActivity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMMonthActivityActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMMonthActivity);
 
-		jMMemInfo.setText("Speicherinformationen");
-		jMMemInfo.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMMemInfoActionPerformed(evt);
-			}
-		});
-		jMenuInfo.add(jMMemInfo);
+        jMenuBar1.add(jMenu1);
 
-		jMChangeLog.setText("Änderungsprotokoll");
-		jMChangeLog.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jMChangeLogActionPerformed(evt);
-			}
-		});
-		jMenuInfo.add(jMChangeLog);
+        jMenuInfo.setText("Info");
 
-		jMenuBar1.add(jMenuInfo);
+        jMInfo.setText("Über");
+        jMInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMInfoActionPerformed(evt);
+            }
+        });
+        jMenuInfo.add(jMInfo);
 
-		setJMenuBar(jMenuBar1);
+        jMMemInfo.setText("Speicherinformationen");
+        jMMemInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMMemInfoActionPerformed(evt);
+            }
+        });
+        jMenuInfo.add(jMMemInfo);
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(
-														jPanel1,
-														javax.swing.GroupLayout.Alignment.TRAILING,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														Short.MAX_VALUE)
-												.addComponent(
-														jPanel2,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														Short.MAX_VALUE))
-								.addContainerGap()));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						javax.swing.GroupLayout.Alignment.TRAILING,
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(jPanel1,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE)
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jPanel2,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap()));
+        jMChangeLog.setText("Änderungsprotokoll");
+        jMChangeLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMChangeLogActionPerformed(evt);
+            }
+        });
+        jMenuInfo.add(jMChangeLog);
 
-		pack();
-	}// </editor-fold>//GEN-END:initComponents
+        jMPlugin.setText("Plugins");
+        jMPlugin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMPluginActionPerformed(evt);
+            }
+        });
+        jMenuInfo.add(jMPlugin);
 
-	private void jMenuQuitActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMenuQuitActionPerformed
+        jMenuBar1.add(jMenuInfo);
+
+        setJMenuBar(jMenuBar1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+        private void jMPluginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMPluginActionPerformed
+
+            invokeDialogUnique(new AboutPlugins(root));
+
+        }//GEN-LAST:event_jMPluginActionPerformed
+
+        private void jMAbsenceTimeBookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMAbsenceTimeBookingActionPerformed
+
+            invokeDialogUnique(new AbsenceTimeBooking(root,this,month_stuff.hours_per_day));
+
+        }//GEN-LAST:event_jMAbsenceTimeBookingActionPerformed
+
+	private void jMenuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuQuitActionPerformed
 
 		close();
-	}// GEN-LAST:event_jMenuQuitActionPerformed
+	}//GEN-LAST:event_jMenuQuitActionPerformed
 
-	private void jMDatabaseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMDatabaseActionPerformed
+	private void jMDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMDatabaseActionPerformed
 
 		invokeDialogUnique(new ConnectionDialog(root));
-	}// GEN-LAST:event_jMDatabaseActionPerformed
+	}//GEN-LAST:event_jMDatabaseActionPerformed
 
-	private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMenuItem1ActionPerformed
+	private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
 
 		if (at.redeye.Dongle.AppliactionModes.getAppliactionModes()
 				.isSingleUser()) {
@@ -790,9 +738,9 @@ public class MainWin extends BaseDialog implements DayEventListener,
 			setNormalCursor();
 		}
 
-	}// GEN-LAST:event_jMenuItem1ActionPerformed
+	}//GEN-LAST:event_jMenuItem1ActionPerformed
 
-	private void minusMonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_minusMonActionPerformed
+	private void minusMonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusMonActionPerformed
 		// TODO add your handling code here:
 		mon--;
 
@@ -803,9 +751,9 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 		month.setMonth(mon, year);
 		updateMonthSumInfo();
-	}// GEN-LAST:event_minusMonActionPerformed
+	}//GEN-LAST:event_minusMonActionPerformed
 
-	private void plusMonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_plusMonActionPerformed
+	private void plusMonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusMonActionPerformed
 
 		mon++;
 
@@ -816,28 +764,28 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 		month.setMonth(mon, year);
 		updateMonthSumInfo();
-	}// GEN-LAST:event_plusMonActionPerformed
+	}//GEN-LAST:event_plusMonActionPerformed
 
 	private void jCBHolidaysAustriaActionPerformed(
-			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCBHolidaysAustriaActionPerformed
+			java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBHolidaysAustriaActionPerformed
 
 		handleHolidays();
-	}// GEN-LAST:event_jCBHolidaysAustriaActionPerformed
+	}//GEN-LAST:event_jCBHolidaysAustriaActionPerformed
 
 	private void jCBHolidaysGermanyActionPerformed(
-			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCBHolidaysGermanyActionPerformed
+			java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBHolidaysGermanyActionPerformed
 
 		handleHolidays();
-	}// GEN-LAST:event_jCBHolidaysGermanyActionPerformed
+	}//GEN-LAST:event_jCBHolidaysGermanyActionPerformed
 
 	private void jCBHolidaysSwitzerlandActionPerformed(
-			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCBHolidaysSwitzerlandActionPerformed
+			java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBHolidaysSwitzerlandActionPerformed
 
 		handleHolidays();
-	}// GEN-LAST:event_jCBHolidaysSwitzerlandActionPerformed
+	}//GEN-LAST:event_jCBHolidaysSwitzerlandActionPerformed
 
 	private void jRBHolidaysAustriaActionPerformed(
-			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jRBHolidaysAustriaActionPerformed
+			java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRBHolidaysAustriaActionPerformed
 
 		jRBHolidaysSwitzerland.setSelected(false);
 		jRBHolidaysGermany.setSelected(false);
@@ -849,10 +797,10 @@ public class MainWin extends BaseDialog implements DayEventListener,
 		jCBHolidaysAustria.setSelected(false);
 
 		handleHolidays();
-	}// GEN-LAST:event_jRBHolidaysAustriaActionPerformed
+	}//GEN-LAST:event_jRBHolidaysAustriaActionPerformed
 
 	private void jRBHolidaysGermanyActionPerformed(
-			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jRBHolidaysGermanyActionPerformed
+			java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRBHolidaysGermanyActionPerformed
 
 		jRBHolidaysSwitzerland.setSelected(false);
 		jRBHolidaysAustria.setSelected(false);
@@ -864,10 +812,10 @@ public class MainWin extends BaseDialog implements DayEventListener,
 		jCBHolidaysGermany.setEnabled(false);
 
 		handleHolidays();
-	}// GEN-LAST:event_jRBHolidaysGermanyActionPerformed
+	}//GEN-LAST:event_jRBHolidaysGermanyActionPerformed
 
 	private void jRBHolidaysSwitzerlandActionPerformed(
-			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jRBHolidaysSwitzerlandActionPerformed
+			java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRBHolidaysSwitzerlandActionPerformed
 
 		jRBHolidaysAustria.setSelected(false);
 		jRBHolidaysGermany.setSelected(false);
@@ -879,99 +827,99 @@ public class MainWin extends BaseDialog implements DayEventListener,
 		jCBHolidaysSwitzerland.setEnabled(false);
 
 		handleHolidays();
-	}// GEN-LAST:event_jRBHolidaysSwitzerlandActionPerformed
+	}//GEN-LAST:event_jRBHolidaysSwitzerlandActionPerformed
 
-	private void jMJobTypesActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMJobTypesActionPerformed
+	private void jMJobTypesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMJobTypesActionPerformed
 
 		invokeDialogUnique(new JobTypes(root));
 
-	}// GEN-LAST:event_jMJobTypesActionPerformed
+	}//GEN-LAST:event_jMJobTypesActionPerformed
 
-	private void jMUserActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMUserActionPerformed
+	private void jMUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMUserActionPerformed
 
-	}// GEN-LAST:event_jMUserActionPerformed
+	}//GEN-LAST:event_jMUserActionPerformed
 
-	private void JMUserPerMonthActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_JMUserPerMonthActionPerformed
+	private void JMUserPerMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMUserPerMonthActionPerformed
 
 		invokeDialogUnique(new UserPerMonth(root));
 
-	}// GEN-LAST:event_JMUserPerMonthActionPerformed
+	}//GEN-LAST:event_JMUserPerMonthActionPerformed
 
-	private void jMMonthReportActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMMonthReportActionPerformed
+	private void jMMonthReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthReportActionPerformed
 
 		invokeDialog(new MonthReportPerUser(root, mon, year));
 
-	}// GEN-LAST:event_jMMonthReportActionPerformed
+	}//GEN-LAST:event_jMMonthReportActionPerformed
 
-	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBHelpActionPerformed
+	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
 		invokeDialogUnique((BaseDialogBase) new LocalHelpWin(root, "MainWin"));
 
-	}// GEN-LAST:event_jBHelpActionPerformed
+	}//GEN-LAST:event_jBHelpActionPerformed
 
-	private void jMGlobalConfigActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMGlobalConfigActionPerformed
+	private void jMGlobalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGlobalConfigActionPerformed
 
 		invokeDialogUnique(new GlobalConfig(root));
 
-	}// GEN-LAST:event_jMGlobalConfigActionPerformed
+	}//GEN-LAST:event_jMGlobalConfigActionPerformed
 
-	private void jMExtraHolidaysActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMExtraHolidaysActionPerformed
+	private void jMExtraHolidaysActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMExtraHolidaysActionPerformed
 
 		invokeDialogUnique(new ExtraHolidays(root, this));
 
-	}// GEN-LAST:event_jMExtraHolidaysActionPerformed
+	}//GEN-LAST:event_jMExtraHolidaysActionPerformed
 
-	private void jMLocalConfigActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMLocalConfigActionPerformed
+	private void jMLocalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMLocalConfigActionPerformed
 
 		invokeDialogUnique(new LocalConfig(root));
 
-	}// GEN-LAST:event_jMLocalConfigActionPerformed
+	}//GEN-LAST:event_jMLocalConfigActionPerformed
 
-	private void jMMonthBlocksActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMMonthBlocksActionPerformed
+	private void jMMonthBlocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthBlocksActionPerformed
 
 		invokeDialogUnique(new MonthBlocks(root));
 
-	}// GEN-LAST:event_jMMonthBlocksActionPerformed
+	}//GEN-LAST:event_jMMonthBlocksActionPerformed
 
-	private void jMInfoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMInfoActionPerformed
+	private void jMInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMInfoActionPerformed
 
 		invokeDialogModal(new About(this, root));
 
-	}// GEN-LAST:event_jMInfoActionPerformed
+	}//GEN-LAST:event_jMInfoActionPerformed
 
-	private void jMMemInfoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMMemInfoActionPerformed
+	private void jMMemInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMemInfoActionPerformed
 
 		invokeDialogUnique(new MemInfo(root));
 
-	}// GEN-LAST:event_jMMemInfoActionPerformed
+	}//GEN-LAST:event_jMMemInfoActionPerformed
 
-	private void jMChangeLogActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMChangeLogActionPerformed
+	private void jMChangeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMChangeLogActionPerformed
 
 		invokeDialogUnique(new LocalHelpWin(root, "ChangeLog"));
 
-	}// GEN-LAST:event_jMChangeLogActionPerformed
+	}//GEN-LAST:event_jMChangeLogActionPerformed
 
-	private void jBErrorLogActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBErrorLogActionPerformed
+	private void jBErrorLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBErrorLogActionPerformed
 
 		invokeDialogUnique(new LogWin(root, "Fehlermeldungen",
 				month_stuff.getError()));
 
-	}// GEN-LAST:event_jBErrorLogActionPerformed
+	}//GEN-LAST:event_jBErrorLogActionPerformed
 
-	private void JMCustomersActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_JMCustomersActionPerformed
+	private void JMCustomersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMCustomersActionPerformed
 
 		invokeDialogUnique(new Customers(root));
 
-	}// GEN-LAST:event_JMCustomersActionPerformed
+	}//GEN-LAST:event_JMCustomersActionPerformed
 
-	private void jMLogoutActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMLogoutActionPerformed
+	private void jMLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMLogoutActionPerformed
 
 		TimecontrolMain.relogin();
 
-	}// GEN-LAST:event_jMLogoutActionPerformed
+	}//GEN-LAST:event_jMLogoutActionPerformed
 
 	private void jMCreateDesktopIconActionPerformed(
-			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMCreateDesktopIconActionPerformed
+			java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMCreateDesktopIconActionPerformed
 
 		DesktopLauncher launcher = new DesktopLauncher2(root);
 
@@ -985,9 +933,9 @@ public class MainWin extends BaseDialog implements DayEventListener,
 						"Das Desktopicon konnte leider nicht erzeugt werden.");
 			}
 		}
-	}// GEN-LAST:event_jMCreateDesktopIconActionPerformed
+	}//GEN-LAST:event_jMCreateDesktopIconActionPerformed
 
-	private void jMSetupWizardActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMSetupWizardActionPerformed
+	private void jMSetupWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMSetupWizardActionPerformed
 
 		final MainWin mw = this;
 
@@ -1018,9 +966,9 @@ public class MainWin extends BaseDialog implements DayEventListener,
 		setVisible(false);
 		setNormalCursor();
 
-	}// GEN-LAST:event_jMSetupWizardActionPerformed
+	}//GEN-LAST:event_jMSetupWizardActionPerformed
 
-	private void jMAddUserActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMAddUserActionPerformed
+	private void jMAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMAddUserActionPerformed
 
 		setWaitCursor();
 
@@ -1029,9 +977,9 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 		setNormalCursor();
 
-	}// GEN-LAST:event_jMAddUserActionPerformed
+	}//GEN-LAST:event_jMAddUserActionPerformed
 
-	private void jMDBExportActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMDBExportActionPerformed
+	private void jMDBExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMDBExportActionPerformed
 
 		ExportDialog exporter = new ExportDialog(root);
 
@@ -1039,9 +987,9 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 		exporter.doExport();
 
-	}// GEN-LAST:event_jMDBExportActionPerformed
+	}//GEN-LAST:event_jMDBExportActionPerformed
 
-	private void jMDBImportActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMDBImportActionPerformed
+	private void jMDBImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMDBImportActionPerformed
 
 		int ret = JOptionPane
 				.showConfirmDialog(
@@ -1082,16 +1030,16 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 		invokeDialogModal(importer);
 
-	}// GEN-LAST:event_jMDBImportActionPerformed
+	}//GEN-LAST:event_jMDBImportActionPerformed
 
-	private void jMMonthActivityActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMMonthActivityActionPerformed
+	private void jMMonthActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthActivityActionPerformed
 
 		MonthlyReportActivity mra = new MonthlyReportActivity(root,
 				month.getMonth(), month.getYear());
 
 		invokeDialogUnique(mra);
 
-	}// GEN-LAST:event_jMMonthActivityActionPerformed
+	}//GEN-LAST:event_jMMonthActivityActionPerformed
 
 	public void handleHolidays() {
 		if (jCBHolidaysAustria.getState() == true) {
@@ -1128,11 +1076,12 @@ public class MainWin extends BaseDialog implements DayEventListener,
 				LocalHolidays lh = new LocalHolidays(getTransaction());
 				lh.load();
 
-				merger.add(lh);
+				merger.add(lh, true);
 			}
 		};
 
 		month.setHolidays(merger);
+                root.setHolidays(merger); // for adding own holidays
 		month.setMonth(mon, year);
 	}
 
@@ -1162,52 +1111,54 @@ public class MainWin extends BaseDialog implements DayEventListener,
 		root.appExit();
 	}
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JMenu Hauptfeiertage;
-	private javax.swing.JMenuItem JMCustomers;
-	private javax.swing.JMenu JMDefaultData;
-	private javax.swing.JMenuItem JMUserPerMonth;
-	private javax.swing.JButton jBErrorLog;
-	private javax.swing.JButton jBHelp;
-	private javax.swing.JCheckBoxMenuItem jCBHolidaysAustria;
-	private javax.swing.JCheckBoxMenuItem jCBHolidaysGermany;
-	private javax.swing.JCheckBoxMenuItem jCBHolidaysSwitzerland;
-	private javax.swing.JLabel jLSum;
-	private javax.swing.JMenuItem jMAddUser;
-	private javax.swing.JMenuItem jMChangeLog;
-	private javax.swing.JMenuItem jMCreateDesktopIcon;
-	private javax.swing.JMenuItem jMDBExport;
-	private javax.swing.JMenuItem jMDBImport;
-	private javax.swing.JMenuItem jMDatabase;
-	private javax.swing.JMenuItem jMExtraHolidays;
-	private javax.swing.JMenuItem jMGlobalConfig;
-	private javax.swing.JMenuItem jMInfo;
-	private javax.swing.JMenuItem jMJobTypes;
-	private javax.swing.JMenuItem jMLocalConfig;
-	private javax.swing.JMenuItem jMLogout;
-	private javax.swing.JMenuItem jMMemInfo;
-	private javax.swing.JMenuItem jMMonthActivity;
-	private javax.swing.JMenuItem jMMonthBlocks;
-	private javax.swing.JMenuItem jMMonthReport;
-	private javax.swing.JMenuItem jMSetupWizard;
-	private javax.swing.JMenu jMUser;
-	private javax.swing.JMenu jMenu1;
-	private javax.swing.JMenuBar jMenuBar1;
-	private javax.swing.JMenu jMenuHollidays;
-	private javax.swing.JMenu jMenuInfo;
-	private javax.swing.JMenuItem jMenuItem1;
-	private javax.swing.JMenu jMenuProgram;
-	private javax.swing.JMenuItem jMenuQuit;
-	private javax.swing.JPanel jPanel1;
-	private javax.swing.JPanel jPanel2;
-	private javax.swing.JRadioButtonMenuItem jRBHolidaysAustria;
-	private javax.swing.JRadioButtonMenuItem jRBHolidaysGermany;
-	private javax.swing.JRadioButtonMenuItem jRBHolidaysSwitzerland;
-	private javax.swing.JButton minusMon;
-	private at.redeye.FrameWork.widgets.calendar.CalendarComponent month;
-	private javax.swing.JButton plusMon;
-
-	// End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu Hauptfeiertage;
+    private javax.swing.JMenuItem JMCustomers;
+    private javax.swing.JMenu JMDefaultData;
+    private javax.swing.JMenuItem JMUserPerMonth;
+    private javax.swing.JButton jBErrorLog;
+    private javax.swing.JButton jBHelp;
+    private javax.swing.JCheckBoxMenuItem jCBHolidaysAustria;
+    private javax.swing.JCheckBoxMenuItem jCBHolidaysGermany;
+    private javax.swing.JCheckBoxMenuItem jCBHolidaysSwitzerland;
+    private javax.swing.JLabel jLSum;
+    private javax.swing.JMenuItem jMAbsenceTimeBooking;
+    private javax.swing.JMenuItem jMAddUser;
+    private javax.swing.JMenuItem jMChangeLog;
+    private javax.swing.JMenuItem jMCreateDesktopIcon;
+    private javax.swing.JMenuItem jMDBExport;
+    private javax.swing.JMenuItem jMDBImport;
+    private javax.swing.JMenuItem jMDatabase;
+    private javax.swing.JMenuItem jMExtraHolidays;
+    private javax.swing.JMenuItem jMGlobalConfig;
+    private javax.swing.JMenuItem jMInfo;
+    private javax.swing.JMenuItem jMJobTypes;
+    private javax.swing.JMenuItem jMLocalConfig;
+    private javax.swing.JMenuItem jMLogout;
+    private javax.swing.JMenuItem jMMemInfo;
+    private javax.swing.JMenuItem jMMonthActivity;
+    private javax.swing.JMenuItem jMMonthBlocks;
+    private javax.swing.JMenuItem jMMonthReport;
+    private javax.swing.JMenuItem jMPlugin;
+    private javax.swing.JMenuItem jMSetupWizard;
+    private javax.swing.JMenu jMUser;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuHollidays;
+    private javax.swing.JMenu jMenuInfo;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenu jMenuProgram;
+    private javax.swing.JMenuItem jMenuQuit;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButtonMenuItem jRBHolidaysAustria;
+    private javax.swing.JRadioButtonMenuItem jRBHolidaysGermany;
+    private javax.swing.JRadioButtonMenuItem jRBHolidaysSwitzerland;
+    private javax.swing.JButton minusMon;
+    private at.redeye.FrameWork.widgets.calendar.CalendarComponent month;
+    private javax.swing.JButton plusMon;
+    // End of variables declaration//GEN-END:variables
 
 	boolean checkJobTypes() {
 		if (job_types_checked)
@@ -1299,49 +1250,48 @@ public class MainWin extends BaseDialog implements DayEventListener,
 		return (Boolean) al.result;
 	}
 
-	boolean checkMonthSettings() {
-		if (upm_checked)
-			return true;
+    boolean checkMonthSettings() {
+        if (upm_checked) {
+            return true;
+        }
 
-		AutoLogger al = new AutoLogger("checkMonthSettings") {
+        AutoLogger al = new AutoLogger("checkMonthSettings") {
 
-			@Override
-			public void do_stuff() throws Exception {
+            @Override
+            public void do_stuff() throws Exception {
 
-				result = new Boolean(false);
+                result = new Boolean(false);
 
-				List<DBStrukt> entries = getTransaction().fetchTable(
-						new DBUserPerMonth(),
-						"where " + getTransaction().markColumn("locked")
-								+ "='NEIN'" + " and "
-								+ getTransaction().markColumn("user") + " = "
-								+ root.getUserId());
+                List<DBStrukt> entries = getTransaction().fetchTable(
+                        new DBUserPerMonth(),
+                        "where " + getTransaction().markColumn("locked")
+                        + "='NEIN'" + " and "
+                        + getTransaction().markColumn("user") + " = "
+                        + root.getUserId());
 
-				if (entries.size() == 0) {
-					JOptionPane
-							.showMessageDialog(
-									null,
-									StringUtils
-											.autoLineBreak(
-													"Sie müssen zuerst die Normalarbeitszeit für die Benutzer festlegen. "
-															+ "Menüpunkt: Einstellungen -> \"Monatseinstellungen für die Benutzer\".\n"
-															+ "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
-															+ "bitte an Ihren Administrator.",
-													40), "Fehler",
-									JOptionPane.OK_OPTION);
+                if (entries.size() == 0) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            StringUtils.autoLineBreak(
+                            "Sie müssen zuerst die Normalarbeitszeit für die Benutzer festlegen. "
+                            + "Menüpunkt: Einstellungen -> \"Monatseinstellungen für die Benutzer\".\n"
+                            + "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
+                            + "bitte an Ihren Administrator.",
+                            40), "Fehler",
+                            JOptionPane.OK_OPTION);
 
-				} else {
-					result = new Boolean(true);
-				}
-			}
+                } else {
+                    result = new Boolean(true);
+                }
+            }
+        };
 
-		};
+        if ((Boolean) al.result) {
+            upm_checked = true;
+        }
 
-		if ((Boolean) al.result)
-			upm_checked = true;
-
-		return (Boolean) al.result;
-	}
+        return (Boolean) al.result;
+    }
 
 	public void onClicked(CalendarDay day) {
 
