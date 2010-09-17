@@ -120,8 +120,7 @@ public class ExtraHolidays extends BaseDialog {
 		};
 	}
 
-	// <editor-fold defaultstate="collapsed"
-	// desc="Generated Code">//GEN-BEGIN:initComponents
+	//<editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
 		jLTitle = new javax.swing.JLabel();
@@ -272,15 +271,15 @@ public class ExtraHolidays extends BaseDialog {
 								.addContainerGap()));
 
 		pack();
-	}// </editor-fold>//GEN-END:initComponents
+	}//</editor-fold>//GEN-END:initComponents
 
-	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBHelpActionPerformed
+	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
 		invokeDialogUnique(new LocalHelpWin(root, "ExtraHolidays"));
 
-	}// GEN-LAST:event_jBHelpActionPerformed
+	}//GEN-LAST:event_jBHelpActionPerformed
 
-	private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBCloseActionPerformed
+	private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCloseActionPerformed
 
 		new AutoMBox(getTitle()) {
 			@Override
@@ -300,9 +299,9 @@ public class ExtraHolidays extends BaseDialog {
 			}
 		};
 
-	}// GEN-LAST:event_jBCloseActionPerformed
+	}//GEN-LAST:event_jBCloseActionPerformed
 
-	private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBDelActionPerformed
+	private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
 		// TODO add your handling code here:
 		if (!checkAnyAndSingleSelection(jTContent))
 			return;
@@ -329,13 +328,13 @@ public class ExtraHolidays extends BaseDialog {
 			}
 		};
 
-	}// GEN-LAST:event_jBDelActionPerformed
+	}//GEN-LAST:event_jBDelActionPerformed
 
-	private void jBNewActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBNewActionPerformed
+	private void jBNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBNewActionPerformed
 		newEntry();
-	}// GEN-LAST:event_jBNewActionPerformed
+	}//GEN-LAST:event_jBNewActionPerformed
 
-	private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBSaveActionPerformed
+	private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
 		// TODO add your handling code here:
 
 		if (check_entries() == false)
@@ -372,9 +371,9 @@ public class ExtraHolidays extends BaseDialog {
 
 		};
 
-	}// GEN-LAST:event_jBSaveActionPerformed
+	}//GEN-LAST:event_jBSaveActionPerformed
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
+	//Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JButton jBClose;
 	private javax.swing.JButton jBDel;
 	private javax.swing.JButton jBHelp;
@@ -384,7 +383,7 @@ public class ExtraHolidays extends BaseDialog {
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JTable jTContent;
 
-	// End of variables declaration//GEN-END:variables
+	//End of variables declaration//GEN-END:variables
 
 	private void newEntry() {
 		DBExtraHolidays e = new DBExtraHolidays();
