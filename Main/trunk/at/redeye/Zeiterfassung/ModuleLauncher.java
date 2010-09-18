@@ -103,6 +103,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		root = new LocalRoot(name, title);
 		um = new UserDataHandling(root);
 		root.setWebStartUlr(url);
+                root.setBaseLanguage("de");
 
 		configureLogging();
 
