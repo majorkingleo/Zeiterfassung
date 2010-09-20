@@ -180,7 +180,7 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 		jCBHolidaysSwitzerland.setState(new Boolean(res));
 
-		if (root.getSetup().getLocalConfig("MainHolidaysSitzerland", "false")
+		if (root.getSetup().getLocalConfig("MainHolidaysSwitzerland", "false")
 				.contentEquals("true")) {
 			jRBHolidaysSwitzerland.setSelected(true);
 			jRBHolidaysSwitzerlandActionPerformed(null);
