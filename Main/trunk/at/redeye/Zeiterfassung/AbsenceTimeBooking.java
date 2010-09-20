@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * AbsenceTimeBooking.java
  *
  * Created on 15.09.2010, 21:09:38
@@ -56,10 +51,17 @@ public class AbsenceTimeBooking extends BaseDialog {
     String normal_start_time;
     String normal_stop_time;
 
+    private String MESSAGE_LEAST_ONE_CHARACTER;
+    private String MESSAGE_LEAST_X_CHARACTER;
+    private String MESSAGE_MISSING_COMMENTS;
+    private String MESSAGE_MISSING_DATE;
+
     public AbsenceTimeBooking(final Root root, MonthSumInfo suminfo, double hours_per_day) {
         super(root, "Abwesenheitszeiten Buchen");        
 
         initComponents();
+
+        initMessages();
 
         this.suminfo = suminfo;
         this.hours_per_day = hours_per_day;
@@ -131,6 +133,17 @@ public class AbsenceTimeBooking extends BaseDialog {
             }
         });
 
+    }
+
+    private void initMessages()
+    {
+        if( MESSAGE_LEAST_ONE_CHARACTER != null )
+            return;
+
+        MESSAGE_LEAST_ONE_CHARACTER = MlM("Es muß mindestens ein Zeichen eingeben werden.");
+        MESSAGE_LEAST_X_CHARACTER = MlM( "Es müssen mindestens %d Zeichen eingeben werden.");
+        MESSAGE_MISSING_COMMENTS = MlM( "Es fehlt der Kommentar, oder der eingegebene Text '%s' ist zu kurz.");
+        MESSAGE_MISSING_DATE = MlM( "Du hast kein Datum ausgewählt" );
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -351,19 +364,15 @@ public class AbsenceTimeBooking extends BaseDialog {
 
                         if (min_num_of_chars > 0) {
                             if (min_num_of_chars == 1) {
-                                minimum_msg = " Es muß mindestens ein Zeichen eingeben werden.";
+                                minimum_msg = MESSAGE_LEAST_ONE_CHARACTER;
                             } else {
-                                minimum_msg = " Es müssen mindestens "
-                                        + min_num_of_chars
-                                        + " Zeichen eingeben werden.";
+                                minimum_msg = String.format(MESSAGE_LEAST_X_CHARACTER,min_num_of_chars);
                             }
                         }
 
                         JOptionPane.showMessageDialog(null, StringUtils.autoLineBreak(
-                                "Es fehlt der Kommentar, "
-                                + "oder der eingegebene Text '"
-                                + (entry.comment.getValue().toString().isEmpty() ? "   " : entry.comment.getValue()) + "' ist zu kurz."
-                                + minimum_msg), "Fehler",
+                                String.format(MESSAGE_MISSING_COMMENTS, (entry.comment.getValue().toString().isEmpty() ? "   " : entry.comment.getValue()) )
+                                + " " + minimum_msg), MlM("Fehler"),
                                 JOptionPane.OK_OPTION);
 
                         logical_failure = true;
@@ -382,7 +391,8 @@ public class AbsenceTimeBooking extends BaseDialog {
                 if( cal_from == null && cal_to == null )
                 {
                     JOptionPane.showMessageDialog(null, StringUtils.autoLineBreak(
-                            "Du hast kein Datum ausgewählt" ), "Fehler", JOptionPane.OK_OPTION );
+                            MESSAGE_MISSING_DATE ), MlM("Fehler"), JOptionPane.OK_OPTION );
+                    logical_failure = true;
                     return;
                 }
                 else if( cal_to == null )

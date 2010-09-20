@@ -45,6 +45,8 @@ public class UserPerMonth extends BaseDialog {
 	TableManipulator tm;
 	UserQuery user_query;
 
+        private String MESSAGE_OVERLAP_ENTRY;
+
 	/** Creates new form UserPerMonth */
 	public UserPerMonth(Root root) {
 		super(root, "Monatseinstellungen für die Benutzer");
@@ -66,6 +68,8 @@ public class UserPerMonth extends BaseDialog {
 
 	private void initCommon() {
 		user_query = new UserQuery(getTransaction());
+
+                MESSAGE_OVERLAP_ENTRY = MlM( "Eintrag %d und Eintrag %d überschneiden sich!");
 
 		DBUserPerMonth upm = new DBUserPerMonth(user_query);
 
@@ -235,9 +239,8 @@ public class UserPerMonth extends BaseDialog {
 				if (failed == true) {
 					JOptionPane.showMessageDialog(
 							null,
-							StringUtils.autoLineBreak("Eintrag " + counter1
-									+ " und Eintrag " + counter2
-									+ " überschneiden sich!"), "Fehler",
+							StringUtils.autoLineBreak(
+                                                        String.format(MESSAGE_OVERLAP_ENTRY, counter1,counter2)), MlM("Fehler"),
 							JOptionPane.OK_OPTION);
 					return false;
 				}

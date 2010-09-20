@@ -104,6 +104,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 		um = new UserDataHandling(root);
 		root.setWebStartUlr(url);
                 root.setBaseLanguage("de");
+                root.setLanguageTranslationResourcePath("/at/redeye/Zeiterfassung/resources/translations");
 
 		configureLogging();
 

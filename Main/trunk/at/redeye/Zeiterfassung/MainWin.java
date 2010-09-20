@@ -73,6 +73,39 @@ public class MainWin extends BaseDialog implements DayEventListener,
 	private boolean customers_checked = false;
 	private boolean upm_checked = false;
 
+        private String MESSAGE_NO_DESKTOP_ICON;
+        private String MESSAGE_REALLY_IMPORT_DATABASE;
+        private String MESSAGE_REALLY_REALLY_IMPORT_DATABASE;
+        private String MESSAGE_CHECK_JOBTYPES;
+        private String MESSAGE_CHECK_CUSTOMERS;
+        private String MESSAGE_CHECK_MONTH_SETTINGS;
+
+        private void initMessages()
+        {
+            if( MESSAGE_NO_DESKTOP_ICON != null )
+                return;
+
+            MESSAGE_NO_DESKTOP_ICON = MlM("Das Desktopicon konnte leider nicht erzeugt werden.");
+            MESSAGE_REALLY_IMPORT_DATABASE = MlM( "Wollen Sie tasächlich eine andere Datenbank importieren und die existierende Löschen?" );
+            MESSAGE_REALLY_REALLY_IMPORT_DATABASE = MlM( "Die existierende Datenbank wird tatsächlich gelöscht! Wollen Sie trotzdem weitermachen?" );
+            MESSAGE_CHECK_JOBTYPES = MlM( "Sie müssen zuerst Tätigkeiten, die zur Benutzung neuer"
+                                + "Zeiteinträge verwendet werden können, erstellen. "
+                                + "Menüpunkt: Einstellungen -> Tätigkeiten.\n"
+                                + "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
+                                + "bitte an Ihren Administrator." );
+            MESSAGE_CHECK_CUSTOMERS = MlM( "Sie müssen zuerst Kunden anlegen, oder diese Funktionalität deaktivieren."
+                                + "Unter dem Menüpunkt Stammdaten -> Kunden können Sie neue Kunden anlegen. Und unter "
+                                + "Menüpunkt: Einstellungen -> Globale Einstellungen.\n"
+                                + "Können Sie die Kunden und Projektfunktionalität komplett deaktivieren. "
+                                + "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
+                                + "bitte an Ihren Administrator." );
+            MESSAGE_CHECK_MONTH_SETTINGS = MlM( "Sie müssen zuerst die Normalarbeitszeit für die Benutzer festlegen. "
+                            + "Menüpunkt: Einstellungen -> \"Monatseinstellungen für die Benutzer\".\n"
+                            + "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
+                            + "bitte an Ihren Administrator." );
+        }
+
+
 	public MainWin(Root root, int mon, int year) {
 		super(root, "Zeiterfassung");
 
@@ -140,6 +173,8 @@ public class MainWin extends BaseDialog implements DayEventListener,
 	private void initCommon() {
 		month.setInfoRenderer(new TimeEntryRenderer(getTransaction(), root,
 				cache, merger));
+
+                initMessages();
 
                 setBaseLanguage("de");
 
@@ -931,8 +966,7 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 			if (!launcher.createDesktopIcon()) {
 
-				JOptionPane.showMessageDialog(this,
-						MlM("Das Desktopicon konnte leider nicht erzeugt werden."));
+				JOptionPane.showMessageDialog(this,MESSAGE_NO_DESKTOP_ICON);
 			}
 		}
 	}//GEN-LAST:event_jMCreateDesktopIconActionPerformed
@@ -993,44 +1027,42 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 	private void jMDBImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMDBImportActionPerformed
 
-		int ret = JOptionPane
-				.showConfirmDialog(
-						this,
-						StringUtils
-								.autoLineBreak("Wollen Sie tasächlich eine andere Datenbank importieren und die existierende Löschen?"),
-						"Datenbankimport", JOptionPane.OK_CANCEL_OPTION);
+            int ret = JOptionPane.showConfirmDialog(
+                    this,
+                    StringUtils.autoLineBreak(MESSAGE_REALLY_IMPORT_DATABASE),
+                    MlM("Datenbankimport"), JOptionPane.OK_CANCEL_OPTION);
 
-		if (ret != JOptionPane.OK_OPTION)
-			return;
+            if (ret != JOptionPane.OK_OPTION) {
+                return;
+            }
 
-		logger.error("User "
-				+ root.getUserName()
-				+ " will einen Datenbankimport Starten und hat die erste Frage mit Ja beantwortet");
+            logger.error("User "
+                    + root.getUserName()
+                    + " will einen Datenbankimport Starten und hat die erste Frage mit Ja beantwortet");
 
-		ret = JOptionPane
-				.showConfirmDialog(
-						this,
-						StringUtils
-								.autoLineBreak("Die existierende Datenbank wird tatsächlich gelöscht! Wollen Sie trotzdem weitermachen?"),
-						"Datenbankimport", JOptionPane.OK_CANCEL_OPTION);
+            ret = JOptionPane.showConfirmDialog(
+                    this,
+                    StringUtils.autoLineBreak(MESSAGE_REALLY_REALLY_IMPORT_DATABASE),
+                    "Datenbankimport", JOptionPane.OK_CANCEL_OPTION);
 
-		logger.error("User "
-				+ root.getUserName()
-				+ " will einen Datenbankimport Starten und hat die zweite Frage auch mit Ja beantwortet");
+            logger.error("User "
+                    + root.getUserName()
+                    + " will einen Datenbankimport Starten und hat die zweite Frage auch mit Ja beantwortet");
 
-		if (ret != JOptionPane.OK_OPTION)
-			return;
+            if (ret != JOptionPane.OK_OPTION) {
+                return;
+            }
 
-		ImportDialog importer = new ImportDialog(root);
+            ImportDialog importer = new ImportDialog(root);
 
-		importer.setFinishedListener(new Runnable() {
+            importer.setFinishedListener(new Runnable() {
 
-			public void run() {
-				TimecontrolMain.relogin(true);
-			}
-		});
+                public void run() {
+                    TimecontrolMain.relogin(true);
+                }
+            });
 
-		invokeDialogModal(importer);
+            invokeDialogModal(importer);
 
 	}//GEN-LAST:event_jMDBImportActionPerformed
 
@@ -1166,37 +1198,31 @@ public class MainWin extends BaseDialog implements DayEventListener,
 		if (job_types_checked)
 			return true;
 
-		AutoLogger al = new AutoLogger("checkJobTypes") {
-			@Override
-			public void do_stuff() throws Exception {
+            AutoLogger al = new AutoLogger("checkJobTypes") {
 
-				result = new Boolean(false);
+                @Override
+                public void do_stuff() throws Exception {
 
-				List<DBStrukt> entries = getTransaction().fetchTable(
-						new DBJobType(),
-						"where " + getTransaction().markColumn("locked")
-								+ "='NEIN'");
+                    result = new Boolean(false);
 
-				if (entries.size() == 0) {
-					JOptionPane
-							.showMessageDialog(
-									null,
-									StringUtils
-											.autoLineBreak(
-													"Sie müssen zuerst Tätigkeiten, die zur Benutzung neuer"
-															+ "Zeiteinträge verwendet werden können, erstellen. "
-															+ "Menüpunkt: Einstellungen -> Tätigkeiten.\n"
-															+ "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
-															+ "bitte an Ihren Administrator.",
-													40), "Fehler",
-									JOptionPane.OK_OPTION);
+                    List<DBStrukt> entries = getTransaction().fetchTable(
+                            new DBJobType(),
+                            "where " + getTransaction().markColumn("locked")
+                            + "='NEIN'");
 
-				} else {
-					result = new Boolean(true);
-				}
-			}
+                    if (entries.size() == 0) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                StringUtils.autoLineBreak(
+                                MESSAGE_CHECK_JOBTYPES,
+                                40), MlM("Fehler"),
+                                JOptionPane.OK_OPTION);
 
-		};
+                    } else {
+                        result = new Boolean(true);
+                    }
+                }
+            };
 
 		if ((Boolean) al.result)
 			job_types_checked = true;
@@ -1212,39 +1238,30 @@ public class MainWin extends BaseDialog implements DayEventListener,
 				AppConfigDefinitions.UseCustomersAndProjects)))
 			return true;
 
-		AutoLogger al = new AutoLogger("checkCustomers") {
+            AutoLogger al = new AutoLogger("checkCustomers") {
 
-			@Override
-			public void do_stuff() throws Exception {
+                @Override
+                public void do_stuff() throws Exception {
 
-				result = new Boolean(false);
+                    result = new Boolean(false);
 
-				List<DBStrukt> entries = getTransaction().fetchTable(
-						new DBCustomers(),
-						"where " + getTransaction().markColumn("locked")
-								+ "='NEIN'");
+                    List<DBStrukt> entries = getTransaction().fetchTable(
+                            new DBCustomers(),
+                            "where " + getTransaction().markColumn("locked")
+                            + "='NEIN'");
 
-				if (entries.size() == 0) {
-					JOptionPane
-							.showMessageDialog(
-									null,
-									StringUtils
-											.autoLineBreak(
-													"Sie müssen zuerst Kunden anlegen, oder diese Funktionalität deaktivieren."
-															+ "Unter dem Menüpunkt Stammdaten -> Kunden können Sie neue Kunden anlegen. Und unter "
-															+ "Menüpunkt: Einstellungen -> Globale Einstellungen.\n"
-															+ "Können Sie die Kunden und Projektfunktionalität komplett deaktivieren. "
-															+ "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
-															+ "bitte an Ihren Administrator.",
-													40), "Fehler",
-									JOptionPane.OK_OPTION);
+                    if (entries.size() == 0) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                StringUtils.autoLineBreak(MESSAGE_CHECK_CUSTOMERS,
+                                40), MlM("Fehler"),
+                                JOptionPane.OK_OPTION);
 
-				} else {
-					result = new Boolean(true);
-				}
-			}
-
-		};
+                    } else {
+                        result = new Boolean(true);
+                    }
+                }
+            };
 
 		if ((Boolean) al.result)
 			customers_checked = true;
@@ -1274,12 +1291,8 @@ public class MainWin extends BaseDialog implements DayEventListener,
                 if (entries.size() == 0) {
                     JOptionPane.showMessageDialog(
                             null,
-                            StringUtils.autoLineBreak(
-                            "Sie müssen zuerst die Normalarbeitszeit für die Benutzer festlegen. "
-                            + "Menüpunkt: Einstellungen -> \"Monatseinstellungen für die Benutzer\".\n"
-                            + "Sollte dieser Menüpunkt Ihnen nicht zur Verfügungstehen, so wenden Sie sich "
-                            + "bitte an Ihren Administrator.",
-                            40), "Fehler",
+                            StringUtils.autoLineBreak(MESSAGE_CHECK_MONTH_SETTINGS,
+                            40), MlM("Fehler"),
                             JOptionPane.OK_OPTION);
 
                 } else {
@@ -1330,9 +1343,12 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 						StringBuilder text = new StringBuilder();
 
-						text.append("Soll: ");
+						text.append(MlM("Soll:"));
+                                                text.append(" ");
 						text.append(month_stuff.getFormatedHoursPerMonth());
-						text.append(" Ist: ");
+                                                text.append(" ");
+						text.append(MlM("Ist:"));
+                                                text.append(" ");
 						text.append(month_stuff.complete_time.toString("HH:mm"));
 
 						if (month_stuff.time_correction_month_done.getMillis() != 0) {
@@ -1358,9 +1374,13 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 						}
 
-						text.append(" Gleitzeitkonto: ");
+                                                text.append(" ");
+						text.append(MlM("Gleitzeitkonto:"));
+                                                text.append(" ");
 						text.append(month_stuff.overtime.toString("HH:mm"));
-						text.append(" Resturlaub: ");
+                                                text.append(" ");
+						text.append(MlM("Resturlaub:"));
+                                                text.append(" ");
 						text.append(month_stuff.remaining_leave
 								.toString("HH:mm"));
 
@@ -1370,7 +1390,7 @@ public class MainWin extends BaseDialog implements DayEventListener,
 											month_stuff.remaining_leave
 													.getHours()
 													/ month_stuff.hours_per_day,
-											1) + " Tage)");
+											1) + " " + MlM("Tage") + ")");
 
 						jLSum.setText(text.toString());
 

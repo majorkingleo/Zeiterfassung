@@ -37,6 +37,10 @@ public class JobTypes extends BaseDialog {
 	TableManipulator tm;
 	List<DBStrukt> values = new ArrayList<DBStrukt>();
 
+
+        private String MESSAGE_DOUBLE_ENTRY_EQUAL;
+        private String MESSAGE_NO_DELETE;
+
 	/**
 	 * Creates new form JobTypes
 	 * 
@@ -59,6 +63,10 @@ public class JobTypes extends BaseDialog {
 	}
 
 	private void initCommon(boolean no_new_entry) {
+
+                setBaseLanguage("de");
+
+                initMessages();
 		DBJobType jt = new DBJobType();
 
 		tm = new TableManipulator(root, jTContent, jt);
@@ -92,6 +100,17 @@ public class JobTypes extends BaseDialog {
             });
 	}
 
+        private void initMessages()
+        {
+            if( MESSAGE_DOUBLE_ENTRY_EQUAL != null )
+                return;
+
+            MESSAGE_DOUBLE_ENTRY_EQUAL = MlM( "Eintrag %d und Eintrag %d gleichen sich.");
+            MESSAGE_NO_DELETE = MlM("Dieser Eintrag kann nicht mehr gelöscht, "
+                    + "sondern nur gesperrt werden, "
+                    + "da bereits Zeiteinträge mit dieser Tätigkeit existieren.");
+        }
+
 	private boolean check_entries() {
 
 		int counter1 = 0;
@@ -120,9 +139,8 @@ public class JobTypes extends BaseDialog {
 							+ counter2 + " gleichen sich.");
 					JOptionPane.showMessageDialog(
 							null,
-							StringUtils.autoLineBreak("Eintrag " + counter1
-									+ " und Eintrag " + counter2
-									+ " gleichen sich."), "Fehler",
+							StringUtils.autoLineBreak(
+                                                        String.format(MESSAGE_DOUBLE_ENTRY_EQUAL, counter1, counter2)), MlM("Fehler"),
 							JOptionPane.OK_OPTION);
 					return false;
 				}
@@ -432,10 +450,8 @@ public class JobTypes extends BaseDialog {
 					.showMessageDialog(
 							null,
 							StringUtils
-									.autoLineBreak("Dieser Eintrag kann nicht mehr gelöscht, "
-											+ "sondern nur gesperrt werden, "
-											+ "da bereits Zeiteinträge mit dieser Tätigkeit existieren."),
-							"Fehler", JOptionPane.OK_OPTION);
+									.autoLineBreak(MESSAGE_NO_DELETE),
+							MlM("Fehler"), JOptionPane.OK_OPTION);
 			return;
 		}
 
