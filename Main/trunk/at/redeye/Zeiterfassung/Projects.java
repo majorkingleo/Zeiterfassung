@@ -35,12 +35,13 @@ public class Projects extends BaseDialog {
 	DBCustomers cust;
 
 	public Projects(final Root root, DBCustomers cust) {
-		super(root, getTitle(cust));
+		super(root, "Projekte");
 		initComponents();
 
 		this.cust = cust;
 
-		jLTitle.setText(getTitle());
+		jLTitle.setText(getTitle(cust));
+                setTitle(getTitle(cust));
 
 		DBProjects projects = new DBProjects();
 
@@ -74,8 +75,8 @@ public class Projects extends BaseDialog {
             });
 	}
 
-	private static String getTitle(DBCustomers cust) {
-		return "Projekte " + cust.name.toString() + " - "
+	private String getTitle(DBCustomers cust) {
+		return MlM("Projekte") + " " + cust.name.toString() + " - "
 				+ cust.comment.toString();
 	}
 
@@ -369,7 +370,7 @@ public class Projects extends BaseDialog {
 	}//</editor-fold>//GEN-END:initComponents
 
 	private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
-	// TODO add your handling code here:
+	
 
 		new AutoMBox(getTitle()) {
 
@@ -391,19 +392,19 @@ public class Projects extends BaseDialog {
 	}//GEN-LAST:event_jBSaveActionPerformed
 
 	private void jBNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBNewActionPerformed
-	// TODO add your handling code here:
+	
 		newEntry();
 	}//GEN-LAST:event_jBNewActionPerformed
 
 	private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCloseActionPerformed
-	// TODO add your handling code here:
+	
 		if (canClose()) {
 			close();
 		}
 	}//GEN-LAST:event_jBCloseActionPerformed
 
 	private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
-	// TODO add your handling code here:
+	
 		if (!checkAnyAndSingleSelection(jTContent))
 			return;
 
