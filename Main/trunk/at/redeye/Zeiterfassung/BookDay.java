@@ -71,6 +71,7 @@ public class BookDay extends BaseDialog {
 		DBTimeEntries te = getBindType();
 
 		tm = new TableManipulator(root, jTContent, te);
+                tm.setResortingAllowed(false);
 
 		tm.hide(te.id);
 		tm.hide(te.user);
