@@ -359,7 +359,7 @@ public class CustomersAddresses extends BaseDialog {
 		if (!checkAnyAndSingleSelection(jTContent))
 			return;
 
-		final int i = jTContent.getSelectedRow();
+		final int i = tm.getSelectedRow();
 
 		if (i < 0 || i >= values.size())
 			return;
