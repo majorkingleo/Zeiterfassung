@@ -189,4 +189,8 @@ public class TimeEntryRenderer implements InfoRenderer {
 	public String renderSum() {
 		return sum;
 	}
+
+    public DateMidnight getDay() {
+        return day;
+    }
 }

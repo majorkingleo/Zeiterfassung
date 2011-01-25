@@ -163,6 +163,9 @@ public class UserPerMonth extends BaseDialog {
 
 		});
 
+                tm.setAutoCompleteForCollAtAll(upm.from, false);
+                tm.setAutoCompleteForCollAtAll(upm.to, false);
+
 		tm.prepareTable();
 
 		feed_table(false);
