@@ -554,16 +554,17 @@ public class CalcMonthStuff {
 		}
 
 		if (last_day.size() > 0) {
-			long ot = calc_overtime.calcExtraTimeForDay(last_day,
-					month.getDay(cal_act.get(Calendar.DAY_OF_MONTH))
-							.isHoliday());
+                        DisplayDay day = month.getDay(cal_act.get(Calendar.DAY_OF_MONTH));
 
-			if (ot > 0) {
-				logger.trace(DBDateTime.getDateStr(last_day.get(0).from
-						.getValue()) + " added " + ot + " to overtime.");
-			}
+                    if (day != null) {
+                        long ot = calc_overtime.calcExtraTimeForDay(last_day, day.isHoliday());
 
-			lovertime += ot;
+                        if (ot > 0) {
+                            logger.trace(DBDateTime.getDateStr(last_day.get(0).from.getValue()) + " added " + ot + " to overtime.");
+                        }
+
+                        lovertime += ot;
+                    }
 		}
 
 		// so jetzt haben wir auf der Haben Seite alle Arbeitszeiten
