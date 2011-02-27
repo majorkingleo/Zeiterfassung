@@ -13,11 +13,23 @@ import java.util.GregorianCalendar;
 
 /**
  *
- * @author martin
+ * @author martin => BJV System
  *
  * Wir haben auch ein Überstunden-System, dh konkret eine Stunde zählt dann 1,5 Stunden.
  * Das sind alle Stunden zwischen 20:00 und 6:30, wenn über 9 Stunden an einem Tag
  * gearbeitet wird und Samstag bzw. Sonntag.
+ *
+ * Überstunden sind:
+ *   Immer die 10. Arbeitsstunde am Tag; d.h. nach 9 geleisteten Stunden sind alle Stunden Überstunden;
+ *   z.B. Arbeitszeit 9.00 bis 22.00 = 9 Stunden + 6 Überstunden
+ *
+ *   Von 20:00 bis 6:30 sind alle Stunden Überstunden; z.B. Arbeitszeit 15.00 bis 24:00 = 5 Stunden + 6 Überstunden
+ *
+ *   Am Ende des Quartals d.h. mit Gültigkeit ab 1.4., 1.6., 1.9., 1.1. ist folgendes geregelt: übersteigt die
+ *   Summe der mehr+Überstunden insgesamt eine Wochenarbeitszeit, so ist diese Differenz auch als Überstunden
+ *   zu werten; bei 38,5 Stunden W-Arbeitszeit also z.B.: Ende 30. März: 33 Mehrstunden
+ *   plus 15 Ü Stunden = 48 abzüglich 38, 5 = 9,5 *0,5=4,75;
+ *   ergibt für die Arbeitnehmerin mit 1. April 33 Mehrstunden plus 19:45 Ü-Stunden
  */
 public class Schema_1 implements OvertimeInterface
 {
@@ -30,7 +42,7 @@ public class Schema_1 implements OvertimeInterface
 
         cal.setTime(date);
 
-        cal.set(Calendar.HOUR, 6);
+        cal.set(Calendar.HOUR_OF_DAY, 6);
         cal.set(Calendar.MINUTE, 30);
         cal.set(Calendar.SECOND, 0);
 
@@ -57,7 +69,7 @@ public class Schema_1 implements OvertimeInterface
 
         cal.setTime(date);
 
-        cal.set(Calendar.HOUR, 20);
+        cal.set(Calendar.HOUR_OF_DAY, 20);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
 
@@ -69,6 +81,7 @@ public class Schema_1 implements OvertimeInterface
         long duration_per_day = 0;
         long duration_before_morning=0;
         long duration_after_evening=0;
+        long duration_extra = 0;
 
         if( entries_per_day.isEmpty() )
             return 0;
@@ -109,17 +122,17 @@ public class Schema_1 implements OvertimeInterface
             }
         }
 
+        if( duration_per_day > 1000*60*60*9 )
+        {
+            duration_extra = duration_per_day  - 1000*60*60*9 - duration_after_evening - duration_before_morning;
+        }
+
         if( is_saturday || is_sunday || is_holiday )
         {            
             return (long) (duration_per_day * 0.5);
         }
 
-        if( duration_per_day < 1000*60*60*9 )
-        {
-            return 0;
-        }
-
-        return (long) ((duration_after_evening + duration_before_morning) * 0.5);
+        return (long) ((duration_after_evening + duration_before_morning + duration_extra ) * 0.5);
     }
 
     public long calcExtraTimeForMonth(long regular_work_time, long real_work_time)

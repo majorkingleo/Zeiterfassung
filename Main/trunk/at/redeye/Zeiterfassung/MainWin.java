@@ -1365,8 +1365,7 @@ public class MainWin extends BaseDialog implements DayEventListener,
 							text.append(" = ");
 
 							HMSTime t = new HMSTime();
-							t.setTime(month_stuff
-									.getHoursPerMonthDoneinMillis());
+							t.setTime(month_stuff.complete_time.getMillis());
 							t.addMillis(month_stuff.time_correction_month_done
 									.getMillis());
 

@@ -481,6 +481,11 @@ public class CalcMonthStuff {
 
 		logger.info(to.getTime());
 
+		Double dovertime = upm.hours_overtime.getValue();
+		long lovertime = dovertime.longValue() * 60 * 60 * 1000;
+
+                overtime.setTime(lovertime);
+
 		if (Time.isMinimumTime(to.getTime())) {
 			// der letzte Tag des aktuellen Monats
 			GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(),
@@ -503,9 +508,6 @@ public class CalcMonthStuff {
 			logger.warn("Noch keine Einträge gefunden mit: " + trans.getSql());
 			return true;
 		}
-
-		Double dovertime = upm.hours_overtime.getValue();
-		long lovertime = dovertime.longValue() * 60 * 60 * 1000;
 
 		logger.trace(trans.getSql());
 
@@ -653,11 +655,11 @@ public class CalcMonthStuff {
 
 	public String getFormatedHoursPerMonth() {
 		HMSTime hms_time = new HMSTime();
-		hms_time.setTime(getHoursPerMonthDoneinMillis());
+		hms_time.setTime(getHoursPerMonthDoneInMillis());
 		return hms_time.toString("HH:mm");
 	}
 
-	public long getHoursPerMonthDoneinMillis() {
+	public long getHoursPerMonthDoneInMillis() {
 		return (long) (hours_per_month * 1000 * 60 * 60);
 	}
 }
