@@ -41,7 +41,8 @@ public class NameNotLockedQuery extends DBSqlAsInteger.SqlQuery {
 
 				List<DBStrukt> res = trans.fetchTable(strukt.getNewOne(),
 						"where " + trans.markColumn(strukt.getLockedName())
-								+ "= 'NEIN' " + getExtraSql());
+								+ "= 'NEIN' " + getExtraSql()
+                                                                + " " + getOrderBySql());
 
 				// System.out.println( "sql: " + trans.getSql() );
 

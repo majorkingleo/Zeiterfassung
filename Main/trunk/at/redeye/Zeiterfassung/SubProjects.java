@@ -97,7 +97,8 @@ public class SubProjects extends BaseDialog {
 				Transaction trans = getTransaction();
 				values = trans.fetchTable(subprojects,
 						"where " + trans.markColumn(subprojects.project) + "='"
-								+ project.id.toString() + "'");
+								+ project.id.toString() + "'"
+                                                                + " order by " + trans.markColumn(subprojects.name));
 
 				for (DBStrukt entry : values) {
 					tm.add(entry);

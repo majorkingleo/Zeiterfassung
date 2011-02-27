@@ -15,14 +15,21 @@ public class SubProjectQuery extends NameNotLockedQuery
 {
     public SubProjectQuery( Transaction trans, boolean with_null_entry )
     {
-        super( trans, new DBSubProjects() );
-
-        if( with_null_entry )
-            setNullEntryAsDefault();
+        this( trans, new DBSubProjects(), with_null_entry );
     }
 
     public SubProjectQuery( Transaction trans )
     {
-        super( trans, new DBSubProjects() );
+        this( trans, new DBSubProjects(), false );
+    }
+
+    private SubProjectQuery( Transaction trans, DBSubProjects proj, boolean with_null_entry )
+    {
+        super( trans, proj );
+
+        if( with_null_entry )
+            setNullEntryAsDefault();
+
+        setOrderBySql(" order by " + trans.markColumn(proj.name));
     }
 }
