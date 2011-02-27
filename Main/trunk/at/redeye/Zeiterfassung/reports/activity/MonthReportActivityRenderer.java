@@ -68,7 +68,7 @@ public class MonthReportActivityRenderer extends BaseReportRenderer implements R
 
                 String where = " where " 
                         + trans.getPeriodStmt("from", new DateMidnight(year, mon, 1), 
-                        		new DateMidnight(year, mon, 1).plusMonths(1))
+                        		new DateMidnight(year, mon, 1).plusMonths(1).minusDays(1))
                         + " order by " + trans.markColumn("from");
 
                 data = trans.fetchTableList(new DBTimeEntries(), where);
