@@ -544,13 +544,13 @@ public class CalcMonthStuff {
 				}
 			}
 
-			String msg = String.format("%s - %s => %s (%s)", DBDateTime
-					.getDateStr(entry.from.getValue()), DBDateTime
-					.getDateStr(entry.to.getValue()),
-					new HMSTime(entry.calcDuration()).toString("HH:mm"),
-					entry.comment.getValue());
+                    if (logger.isTraceEnabled()) {
+                        String msg = String.format("%s - %s => %s (%s)", DBDateTime.getDateStr(entry.from.getValue()), DBDateTime.getDateStr(entry.to.getValue()),
+                                new HMSTime(entry.calcDuration()).toString("HH:mm"),
+                                entry.comment.getValue());
 
-			logger.trace(msg);
+                        logger.trace(msg);
+                    }
 		}
 
 		if (last_day.size() > 0) {
