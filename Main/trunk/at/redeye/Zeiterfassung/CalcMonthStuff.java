@@ -581,9 +581,13 @@ public class CalcMonthStuff {
 		logger.info("from: " + DBDateTime.getDateStr(cal_from) + " to "
 				+ DBDateTime.getDateStr(cal_to));
 
-		int start = cal_from.getMonthOfYear();
-		for (int i = start; i <= cal_to.getMonthOfYear(); i++) {
-			Date aktual_day = cal_from.plusMonths(start - i).toDate();
+                int distance = (cal_to.getYear() - cal_from.getYear())*12 + (cal_to.getMonthOfYear() - cal_from.getMonthOfYear());
+
+		// int start = cal_from.getMonthOfYear();
+		// for (int i = start; i <= cal_to.getMonthOfYear(); i++) {
+                for( int i = 0; i <= distance; i++ ) {
+			//Date aktual_day = cal_from.plusMonths(start - i).toDate();
+                        Date aktual_day = cal_from.plusMonths(i).toDate();
 			long work_days_for_month = getWorkDaysForMonth(aktual_day);
 			double dhours_per_day = getHoursPerDay(upm);
 
