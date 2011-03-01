@@ -7,7 +7,6 @@ package at.redeye.Zeiterfassung.overtime;
 
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -33,6 +32,6 @@ public interface OvertimeInterface
      * @param holiday
      * @return die Anzhal der Stunden, die als Überstunden gelten in millisekunden.
      */
-    public long calcOverTimeForDay(List<DBTimeEntries> entries_per_day, boolean holiday);
+    public long calcOverTimeForDay(Collection<DBTimeEntries> entries_per_day, boolean holiday);
 
 }

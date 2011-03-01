@@ -34,10 +34,16 @@ import java.util.List;
  */
 public class Schema_1 implements OvertimeInterface
 {
+    static class Times
+    {
+        long extra_time = 0;
+        long over_time = 0;
+    }
+
     boolean is_saturday = false;
     boolean is_sunday = false;
 
-    private Date calcMorning( Date date )
+    Date calcMorning( Date date )
     {
         GregorianCalendar cal = new GregorianCalendar();
 
@@ -64,7 +70,7 @@ public class Schema_1 implements OvertimeInterface
         return cal.getTime();
     }
 
-    private Date calcEvening( Date date )
+    Date calcEvening( Date date )
     {
         GregorianCalendar cal = new GregorianCalendar();
 
@@ -79,13 +85,22 @@ public class Schema_1 implements OvertimeInterface
 
     public long calcExtraTimeForDay(Collection<DBTimeEntries> entries_per_day, boolean is_holiday )
     {
+        Times times = calcTimesForDay(entries_per_day, is_holiday);
+
+        return times.extra_time;
+    }
+
+    Times calcTimesForDay(Collection<DBTimeEntries> entries_per_day, boolean is_holiday )
+    {
         long duration_per_day = 0;
         long duration_before_morning=0;
         long duration_after_evening=0;
         long duration_extra = 0;
 
+        Times times = new Times();
+
         if( entries_per_day.isEmpty() )
-            return 0;
+            return times;
 
         Date d_morning = null;
         Date d_evening = null;
@@ -100,7 +115,7 @@ public class Schema_1 implements OvertimeInterface
             if( d_morning == null )
                 d_morning = calcMorning( d_from );
 
-            if( d_from.before(d_morning) && d_to.before(d_morning) )
+            if( d_from.before(d_morning) && ( d_to.before(d_morning) || d_to.equals(d_morning)))
             {
                 duration_before_morning += e.calcDuration();
             }
@@ -113,14 +128,14 @@ public class Schema_1 implements OvertimeInterface
                 d_evening = calcEvening( d_from );
 
 
-            if( d_from.after(d_evening) )
+            if( d_from.after(d_evening) || d_from.equals(d_evening) )
             {
                 duration_after_evening += e.calcDuration();
             }
             else if( d_from.before(d_evening) && d_to.after(d_evening))
             {
                 duration_after_evening += d_to.getTime() - d_evening.getTime();
-            }
+            }            
         }
 
         if( duration_per_day > 1000*60*60*9 )
@@ -129,11 +144,15 @@ public class Schema_1 implements OvertimeInterface
         }
 
         if( is_saturday || is_sunday || is_holiday )
-        {            
-            return (long) (duration_per_day * 0.5);
+        {
+            times.extra_time = (long)(duration_per_day * 0.5);
+            times.over_time = duration_per_day;
+        } else {
+            times.extra_time = (long)((duration_after_evening + duration_before_morning + duration_extra ) * 0.5);
+            times.over_time = duration_after_evening + duration_before_morning + duration_extra;
         }
 
-        return (long) ((duration_after_evening + duration_before_morning + duration_extra ) * 0.5);
+        return times;
     }
 
     public long calcExtraTimeForMonth(long regular_work_time, long real_work_time)
@@ -141,8 +160,11 @@ public class Schema_1 implements OvertimeInterface
         return 0;
     }
 
-    public long calcOverTimeForDay(List<DBTimeEntries> entries_per_day, boolean holiday) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public long calcOverTimeForDay(Collection<DBTimeEntries> entries_per_day, boolean is_holiday)
+    {
+        Times times = calcTimesForDay(entries_per_day, is_holiday);
+
+        return times.over_time;
     }
 
 }
