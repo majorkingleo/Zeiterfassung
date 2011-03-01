@@ -167,4 +167,8 @@ public class Schema_1 implements OvertimeInterface
         return times.over_time;
     }
 
+    public double getOverTimeFactor() {
+        return 1.5;
+    }
+
 }

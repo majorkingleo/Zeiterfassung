@@ -34,4 +34,9 @@ public interface OvertimeInterface
      */
     public long calcOverTimeForDay(Collection<DBTimeEntries> entries_per_day, boolean holiday);
 
+    /**     
+     * @return Den Faktor mit dem die Überstunden multipliziert werden um die ZA Stunden 
+     * zu erhalten.
+     */
+    public double getOverTimeFactor();
 }

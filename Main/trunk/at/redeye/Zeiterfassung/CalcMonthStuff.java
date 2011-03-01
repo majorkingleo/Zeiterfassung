@@ -15,7 +15,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 
-import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
@@ -41,19 +40,21 @@ import org.joda.time.DateTimeConstants;
  * @author martin
  */
 public class CalcMonthStuff {
-	double hours_per_day = 0;
-	double hours_per_month = 0;
-	double hours_per_month_done = 0;
-	Transaction trans;
-	CalcMonthStuffDataInterface display_month;	
-	HMSTime complete_time = new HMSTime();
-	HMSTime remaining_leave = new HMSTime();
-	HMSTime overtime = new HMSTime();
-	private static final Logger logger = Logger.getLogger(CalcMonthStuff.class);
-	StringBuilder error_log = new StringBuilder();
-	HMSTime time_correction_month_done = new HMSTime();
-        int user_id;
-        int days_of_month=0;
+        private static final Logger logger = Logger.getLogger(CalcMonthStuff.class);
+
+	private double hours_per_day = 0;
+	private double hours_per_month = 0;
+	private double hours_per_month_done = 0;
+	private Transaction trans;
+	private CalcMonthStuffDataInterface display_month;
+	private HMSTime complete_time = new HMSTime();
+	private HMSTime remaining_leave = new HMSTime();
+	private HMSTime flextime = new HMSTime();
+        private HMSTime overtime = new HMSTime();
+	private StringBuilder error_log = new StringBuilder();
+	private HMSTime time_correction_month_done = new HMSTime();
+        private int user_id;
+        private int days_of_month=0;
 
 	public CalcMonthStuff(CalcMonthStuffDataInterface month, Transaction trans, int user_id) {
 		this.display_month = month;
@@ -61,7 +62,7 @@ public class CalcMonthStuff {
                 this.user_id = user_id;
 	}
 
-	public boolean calcHoursPerDay() throws TableBindingNotRegisteredException,
+	private boolean calcHoursPerDay() throws TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, SQLException,
 			WrongBindFileFormatException, CloneNotSupportedException,
 			DuplicateRecordException {
@@ -114,6 +115,11 @@ public class CalcMonthStuff {
 		return getHoursPerDay(upm);
 	}
 
+        public double getHoursPerDay()
+        {
+            return hours_per_day;
+        }
+
 	public DBUserPerMonth getUPMRecord(int year, int month)
 			throws TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, SQLException,
@@ -136,23 +142,6 @@ public class CalcMonthStuff {
 
 	public void calcHoursPerMonth() {
 		hours_per_month = 0;
-/*
-		for (int i = 1; i <= display_month.getDaysOfMonth(); i++) {
-			DisplayDay day = display_month.getDay(i);
-
-			if (day.isHoliday())
-				continue;
-
-			if (day.isSaturday())
-				continue;
-
-			if (day.isSunday())
-				continue;
-
-			hours_per_month += hours_per_day;
-		}
- */
-
 
                 DateMidnight dm = new DateMidnight(display_month.getYear(), display_month.getMonth(),1);
                 final DateMidnight month_end = dm.plusMonths(1);
@@ -186,11 +175,11 @@ public class CalcMonthStuff {
 		cal.setTime(date);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 
-		int days_of_month = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		int local_days_of_month = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
 		int days_to_work = 0;
 
-		for (int i = 1; i <= days_of_month; i++) {
+		for (int i = 1; i <= local_days_of_month; i++) {
 			cal.set(Calendar.DAY_OF_MONTH, i);
 
 			if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
@@ -309,7 +298,7 @@ public class CalcMonthStuff {
 			if (!calcRemainingLeave())
 				error("Der Resturlaub konnte nicht berechnet werden.");
 
-			if (!calcOverTime())
+			if (!calcFlexTime())
 				error("Der Gesammtarbeitszeit konnte nicht berechnet werden.");
 		}
 	}
@@ -460,7 +449,7 @@ public class CalcMonthStuff {
 		return true;
 	}
 
-	private boolean calcOverTime() throws SQLException,
+	private boolean calcFlexTime() throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
 			WrongBindFileFormatException, DuplicateRecordException {
 		GregorianCalendar gdate = new GregorianCalendar(display_month.getYear(),
@@ -486,10 +475,14 @@ public class CalcMonthStuff {
 
 		logger.info(to.getTime());
 
-		Double dovertime = upm.hours_overtime.getValue();
-		long lovertime = dovertime.longValue() * 60 * 60 * 1000;
+		Double dflextime = upm.hours_overtime.getValue();
+		long lflextime = dflextime.longValue() * 60 * 60 * 1000;
+                long lovertime = dflextime.longValue() * 60 * 60 * 1000;
 
+                flextime.setTime(lflextime);
                 overtime.setTime(lovertime);
+
+                HMSTime debug_overtime = new HMSTime(lovertime);
 
 		if (Time.isMinimumTime(to.getTime())) {
 			// der letzte Tag des aktuellen Monats
@@ -524,7 +517,7 @@ public class CalcMonthStuff {
 
 		for (int i = 0; i < res.size(); i++) {
 			DBTimeEntries entry = (DBTimeEntries) res.get(i);
-			lovertime += entry.calcDuration();
+			lflextime += entry.calcDuration();
 
 			if (last_day.isEmpty()) {
 				cal_before.setTime(entry.from.getValue());
@@ -535,17 +528,22 @@ public class CalcMonthStuff {
 						.get(Calendar.DAY_OF_MONTH)) {
 					cal_before.setTime(entry.from.getValue());
 
-					long ot = calc_overtime.calcExtraTimeForDay(last_day,
-							isHoliday(entry.from.getValue()));
+					long ft_extra = calc_overtime.calcExtraTimeForDay(last_day,isHoliday(entry.from.getValue()));
+                                        long ot = calc_overtime.calcOverTimeForDay(last_day,isHoliday(entry.from.getValue()));
+
+                                        debug_overtime.addMillis(ot);
+                                        debug_overtime.addMillis(ft_extra);
+
 					last_day.clear();
 					last_day.add(entry);
 
-					if (ot > 0) {
+					if (ft_extra > 0) {
 						logger.trace(DBDateTime.getDateStr(entry.from
-								.getValue()) + " added " + ot + " to overtime.");
+								.getValue()) + " added " + ft_extra + " to overtime.");
 					}
 
-					lovertime += ot;
+					lflextime += ft_extra;
+                                        lovertime += ot + ft_extra;
 				} else {
 					last_day.add(entry);
 				}
@@ -561,13 +559,18 @@ public class CalcMonthStuff {
 		}
 
 		if (last_day.size() > 0) {
-                    long ot = calc_overtime.calcExtraTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()));
+                    long ft_extra = calc_overtime.calcExtraTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()));
+                    long ot = calc_overtime.calcOverTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()));
 
-                    if (ot > 0) {
-                        logger.trace(DBDateTime.getDateStr(last_day.get(0).from.getValue()) + " added " + ot + " to overtime.");
+                     debug_overtime.addMillis(ot);
+                     debug_overtime.addMillis(ft_extra);
+
+                    if (ft_extra > 0) {
+                        logger.trace(DBDateTime.getDateStr(last_day.get(0).from.getValue()) + " added " + ft_extra + " to flex time. Overtime " + ot );
                     }
 
-                    lovertime += ot;
+                    lflextime += ft_extra;
+                    lovertime += ot + ft_extra;
 		}
 
 		// so jetzt haben wir auf der Haben Seite alle Arbeitszeiten
@@ -612,19 +615,20 @@ public class CalcMonthStuff {
 
 		if (calc_overtime != null)
 			correction = calc_overtime.calcExtraTimeForMonth(
-					(long) (regular_work_time * 60 * 60 * 1000), lovertime);
+					(long) (regular_work_time * 60 * 60 * 1000), lflextime);
 
-		double overtime_result = (lovertime - correction) / 60 / 60 / 1000.0
+		double flextime_result = (lflextime - correction) / 60 / 60 / 1000.0
 				- (regular_work_time);
 
 		logger.info(String
 				.format("overal working hours from %s to %s: %.3f regular working hours: %.3f result: %.3f",
 						DBDateTime.getDateStr(from), DBDateTime.getDateStr(to),
-						Rounding.rndDouble(lovertime / 60 / 60 / 1000.0, 3),
+						Rounding.rndDouble(lflextime / 60 / 60 / 1000.0, 3),
 						Rounding.rndDouble(regular_work_time, 3),
-						Rounding.rndDouble(overtime_result, 3)));
+						Rounding.rndDouble(flextime_result, 3)));
 
-		overtime.setTime((long) (overtime_result * 60 * 60 * 1000));
+		flextime.setTime((long) (flextime_result * 60 * 60 * 1000));
+                overtime.setTime(lovertime);
 
 		return true;
 	}
@@ -658,13 +662,41 @@ public class CalcMonthStuff {
 		return null;
 	}
 
+        /**
+         * @return die Soll-Arbeitsstunden im Monat
+         */
 	public String getFormatedHoursPerMonth() {
 		HMSTime hms_time = new HMSTime();
-		hms_time.setTime(getHoursPerMonthDoneInMillis());
+		hms_time.setTime(getHoursPerMonthInMillis());
 		return hms_time.toString("HH:mm");
 	}
 
-	public long getHoursPerMonthDoneInMillis() {
+	public long getHoursPerMonthInMillis() {
 		return (long) (hours_per_month * 1000 * 60 * 60);
 	}
+
+        public HMSTime getCompleteTime()
+        {
+            return complete_time;
+        }
+
+        public HMSTime getFlexTime()
+        {
+            return flextime;
+        }
+
+        public HMSTime getRemainingLeave()
+        {
+            return remaining_leave;
+        }
+        
+        public HMSTime getExtraTimePerMonthDone()
+        {
+            return time_correction_month_done;
+        }
+
+        public HMSTime getOverTime()
+        {
+            return overtime;
+        }
 }

@@ -749,7 +749,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 
         private void jMAbsenceTimeBookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMAbsenceTimeBookingActionPerformed
 
-            invokeDialogUnique(new AbsenceTimeBooking(root,this,month_stuff.hours_per_day));
+            invokeDialogUnique(new AbsenceTimeBooking(root,this,month_stuff.getHoursPerDay()));
 
         }//GEN-LAST:event_jMAbsenceTimeBookingActionPerformed
 
@@ -1316,7 +1316,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 			// month.isWhatDayOfMonth(day) );
 			invokeDialogUnique(new BookDay(root, new DateMidnight(year, mon,
 					month.isWhatDayOfMonth(day)), month.getDay(day), this,
-					month_stuff.hours_per_day, cache));
+					month_stuff.getHoursPerDay(), cache));
 
 		}
 	}
@@ -1349,24 +1349,24 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                                                 text.append(" ");
 						text.append(MlM("Ist:"));
                                                 text.append(" ");
-						text.append(month_stuff.complete_time.toString("HH:mm"));
+						text.append(month_stuff.getCompleteTime().toString("HH:mm"));
 
-						if (month_stuff.time_correction_month_done.getMillis() != 0) {
+						if (month_stuff.getExtraTimePerMonthDone().getMillis() != 0) {
 							text.append(" ");
 
-							if (month_stuff.time_correction_month_done
+							if (month_stuff.getExtraTimePerMonthDone()
 									.getMillis() > 0) {
 								text.append("+");
 							}
 
-							text.append(month_stuff.time_correction_month_done
+							text.append(month_stuff.getExtraTimePerMonthDone()
 									.toString("HH:mm"));
 
 							text.append(" = ");
 
 							HMSTime t = new HMSTime();
-							t.setTime(month_stuff.complete_time.getMillis());
-							t.addMillis(month_stuff.time_correction_month_done
+							t.setTime(month_stuff.getCompleteTime().getMillis());
+							t.addMillis(month_stuff.getExtraTimePerMonthDone()
 									.getMillis());
 
 							text.append(t.toString("HH:mm"));
@@ -1376,19 +1376,19 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                                                 text.append(" ");
 						text.append(MlM("Gleitzeitkonto:"));
                                                 text.append(" ");
-						text.append(month_stuff.overtime.toString("HH:mm"));
+						text.append(month_stuff.getFlexTime().toString("HH:mm"));
                                                 text.append(" ");
 						text.append(MlM("Resturlaub:"));
                                                 text.append(" ");
-						text.append(month_stuff.remaining_leave
+						text.append(month_stuff.getRemainingLeave()
 								.toString("HH:mm"));
 
-						if (month_stuff.hours_per_day > 0)
+						if (month_stuff.getHoursPerDay() > 0)
 							text.append(" ("
 									+ Rounding.rndDouble(
-											month_stuff.remaining_leave
+											month_stuff.getRemainingLeave()
 													.getHours()
-													/ month_stuff.hours_per_day,
+													/ month_stuff.getHoursPerDay(),
 											1) + " " + MlM("Tage") + ")");
 
 						jLSum.setText(text.toString());

@@ -27,4 +27,8 @@ public class None implements OvertimeInterface
         return 0;
     }
 
+    public double getOverTimeFactor() {
+        return 0;
+    }
+
 }
