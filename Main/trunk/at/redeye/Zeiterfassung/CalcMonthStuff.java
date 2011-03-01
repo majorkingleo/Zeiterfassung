@@ -22,9 +22,6 @@ import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.utilities.Time;
-import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
-import at.redeye.FrameWork.widgets.calendar.DisplayMonth;
-import at.redeye.FrameWork.widgets.calendarday.DisplayDay;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -37,6 +34,7 @@ import at.redeye.Zeiterfassung.overtime.FlatRate;
 import at.redeye.Zeiterfassung.overtime.None;
 import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
 import at.redeye.Zeiterfassung.overtime.Schema_1;
+import org.joda.time.DateTimeConstants;
 
 /**
  * 
@@ -47,26 +45,27 @@ public class CalcMonthStuff {
 	double hours_per_month = 0;
 	double hours_per_month_done = 0;
 	Transaction trans;
-	DisplayMonth month;
-	Root root;
+	CalcMonthStuffDataInterface display_month;	
 	HMSTime complete_time = new HMSTime();
 	HMSTime remaining_leave = new HMSTime();
 	HMSTime overtime = new HMSTime();
-	private static Logger logger = Logger.getLogger(CalcMonthStuff.class);
+	private static final Logger logger = Logger.getLogger(CalcMonthStuff.class);
 	StringBuilder error_log = new StringBuilder();
 	HMSTime time_correction_month_done = new HMSTime();
+        int user_id;
+        int days_of_month=0;
 
-	public CalcMonthStuff(DisplayMonth month, Transaction trans, Root root) {
-		this.month = month;
-		this.trans = trans;
-		this.root = root;
+	public CalcMonthStuff(CalcMonthStuffDataInterface month, Transaction trans, int user_id) {
+		this.display_month = month;
+		this.trans = trans;		
+                this.user_id = user_id;
 	}
 
 	public boolean calcHoursPerDay() throws TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, SQLException,
 			WrongBindFileFormatException, CloneNotSupportedException,
 			DuplicateRecordException {
-		hours_per_day = getHoursPerDay(month.getYear(), month.getMonth());
+		hours_per_day = getHoursPerDay(display_month.getYear(), display_month.getMonth());
 
 		if (hours_per_day >= 0)
 			return true;
@@ -115,7 +114,7 @@ public class CalcMonthStuff {
 		return getHoursPerDay(upm);
 	}
 
-	private DBUserPerMonth getUPMRecord(int year, int month)
+	public DBUserPerMonth getUPMRecord(int year, int month)
 			throws TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, SQLException,
 			WrongBindFileFormatException, CloneNotSupportedException,
@@ -123,7 +122,7 @@ public class CalcMonthStuff {
 		DBUserPerMonth upm;
 
 		upm = GetUserPerMonthRecord.getValidRecordForMonth(trans,
-				root.getUserId(), year, month);
+				user_id, year, month);
 
 		if (upm == null) {
 			logger.error("Der Monatseintrag des Benutzers konnte nicht berechnet werden!");
@@ -137,9 +136,9 @@ public class CalcMonthStuff {
 
 	public void calcHoursPerMonth() {
 		hours_per_month = 0;
-
-		for (int i = 1; i <= month.getDaysOfMonth(); i++) {
-			DisplayDay day = month.getDay(i);
+/*
+		for (int i = 1; i <= display_month.getDaysOfMonth(); i++) {
+			DisplayDay day = display_month.getDay(i);
 
 			if (day.isHoliday())
 				continue;
@@ -152,26 +151,34 @@ public class CalcMonthStuff {
 
 			hours_per_month += hours_per_day;
 		}
+ */
+
+
+                DateMidnight dm = new DateMidnight(display_month.getYear(), display_month.getMonth(),1);
+                final DateMidnight month_end = dm.plusMonths(1);
+
+                for( ; dm.isBefore(month_end); dm = dm.plusDays(1) )
+                {
+                    if( display_month.isHoliday(dm) )
+                        continue;
+
+                    if( dm.getDayOfWeek() == DateTimeConstants.SATURDAY )
+                        continue;
+
+                    if( dm.getDayOfWeek() == DateTimeConstants.SUNDAY )
+                        continue;
+
+                    hours_per_month += hours_per_day;
+                }
+
 	}
-
-	public static int getDaysOfMonth(Date date) {
-		Calendar cal = new GregorianCalendar();
-		cal.setTime(date);
-
-		return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-	}
-
-	public boolean isHoliday(Date day) {
+        
+	private boolean isHoliday(Date day) {
 		return isHoliday(new DateMidnight(day));
 	}
-
-	public boolean isHoliday(DateMidnight day) {
-		HolidayInfo holidays = month.getHolidays().getHolidayForDay(day);
-
-		if (holidays == null)
-			return false;
-
-		return holidays.official_holiday;
+        
+	private boolean isHoliday(DateMidnight day) {
+                return display_month.isHoliday(day);
 	}
 
 	public int getWorkDaysForMonth(Date date) {
@@ -208,8 +215,8 @@ public class CalcMonthStuff {
 		hours_per_month_done = 0;
 		time_correction_month_done.setTime(0);
 
-		int m = month.getMonth();
-		int y = month.getYear();
+		int m = display_month.getMonth();
+		int y = display_month.getYear();
 
 		DBUserPerMonth upm = getUPMRecord(y, m);
 
@@ -224,7 +231,7 @@ public class CalcMonthStuff {
 		DateMidnight dmEnd = dmStart.plusMonths(1).minusDays(1);
 
 		String where = "where " + trans.markColumn("user") + " = "
-				+ root.getUserId() + " and "
+				+ user_id + " and "
 				+ trans.getPeriodStmt("from", dmStart, dmEnd) + " order by "
 				+ trans.markColumn("from");
 
@@ -251,9 +258,7 @@ public class CalcMonthStuff {
 				if (cal_before.get(Calendar.DAY_OF_MONTH) != cal_act
 						.get(Calendar.DAY_OF_MONTH)) {
 					cal_before.setTime(te.from.getValue());
-					long ot = calc_overtime.calcExtraTimeForDay(last_day, month
-							.getDay(cal_act.get(Calendar.DAY_OF_MONTH))
-							.isHoliday());
+					long ot = calc_overtime.calcExtraTimeForDay(last_day,isHoliday(te.from.getValue()));
 					last_day.clear();
 					last_day.add(te);
 
@@ -270,9 +275,7 @@ public class CalcMonthStuff {
 		}
 
 		if (last_day.size() > 0) {
-			long ot = calc_overtime.calcExtraTimeForDay(last_day,
-					month.getDay(cal_act.get(Calendar.DAY_OF_MONTH))
-							.isHoliday());
+			long ot = calc_overtime.calcExtraTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()) );
 
 			if (ot > 0) {
 				logger.info(DBDateTime.getDateStr(last_day.get(0).from
@@ -292,6 +295,8 @@ public class CalcMonthStuff {
 			WrongBindFileFormatException, CloneNotSupportedException,
 			DuplicateRecordException {
 		error_log.setLength(0);
+
+                days_of_month = new GregorianCalendar(display_month.getYear(), display_month.getMonth()-1, 1).getActualMaximum(Calendar.DAY_OF_MONTH);
 
 		if (!calcHoursPerDay()) {
 			error("Die Anzahl der Arbeitsstunden pro Tag konnte nicht berechnet werden.");
@@ -387,13 +392,13 @@ public class CalcMonthStuff {
 	public boolean calcRemainingLeave() throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
 			WrongBindFileFormatException, DuplicateRecordException {
-		GregorianCalendar gdate = new GregorianCalendar(month.getYear(),
-				month.getMonth() - 1, 1);
+		GregorianCalendar gdate = new GregorianCalendar(display_month.getYear(),
+				display_month.getMonth() - 1, 1);
 
 		Date date = gdate.getTime();
 
 		DBUserPerMonth upm = GetUserPerMonthRecord.getValidRecordForMonth(
-				trans, root.getUserId(), month.getYear(), month.getMonth());
+				trans, user_id, display_month.getYear(), display_month.getMonth());
 
 		if (upm == null) {
 			String msg = "Keinen passenden Monatseintrag gefunden. Die Urlaubsstunden können nicht berechnet werden.";
@@ -411,8 +416,8 @@ public class CalcMonthStuff {
 
 		if (Time.isMinimumTime(to.getTime())) {
 			// der letzte tag des aktuellen Monats
-			GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(),
-					month.getMonth() - 1, month.getDaysOfMonth());
+			GregorianCalendar gdate2 = new GregorianCalendar(display_month.getYear(),
+					display_month.getMonth() - 1, days_of_month);
 			to = gdate2.getTime();
 		}
 
@@ -435,7 +440,7 @@ public class CalcMonthStuff {
 						+ trans.getPeriodStmt("from", new DateMidnight(from),
 								new DateMidnight(to)) + " and "
 						+ trans.markColumn(entries.user) + " = "
-						+ root.getUserId() + job_type_sql + " order by "
+						+ user_id + job_type_sql + " order by "
 						+ trans.markColumn(entries.from));
 
 		if (res.size() <= 0) {
@@ -458,13 +463,13 @@ public class CalcMonthStuff {
 	private boolean calcOverTime() throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
 			WrongBindFileFormatException, DuplicateRecordException {
-		GregorianCalendar gdate = new GregorianCalendar(month.getYear(),
-				month.getMonth() - 1, 1);
+		GregorianCalendar gdate = new GregorianCalendar(display_month.getYear(),
+				display_month.getMonth() - 1, 1);
 
 		Date date = gdate.getTime();
 
 		DBUserPerMonth upm = GetUserPerMonthRecord.getValidRecordForMonth(
-				trans, root.getUserId(), month.getYear(), month.getMonth());
+				trans, user_id, display_month.getYear(), display_month.getMonth());
 
 		if (upm == null) {
 			String msg = "Keinen passenden Monatseintrag gefunden. Die Überstunden können nicht berechnet werden.\n"
@@ -488,8 +493,8 @@ public class CalcMonthStuff {
 
 		if (Time.isMinimumTime(to.getTime())) {
 			// der letzte Tag des aktuellen Monats
-			GregorianCalendar gdate2 = new GregorianCalendar(month.getYear(),
-					month.getMonth() - 1, month.getDaysOfMonth());
+			GregorianCalendar gdate2 = new GregorianCalendar(display_month.getYear(),
+					display_month.getMonth() - 1, days_of_month);
 			to = gdate2.getTime();
 			logger.trace("Setting to to:" + DBDateTime.getDateStr(to));
 		}
@@ -500,7 +505,7 @@ public class CalcMonthStuff {
 						+ trans.getPeriodStmt("from", new DateMidnight(from),
 								new DateMidnight(to)) + " and "
 						+ trans.markColumn(entries.user) + " = "
-						+ root.getUserId() + " and "
+						+ user_id + " and "
 						+ trans.markColumn(entries.jobtype) + " in ("
 						+ getJobTyesForWork() + ")");
 
@@ -556,17 +561,13 @@ public class CalcMonthStuff {
 		}
 
 		if (last_day.size() > 0) {
-                        DisplayDay day = month.getDay(cal_act.get(Calendar.DAY_OF_MONTH));
+                    long ot = calc_overtime.calcExtraTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()));
 
-                    if (day != null) {
-                        long ot = calc_overtime.calcExtraTimeForDay(last_day, day.isHoliday());
-
-                        if (ot > 0) {
-                            logger.trace(DBDateTime.getDateStr(last_day.get(0).from.getValue()) + " added " + ot + " to overtime.");
-                        }
-
-                        lovertime += ot;
+                    if (ot > 0) {
+                        logger.trace(DBDateTime.getDateStr(last_day.get(0).from.getValue()) + " added " + ot + " to overtime.");
                     }
+
+                    lovertime += ot;
 		}
 
 		// so jetzt haben wir auf der Haben Seite alle Arbeitszeiten

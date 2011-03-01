@@ -23,16 +23,21 @@ import at.redeye.FrameWork.base.reports.BaseReportRenderer;
 import at.redeye.FrameWork.base.reports.ReportRenderer;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.HMSTime;
+import at.redeye.FrameWork.utilities.calendar.Holidays;
+import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
+import at.redeye.Zeiterfassung.CalcMonthStuff;
+import at.redeye.Zeiterfassung.CalcMonthStuffDataInterface;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType.JOBTYPES;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
 
 /**
  * 
  * @author martin
  */
-public class MonthReportPerUserRenderer extends BaseReportRenderer implements
-		ReportRenderer {
+public class MonthReportPerUserRenderer extends BaseReportRenderer implements ReportRenderer, CalcMonthStuffDataInterface {
 	Transaction trans;
 	List<DBStrukt> data = new ArrayList<DBStrukt>();
 	HashMap<Integer, DBJobType> job_types = new HashMap<Integer, DBJobType>();
@@ -40,14 +45,20 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements
 	int year;
 	String username;
 	int user_id;
+        Holidays holidays;
+        CalcMonthStuff calc_month_stuff;
+        DBUserPerMonth upm;
+        OvertimeInterface over_time;
 
 	public MonthReportPerUserRenderer(Transaction trans, int mon, int year,
-			String username, int user_id) {
+			String username, int user_id, Holidays holidays) {
 		this.trans = trans;
 		this.mon = mon;
 		this.year = year;
 		this.user_id = user_id;
 		this.username = username;
+                this.holidays = holidays;
+                calc_month_stuff = new CalcMonthStuff(this, trans, user_id);
 	}
 
 	public boolean collectData() {
@@ -57,17 +68,19 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements
 			public void do_stuff() throws Exception {
 				result = new Boolean(false);
 
+                                DBTimeEntries entries = new DBTimeEntries();
+
 				String where = " where "
-						+ trans.markColumn("user")
+						+ trans.markColumn(entries.user)
 						+ " = "
 						+ user_id
 						+ " and "
-						+ trans.getPeriodStmt("from", new DateMidnight(year,
+						+ trans.getPeriodStmt(entries.from, new DateMidnight(year,
 								mon, 1), new DateMidnight(year, mon, 1)
 								.plusMonths(1).minusDays(1)) + " order by "
-						+ trans.markColumn("from");
+						+ trans.markColumn(entries.from);
 
-				data = trans.fetchTable(new DBTimeEntries(), where);
+				data = trans.fetchTable(entries, where);
 
 				// alle Jobtypes ins Hirn blasen
 				List<DBStrukt> res = trans.fetchTable(new DBJobType());
@@ -76,6 +89,12 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements
 					DBJobType jt = (DBJobType) s;
 					job_types.put(jt.id.getValue(), jt);
 				}
+
+                                calc_month_stuff.calc();
+                                upm = calc_month_stuff.getUPMRecord(year, mon);       
+                                
+                                if( upm != null )
+                                    over_time = CalcMonthStuff.getOverTimeforUPM(upm);
 
 				result = new Boolean(true);
 			}
@@ -97,6 +116,8 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements
 		HashMap<Integer, Long> millis_per_jobtype_month = new HashMap<Integer, Long>();
 		HashMap<Integer, Long> millis_per_jobtype_day = new HashMap<Integer, Long>();
 
+                List<DBTimeEntries> entries_per_day = new ArrayList<DBTimeEntries>();
+
 		for (DBStrukt s : data) {
 			DBTimeEntries e = (DBTimeEntries) s;
 
@@ -113,6 +134,10 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements
 					write_sum_day(millis_per_jobtype_day);
 					millis_per_jobtype_day.clear();
 
+                                        if( !entries_per_day.isEmpty() ) {
+                                            long over_time_in_millis = over_time.calcOverTimeForDay(entries_per_day, isHoliday(entries_per_day.get(0).from.getValue()));
+                                            long extra_time_in_millis = over_time.calcExtraTimeForDay(entries_per_day, isHoliday(entries_per_day.get(0).from.getValue()));
+                                        }
 					html_blockquote_end();
 				}
 
@@ -124,7 +149,10 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements
 				html_blockquote_start();
 
 				millis_per_jobtype_day.clear();
+                                entries_per_day.clear();
 			}
+
+                        entries_per_day.add(e);
 
 			Long duration = millis_per_jobtype_day.get((Integer) e.jobtype
 					.getValue());
@@ -237,4 +265,36 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements
 
 		html_bold(line.toString());
 	}
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getMonth() {
+        return mon;
+    }
+
+    public int getUserId() {
+        return user_id;
+    }
+
+    private boolean isHoliday(Date day)
+    {
+        return isHoliday(new DateMidnight(day));
+    }    
+
+    public boolean isHoliday(DateMidnight day)
+    {
+        if (holidays == null) {
+            return false;
+        }
+
+        HolidayInfo hi = holidays.getHolidayForDay(day);
+
+        if (hi == null) {
+            return false;
+        }
+
+        return hi.official_holiday;
+    }
 }

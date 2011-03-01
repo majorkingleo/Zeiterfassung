@@ -7,6 +7,7 @@ package at.redeye.Zeiterfassung.overtime;
 
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -26,6 +27,10 @@ public class FlatRate implements OvertimeInterface
             return real_work_time - regular_work_time;
         }
 
+        return 0;
+    }
+
+    public long calcOverTimeForDay(List<DBTimeEntries> entries_per_day, boolean holiday) {
         return 0;
     }
 

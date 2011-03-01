@@ -7,6 +7,7 @@ package at.redeye.Zeiterfassung.overtime;
 
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -20,6 +21,10 @@ public class None implements OvertimeInterface
     }
 
     public long calcExtraTimeForMonth(long regular_work_time, long real_work_time) {
+        return 0;
+    }
+
+    public long calcOverTimeForDay(List<DBTimeEntries> entries_per_day, boolean holiday) {
         return 0;
     }
 

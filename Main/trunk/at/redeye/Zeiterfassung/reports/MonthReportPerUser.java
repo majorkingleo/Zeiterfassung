@@ -18,6 +18,7 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.reports.ReportRenderer;
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.FrameWork.utilities.calendar.MonthNames;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
@@ -51,9 +52,10 @@ public class MonthReportPerUser extends BaseDialog {
 	int year;
 	String currentUser;
 	int currentUserId;
+        Holidays holidays;
 
 	/** Creates new form MonthReport */
-	public MonthReportPerUser(Root root, int mon, int year) {
+	public MonthReportPerUser(Root root, int mon, int year, Holidays holidays) {
 		super(root, "Monatsbericht für " + root.getUserName());
 		initComponents();
 
@@ -65,6 +67,7 @@ public class MonthReportPerUser extends BaseDialog {
 
 		this.mon = mon;
 		this.year = year;
+                this.holidays = holidays;
 		currentUser = root.getUserName();
 		currentUserId = root.getUserId();
 
@@ -295,7 +298,7 @@ public class MonthReportPerUser extends BaseDialog {
 		setTitle("Monatsbericht " + getTitle(mon, year) + " für " + currentUser);
 
 		ReportRenderer rr = new MonthReportPerUserRenderer(getTransaction(),
-				mon, year, currentUser, currentUserId);
+				mon, year, currentUser, currentUserId, holidays);
 
 		if (rr.collectData()) {
 			jReport.setText(rr.render());

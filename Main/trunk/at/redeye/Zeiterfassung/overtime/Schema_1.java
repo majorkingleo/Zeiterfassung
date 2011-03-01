@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  *
@@ -138,6 +139,10 @@ public class Schema_1 implements OvertimeInterface
     public long calcExtraTimeForMonth(long regular_work_time, long real_work_time)
     {
         return 0;
+    }
+
+    public long calcOverTimeForDay(List<DBTimeEntries> entries_per_day, boolean holiday) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

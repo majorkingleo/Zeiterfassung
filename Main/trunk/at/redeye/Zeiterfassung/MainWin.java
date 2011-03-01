@@ -39,6 +39,7 @@ import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.calendar.AustrianHolidays;
 import at.redeye.FrameWork.utilities.calendar.GermanHolidays;
 import at.redeye.FrameWork.utilities.calendar.HolidayMerger;
+import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import at.redeye.FrameWork.utilities.calendar.SwitzerlandHolidays;
 import at.redeye.FrameWork.widgets.calendarday.CalendarDay;
 import at.redeye.FrameWork.widgets.calendarday.DayEventListener;
@@ -59,8 +60,7 @@ import at.redeye.Zeiterfassung.reports.activity.MonthlyReportActivity;
  * 
  * @author martin
  */
-public class MainWin extends BaseDialog implements DayEventListener,
-		MonthSumInfo {
+public class MainWin extends BaseDialog implements DayEventListener, MonthSumInfo, CalcMonthStuffDataInterface {
 
 	private static final long serialVersionUID = 1L;
 	private int mon = 1;
@@ -198,7 +198,7 @@ public class MainWin extends BaseDialog implements DayEventListener,
 			}
 		}
 
-		month_stuff = new CalcMonthStuff(month, getTransaction(), root);
+		month_stuff = new CalcMonthStuff(this, getTransaction(), root.getUserId());
 
 		String res = root.getSetup().getLocalConfig("HolidaysAustria",
 				new Boolean(jCBHolidaysAustria.getState()).toString());
@@ -884,7 +884,7 @@ public class MainWin extends BaseDialog implements DayEventListener,
 
 	private void jMMonthReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMMonthReportActionPerformed
 
-		invokeDialog(new MonthReportPerUser(root, mon, year));
+		invokeDialog(new MonthReportPerUser(root, mon, year, merger));
 
 	}//GEN-LAST:event_jMMonthReportActionPerformed
 
@@ -1408,5 +1408,34 @@ public class MainWin extends BaseDialog implements DayEventListener,
 	public void setCreateDesktopIconEnabled(boolean state) {
 		jMCreateDesktopIcon.setEnabled(state);
 	}
+
+    public int getYear() {
+        return month.getYear();
+    }
+
+    public int getMonth() {
+        return month.getMonth();
+    }
+
+    public int getUserId() {
+        return root.getUserId();
+    }
+
+    public int getDaysOfMonth() {
+        return month.getDaysOfMonth();
+    }
+
+    public boolean isHoliday( DateMidnight date )
+    {
+        if( merger == null )
+            return false;
+
+        HolidayInfo hi = merger.getHolidayForDay(date);
+
+        if( hi == null )
+            return false;
+
+        return hi.official_holiday;
+    }
 
 }
