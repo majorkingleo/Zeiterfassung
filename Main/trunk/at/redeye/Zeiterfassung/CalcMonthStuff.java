@@ -231,6 +231,7 @@ public class CalcMonthStuff {
 
             days_of_month = new GregorianCalendar(display_month.getYear(), display_month.getMonth() - 1, 1).getActualMaximum(Calendar.DAY_OF_MONTH);
 
+
             calcHoursPerMonth();
             calcHoursPerMonthDone();
 
@@ -525,26 +526,30 @@ public class CalcMonthStuff {
 		logger.info("from: " + DBDateTime.getDateStr(cal_from) + " to "
 				+ DBDateTime.getDateStr(cal_to));
 
-                int distance = (cal_to.getYear() - cal_from.getYear())*12 + (cal_to.getMonthOfYear() - cal_from.getMonthOfYear());
+               if( upm == null || upm.hours_per_week.getValue() <= 0.0 )
+                {
+                    error("Der Arbeitsstunden konnten nicht berechnet werden da keine Wochenstundenanzahl eingetragen ist.");
+                } else {
 
-		// int start = cal_from.getMonthOfYear();
-		// for (int i = start; i <= cal_to.getMonthOfYear(); i++) {
-                for( int i = 0; i <= distance; i++ ) {
-			//Date aktual_day = cal_from.plusMonths(start - i).toDate();
-                        Date aktual_day = cal_from.plusMonths(i).toDate();
-			long work_days_for_month = getWorkDaysForMonth(aktual_day);
+                int distance = (cal_to.getYear() - cal_from.getYear()) * 12 + (cal_to.getMonthOfYear() - cal_from.getMonthOfYear());
 
-			double work_time_for_month = hours_per_month;
+                // int start = cal_from.getMonthOfYear();
+                // for (int i = start; i <= cal_to.getMonthOfYear(); i++) {
+                for (int i = 0; i <= distance; i++) {
+                    //Date aktual_day = cal_from.plusMonths(start - i).toDate();
+                    Date aktual_day = cal_from.plusMonths(i).toDate();
+                    long work_days_for_month = getWorkDaysForMonth(aktual_day);
 
-			logger.info(String
-					.format("%d %s Working Days: %d regular working hours per month: %f",
-							i, DBDateTime.getDateStr(aktual_day),
-							work_days_for_month, work_time_for_month));
-							
+                    double work_time_for_month = hours_per_month;
 
-			regular_work_time += work_time_for_month;
-		}
+                    logger.info(String.format("%d %s Working Days: %d regular working hours per month: %f",
+                            i, DBDateTime.getDateStr(aktual_day),
+                            work_days_for_month, work_time_for_month));
 
+
+                    regular_work_time += work_time_for_month;
+                }
+            }
 		long correction = 0;
 
 		if (calc_overtime != null)
