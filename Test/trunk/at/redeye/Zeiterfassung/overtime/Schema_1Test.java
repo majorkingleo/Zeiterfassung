@@ -5,12 +5,17 @@
 
 package at.redeye.Zeiterfassung.overtime;
 
+import at.redeye.FrameWork.utilities.calendar.AustrianHolidays;
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import at.redeye.Zeiterfassung.overtime.Schema_1.Times;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import org.joda.time.DateMidnight;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -90,9 +95,18 @@ public class Schema_1Test {
     }
 
     Collection<TestCase> test_cases = new ArrayList<TestCase>();
+    DBUserPerMonth upm_38_5;
+    DBUserPerMonth upm_32;
 
     public Schema_1Test()
     {
+        upm_38_5 = new DBUserPerMonth();
+        upm_38_5.hours_per_week.loadFromCopy(38.5);
+
+        upm_32 = new DBUserPerMonth();
+        upm_32.hours_per_week.loadFromCopy(32.0);
+
+
         {
             TestCase test = new TestCase("No Entries");
             test_cases.add(test);
@@ -181,9 +195,9 @@ public class Schema_1Test {
     @Test
     public void testCalcExtraTimeForDay() {
         System.out.println("calcExtraTimeForDay");
-        Collection<DBTimeEntries> entries_per_day = null;
+        
         boolean is_holiday = false;
-        Schema_1 instance = new Schema_1();
+        Schema_1 instance = new Schema_1(upm_38_5);
 
         for( TestCase test : test_cases )
         {
@@ -202,7 +216,7 @@ public class Schema_1Test {
         System.out.println("calcExtraTimeForMonth");
         long regular_work_time = 0L;
         long real_work_time = 0L;
-        Schema_1 instance = new Schema_1();
+        Schema_1 instance = new Schema_1(upm_38_5);
         long expResult = 0L;
         long result = instance.calcExtraTimeForMonth(regular_work_time, real_work_time);
         assertEquals(expResult, result);                
@@ -216,7 +230,7 @@ public class Schema_1Test {
         System.out.println("calcOverTimeForDay");
         List<DBTimeEntries> entries_per_day = null;
         boolean holiday = false;
-        Schema_1 instance = new Schema_1();
+        Schema_1 instance = new Schema_1(upm_38_5);
 
         for( TestCase test : test_cases )
         {
@@ -224,6 +238,83 @@ public class Schema_1Test {
             long expResult = test.expected_result_for_over_time;
             long result = instance.calcOverTimeForDay(test.entries, test.is_holiday);
             assertEquals(expResult, result);
+        }
+    }
+
+    /**
+     * Test of calcMorning method, of class Schema_1.
+     */
+    @Test
+    public void testCalcMorning() {
+        System.out.println("calcMorning");
+        Date date = TODAY;
+        Schema_1 instance = new Schema_1(upm_32);
+        Date expResult = new GregorianCalendar(2011,03,01,6,30).getTime();
+        Date result = instance.calcMorning(date);
+        assertEquals(expResult, result);
+                
+    }
+
+    /**
+     * Test of calcEvening method, of class Schema_1.
+     */
+    @Test
+    public void testCalcEvening() {
+        System.out.println("calcEvening");
+        Date date = TODAY;
+        Schema_1 instance = new Schema_1(upm_32);
+        Date expResult = new GregorianCalendar(2011,03,01,20,00).getTime();
+        Date result = instance.calcEvening(date);
+        assertEquals(expResult, result);
+        
+    }
+
+    /**
+     * Test of getOverTimeFactor method, of class Schema_1.
+     */
+    @Test
+    public void testGetOverTimeFactor() {
+        System.out.println("getOverTimeFactor");
+        Schema_1 instance = new Schema_1(upm_32);
+        double expResult = 1.5;
+        double result = instance.getOverTimeFactor();
+        assertEquals(expResult, result, 0.0);        
+    }
+
+    /**
+     * Test of getHours4Day method, of class Schema_1.
+     */
+    @Test
+    public void testGetHours4Day() {
+        System.out.println("getHours4Day");
+
+        {
+            DateMidnight dm = new DateMidnight(2011, 3, 1);
+            DateMidnight dm_end = dm.plusMonths(1);
+
+            Schema_1 instance = new Schema_1(upm_38_5);
+            double hours_per_month = 0;
+            Holidays holidays = new AustrianHolidays();
+
+            for (; dm.isBefore(dm_end); dm = dm.plusDays(1)) {
+                hours_per_month += instance.getHours4Day(dm, holidays);
+            }
+
+            assertEquals(178, hours_per_month, 0.0);
+        }
+
+        {
+            DateMidnight dm = new DateMidnight(2011, 3, 1);
+            DateMidnight dm_end = dm.plusMonths(1);
+            Schema_1 instance = new Schema_1(upm_32);
+            double hours_per_month = 0;
+            Holidays holidays = new AustrianHolidays();
+
+            for (; dm.isBefore(dm_end); dm = dm.plusDays(1)) {
+                hours_per_month += instance.getHours4Day(dm, holidays);
+            }
+
+            assertEquals(149, hours_per_month, 0.0);
         }
     }
 
