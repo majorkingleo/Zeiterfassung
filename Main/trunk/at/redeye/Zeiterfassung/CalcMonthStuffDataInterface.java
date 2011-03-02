@@ -5,6 +5,7 @@
 
 package at.redeye.Zeiterfassung;
 
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import org.joda.time.DateMidnight;
 
 /**
@@ -33,4 +34,7 @@ public interface CalcMonthStuffDataInterface
      * @return true if this day is an holiday
      */
     boolean isHoliday( DateMidnight day );
+
+    public Holidays getHolidays();
+
 }

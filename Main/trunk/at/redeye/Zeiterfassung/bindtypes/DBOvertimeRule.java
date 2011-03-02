@@ -18,7 +18,8 @@ public class DBOvertimeRule extends DBEnum
     {
         KEINES,
         PAUSCHALIST,
-        ÜBERSTUNDENSCHEMA_01
+        ÜBERSTUNDENSCHEMA_01,
+        FLATRATE_SFR_01,
     };
            
     

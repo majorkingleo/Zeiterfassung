@@ -45,10 +45,12 @@ Document   : UserPerMonth.html
            Es gibt mehrere Überstundenvarianten zur Auswahl.
 
            <h4>KEINES</h4>
-           Hierbei erfolgt keinerlei Übertsundenberechnung.
+           Hierbei erfolgt keinerlei Überstundenberechnung.<br/>
+           Die Sollarbeitszeit des Monats wird über die durchschnittliche Arbeitszeit pro Tag berechnet.
 
            <h4>PAUSCHALIST</h4>
-           Beim Pauschalisten gibt es nie Plusstunden am Gleitzeitkonto.
+           Beim Pauschalisten gibt es nie Plusstunden am Gleitzeitkonto.<br/>
+           Die Sollarbeitszeit des Monats wird über die durchschnittliche Arbeitszeit pro Tag berechnet.
 
            <h4>ÜBERSTUNDENSCHEMA_01</h4>
 
@@ -62,7 +64,23 @@ Document   : UserPerMonth.html
                    auch als Überstunden zu werten; bei 38,5 Stunden W-Arbeitszeit also
                    z.B.: Ende 30. März: 33 Mehrstunden plus 15 Ü Stunden = 48 abzüglich 38, 5 = 9,5 *0,5=4,75;<br>
                    ergibt für die Arbeitnehmerin mit 1. April 33 Mehrstunden plus 19:45 Ü-Stunden</li>
+               <li>
+                    <b>Sollarbeitszeit</b><br/>
+                    Für eine 38,5 Stunden Woche werden von Montag bis Donnerstag 8 Stunden angenommen und am Freitag 6,5 Stunden.<br/>
+                    Beträgt die Wochenstundenanzahl 38,5 Stunden, oder mehr werden Montag bis Donnerstag 8 Stunden angenommen und die verbleibenden Stunden am Freitag.<br/><br/>
+                    Beträgt die Wochenstundenanzahl weniger als 38,5 Stunden, so werden Montag bis Donnerstag 7 Stunden angenommen und die restlichen Stunden am Freitag.
+                    Daraus ergibt sich für eine 32 Stundenwoche folgendes Schema: Montag bis Donnerstag 7 Stunden und Freitag 4.
+               </li>
            </ul>
+
+           <h4>FLATRATE_SFR_01 (Flat Rate Short Friday)</h4>
+           Diese Schema entspricht einem Pauschalistenschema, allerdings wird die Sollarbeitszeit nach folgenem Schema berechnet:<br/><br/>
+
+           Für eine 38,5 Stunden Woche werden von Montag bis Donnerstag 8 Stunden angenommen und am Freitag 6,5 Stunden.<br/>
+           Beträgt die Wochenstundenanzahl 38,5 Stunden, oder mehr werden Montag bis Donnerstag 8 Stunden angenommen und die verbleibenden Stunden am Freitag.<br/><br/>
+           Beträgt die Wochenstundenanzahl weniger als 38,5 Stunden, so werden Montag bis Donnerstag 7 Stunden angenommen und die restlichen Stunden am Freitag.
+           Daraus ergibt sich für eine 32 Stundenwoche folgendes Schema: Montag bis Donnerstag 7 Stunden und Freitag 4.
+
 
            <!-- Alle Stunden zwischen 20:00 und 6:30, wenn über 9 Stunden an einem Tag gearbeitet wird und Samstag bzw. Sonntag,
            sowie Feiertag zählen als 1.5 Stunden. -->

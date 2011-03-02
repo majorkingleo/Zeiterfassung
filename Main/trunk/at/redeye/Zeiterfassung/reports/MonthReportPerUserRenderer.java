@@ -336,9 +336,8 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 text.append("<tr><td>");
                 html_normal_text("Mehrstunden:");
                 text.append("</td><td>");
-
-                html_normal_text("<i>todo</i>");
-                // html_normal_text(getDurFromMilli(calc_month_stuff.getCompleteTime().getMillis()));
+                
+                html_normal_text(getDurFromMilli(calc_month_stuff.getCompleteTime().getMillis() - calc_month_stuff.getHoursPerMonthInMillis()));
                 
                 text.append("</td></tr>");
 
@@ -348,13 +347,23 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 html_normal_text(calc_month_stuff.getOverTime().toString("HH:mm"));
                 text.append("</td></tr>");
 
+                text.append("<tr><td></td></tr>");
+
+                /*
+                text.append("<tr><td>");
+                html_normal_text("Iststunden gesammt:");
+                text.append("</td><td>");
+                html_normal_text(getDurFromMilli(calc_month_stuff.getHoursPerMonthInMillis()));
+                text.append("</td></tr>");
+*/
                 text.append("<tr><td>");
                 html_normal_text("Resturlaub:");
                 text.append("</td><td>");
 
                 text.append( calc_month_stuff.getRemainingLeave().toString("HH:mm") );
 
-                double days = Rounding.rndDouble(calc_month_stuff.getRemainingLeave().getHours() / calc_month_stuff.getHoursPerDay(), 1);
+//                double days = Rounding.rndDouble(calc_month_stuff.getRemainingLeave().getHours() / calc_month_stuff.getHoursPerDay(), 1);
+                double days = 0;
 
                 html_normal_text( " ( " + days + " Tage ) ");
                 text.append("</td></tr>");
@@ -415,5 +424,10 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
         }
 
         return hi.official_holiday;
+    }
+
+    public Holidays getHolidays()
+    {
+        return holidays;
     }
 }

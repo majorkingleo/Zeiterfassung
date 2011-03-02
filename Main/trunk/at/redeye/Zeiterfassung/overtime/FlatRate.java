@@ -5,8 +5,11 @@
 
 package at.redeye.Zeiterfassung.overtime;
 
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import java.util.Collection;
+import org.joda.time.DateMidnight;
 
 /**
  *
@@ -14,6 +17,17 @@ import java.util.Collection;
  */
 public class FlatRate implements OvertimeInterface
 {
+    Hours4DayInterface hours4day;
+
+    public FlatRate( DBUserPerMonth upm )
+    {
+        this(new WorkTimeNoWeekendNoHolidays(upm));
+    }
+
+    public FlatRate( Hours4DayInterface hours_per_day )
+    {
+        this.hours4day = hours_per_day;
+    }
 
     public long calcExtraTimeForDay(Collection<DBTimeEntries> entries_per_day, boolean is_holiday) {
         return 0;
@@ -35,6 +49,11 @@ public class FlatRate implements OvertimeInterface
 
     public double getOverTimeFactor() {
         return 0;
+    }
+
+    public double getHours4Day(DateMidnight dm, Holidays holidays)
+    {
+        return hours4day.getHours4Day(dm, holidays);
     }
 
 }

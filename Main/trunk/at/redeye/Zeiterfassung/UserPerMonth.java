@@ -112,7 +112,8 @@ public class UserPerMonth extends BaseDialog {
 				if (u == null)
 					return false;
 
-				double hpd = CalcMonthStuff.getHoursPerDay(u);
+                                // TODO
+				double hpd = 8;
 
 				if (hpd == 0)
 					hpd = 8;
@@ -147,7 +148,8 @@ public class UserPerMonth extends BaseDialog {
 				if (u == null)
 					return false;
 
-				double hpd = CalcMonthStuff.getHoursPerDay(u);
+                                // TODO
+				double hpd = 8;
 
 				if (hpd == 0)
 					hpd = 8;

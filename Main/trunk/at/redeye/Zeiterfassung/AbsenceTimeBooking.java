@@ -16,6 +16,7 @@ import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
 import java.util.Calendar;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -47,7 +48,7 @@ public class AbsenceTimeBooking extends BaseDialog {
 
     int min_num_of_chars = 4;
     MonthSumInfo suminfo;
-    double hours_per_day;
+    OvertimeInterface calc_over_time;
     String normal_start_time;
     String normal_stop_time;
 
@@ -56,7 +57,7 @@ public class AbsenceTimeBooking extends BaseDialog {
     private String MESSAGE_MISSING_COMMENTS;
     private String MESSAGE_MISSING_DATE;
 
-    public AbsenceTimeBooking(final Root root, MonthSumInfo suminfo, double hours_per_day) {
+    public AbsenceTimeBooking(final Root root, MonthSumInfo suminfo, OvertimeInterface calc_over_time) {
         super(root, "Abwesenheitszeiten Buchen");        
 
         initComponents();
@@ -64,7 +65,7 @@ public class AbsenceTimeBooking extends BaseDialog {
         initMessages();
 
         this.suminfo = suminfo;
-        this.hours_per_day = hours_per_day;
+        this.calc_over_time = calc_over_time;
 
         final Transaction trans = getTransaction();
 
@@ -119,7 +120,7 @@ public class AbsenceTimeBooking extends BaseDialog {
             }
         };
 
-        if( hours_per_day == 0.0 )
+        if( calc_over_time == null )
         {
             jCWholeDay.setSelected(false);
             jCWholeDayActionPerformed(null);
@@ -447,7 +448,10 @@ public class AbsenceTimeBooking extends BaseDialog {
                     {
                         e.from.loadTimePart(normal_start_time + ":00");                        
                         DateTime dt = new DateTime( e.from.getValue() );
-                        dt = dt.plusMinutes((int)Math.ceil(hours_per_day*60.0));
+
+                        if( calc_over_time != null )
+                            dt = dt.plusMinutes((int)Math.ceil(calc_over_time.getHours4Day(mCurrent, root.getHolidays())*60.0));
+                        
                         e.to.loadFromCopy(dt.toDate());
                     }
 

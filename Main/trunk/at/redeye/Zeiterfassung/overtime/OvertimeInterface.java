@@ -5,8 +5,10 @@
 
 package at.redeye.Zeiterfassung.overtime;
 
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import java.util.Collection;
+import org.joda.time.DateMidnight;
 
 /**
  *
@@ -39,4 +41,12 @@ public interface OvertimeInterface
      * zu erhalten.
      */
     public double getOverTimeFactor();
+
+    /**
+     * returns the hours to work for a specific date
+     * @param dm Date
+     * @param holidays
+     * @return hours to work for this day
+     */
+    public double getHours4Day( DateMidnight dm, Holidays holidays );
 }

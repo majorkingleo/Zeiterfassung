@@ -5,12 +5,14 @@
 
 package at.redeye.Zeiterfassung.overtime;
 
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
+import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
+import org.joda.time.DateMidnight;
 
 /**
  *
@@ -42,6 +44,16 @@ public class Schema_1 implements OvertimeInterface
 
     boolean is_saturday = false;
     boolean is_sunday = false;
+
+    Hours4DayInterface hours4day;
+
+    public Schema_1( DBUserPerMonth upm )
+    {
+        if( upm.hours_per_week.getValue() >= 38.5 )
+            hours4day = new ShortFriday(8.0,upm.hours_per_week.getValue()-8.0*4);
+        else
+            hours4day = new ShortFriday(7.0,upm.hours_per_week.getValue()-7.0*4);
+    }
 
     Date calcMorning( Date date )
     {
@@ -169,6 +181,10 @@ public class Schema_1 implements OvertimeInterface
 
     public double getOverTimeFactor() {
         return 1.5;
+    }
+
+    public double getHours4Day(DateMidnight dm, Holidays holidays) {
+        return hours4day.getHours4Day(dm, holidays);
     }
 
 }

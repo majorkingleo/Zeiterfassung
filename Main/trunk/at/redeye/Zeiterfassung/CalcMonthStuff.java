@@ -32,8 +32,8 @@ import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import at.redeye.Zeiterfassung.overtime.FlatRate;
 import at.redeye.Zeiterfassung.overtime.None;
 import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
+import at.redeye.Zeiterfassung.overtime.Flatrate_Short_Friday_01;
 import at.redeye.Zeiterfassung.overtime.Schema_1;
-import org.joda.time.DateTimeConstants;
 
 /**
  * 
@@ -41,8 +41,7 @@ import org.joda.time.DateTimeConstants;
  */
 public class CalcMonthStuff {
         private static final Logger logger = Logger.getLogger(CalcMonthStuff.class);
-
-	private double hours_per_day = 0;
+	
 	private double hours_per_month = 0;
 	private double hours_per_month_done = 0;
 	private Transaction trans;
@@ -55,6 +54,7 @@ public class CalcMonthStuff {
 	private HMSTime time_correction_month_done = new HMSTime();
         private int user_id;
         private int days_of_month=0;
+        private OvertimeInterface calc_overtime;
 
 	public CalcMonthStuff(CalcMonthStuffDataInterface month, Transaction trans, int user_id) {
 		this.display_month = month;
@@ -62,62 +62,9 @@ public class CalcMonthStuff {
                 this.user_id = user_id;
 	}
 
-	private boolean calcHoursPerDay() throws TableBindingNotRegisteredException,
-			UnsupportedDBDataTypeException, SQLException,
-			WrongBindFileFormatException, CloneNotSupportedException,
-			DuplicateRecordException {
-		hours_per_day = getHoursPerDay(display_month.getYear(), display_month.getMonth());
-
-		if (hours_per_day >= 0)
-			return true;
-
-		return false;
-	}
-
-	public double getHoursPerDay(Date date)
-			throws TableBindingNotRegisteredException,
-			UnsupportedDBDataTypeException, SQLException,
-			WrongBindFileFormatException, CloneNotSupportedException,
-			DuplicateRecordException {
-		DateMidnight dm = new DateMidnight(date);
-		return getHoursPerDay(dm.getYear(), dm.getMonthOfYear());
-	}
-
-	public static double getHoursPerDay(DBUserPerMonth upm) {
-		double usage = (Double) upm.usage.getValue();
-
-		if (usage <= 0) {
-			return -1;
-		}
-
-		Double days_per_week = (Double) upm.days_per_week.getValue();
-
-		if (days_per_week == 0.0) {
-			days_per_week = 5.0;
-		}
-
-		double dhours_per_day = (((Double) upm.hours_per_week.getValue()) / days_per_week)
-				* (usage / 100.0);
-
-		return dhours_per_day;
-	}
-
-	public double getHoursPerDay(int year, int month)
-			throws TableBindingNotRegisteredException,
-			UnsupportedDBDataTypeException, SQLException,
-			WrongBindFileFormatException, CloneNotSupportedException,
-			DuplicateRecordException {
-		DBUserPerMonth upm = getUPMRecord(year, month);
-
-		if (upm == null)
-			return -1;
-
-		return getHoursPerDay(upm);
-	}
-
-        public double getHoursPerDay()
+        public double getHoursPerDay(DateMidnight date)
         {
-            return hours_per_day;
+            return calc_overtime.getHours4Day(date, display_month.getHolidays());
         }
 
 	public DBUserPerMonth getUPMRecord(int year, int month)
@@ -140,26 +87,24 @@ public class CalcMonthStuff {
 		return upm;
 	}
 
-	public void calcHoursPerMonth() {
+	private void calcHoursPerMonth() throws TableBindingNotRegisteredException, UnsupportedDBDataTypeException, SQLException, WrongBindFileFormatException, CloneNotSupportedException, DuplicateRecordException {
 		hours_per_month = 0;
 
                 DateMidnight dm = new DateMidnight(display_month.getYear(), display_month.getMonth(),1);
                 final DateMidnight month_end = dm.plusMonths(1);
 
+                DBUserPerMonth upm = getUPMRecord(display_month.getYear(), display_month.getMonth() );
+
+		if (upm == null) {
+			return;
+		}
+
+                calc_overtime = getOverTimeforUPM(upm);
+
                 for( ; dm.isBefore(month_end); dm = dm.plusDays(1) )
-                {
-                    if( display_month.isHoliday(dm) )
-                        continue;
-
-                    if( dm.getDayOfWeek() == DateTimeConstants.SATURDAY )
-                        continue;
-
-                    if( dm.getDayOfWeek() == DateTimeConstants.SUNDAY )
-                        continue;
-
-                    hours_per_month += hours_per_day;
+                {                   
+                    hours_per_month += calc_overtime.getHours4Day(dm, display_month.getHolidays());
                 }
-
 	}
         
 	private boolean isHoliday(Date day) {
@@ -231,8 +176,7 @@ public class CalcMonthStuff {
 		List<DBTimeEntries> last_day = new ArrayList<DBTimeEntries>();
 
 		Calendar cal_before = new GregorianCalendar();
-		Calendar cal_act = new GregorianCalendar();
-		OvertimeInterface calc_overtime = getOverTimeforUPM(upm);
+		Calendar cal_act = new GregorianCalendar();		
 
 		for (DBStrukt s : res) {
 			DBTimeEntries te = (DBTimeEntries) s;
@@ -283,24 +227,21 @@ public class CalcMonthStuff {
 			UnsupportedDBDataTypeException, SQLException,
 			WrongBindFileFormatException, CloneNotSupportedException,
 			DuplicateRecordException {
-		error_log.setLength(0);
+            error_log.setLength(0);
 
-                days_of_month = new GregorianCalendar(display_month.getYear(), display_month.getMonth()-1, 1).getActualMaximum(Calendar.DAY_OF_MONTH);
+            days_of_month = new GregorianCalendar(display_month.getYear(), display_month.getMonth() - 1, 1).getActualMaximum(Calendar.DAY_OF_MONTH);
 
-		if (!calcHoursPerDay()) {
-			error("Die Anzahl der Arbeitsstunden pro Tag konnte nicht berechnet werden.");
-		} else {
+            calcHoursPerMonth();
+            calcHoursPerMonthDone();
 
-			calcHoursPerMonth();
+            if (!calcRemainingLeave()) {
+                error("Der Resturlaub konnte nicht berechnet werden.");
+            }
 
-			calcHoursPerMonthDone();
+            if (!calcFlexTime()) {
+                error("Der Gesammtarbeitszeit konnte nicht berechnet werden.");
+            }
 
-			if (!calcRemainingLeave())
-				error("Der Resturlaub konnte nicht berechnet werden.");
-
-			if (!calcFlexTime())
-				error("Der Gesammtarbeitszeit konnte nicht berechnet werden.");
-		}
 	}
 
 	private boolean matchUserEntryForDate(DBUserPerMonth upm, Date date) {
@@ -512,8 +453,7 @@ public class CalcMonthStuff {
 		List<DBTimeEntries> last_day = new ArrayList<DBTimeEntries>();
 
 		Calendar cal_before = new GregorianCalendar();
-		Calendar cal_act = new GregorianCalendar();
-		OvertimeInterface calc_overtime = getOverTimeforUPM(upm);
+		Calendar cal_act = new GregorianCalendar();		
 
 		for (int i = 0; i < res.size(); i++) {
 			DBTimeEntries entry = (DBTimeEntries) res.get(i);
@@ -593,20 +533,14 @@ public class CalcMonthStuff {
 			//Date aktual_day = cal_from.plusMonths(start - i).toDate();
                         Date aktual_day = cal_from.plusMonths(i).toDate();
 			long work_days_for_month = getWorkDaysForMonth(aktual_day);
-			double dhours_per_day = getHoursPerDay(upm);
-
-			// ansonsten werden die Feiertage nicht berücksichtigt, was auch
-			// schlecht ist.
-			// double work_time_for_month = work_days_for_month *
-			// dhours_per_day;
 
 			double work_time_for_month = hours_per_month;
 
 			logger.info(String
-					.format("%d %s Working Days: %d regular working hours per month: %f working hours per day: %f",
+					.format("%d %s Working Days: %d regular working hours per month: %f",
 							i, DBDateTime.getDateStr(aktual_day),
-							work_days_for_month, work_time_for_month,
-							dhours_per_day));
+							work_days_for_month, work_time_for_month));
+							
 
 			regular_work_time += work_time_for_month;
 		}
@@ -647,20 +581,22 @@ public class CalcMonthStuff {
 		error_log.append(text);
 	}
 
-	public static OvertimeInterface getOverTimeforUPM(DBUserPerMonth upm) {
-		SCHEMAS schema = SCHEMAS.valueOf(upm.overtime_rule.getValue());
+    public static OvertimeInterface getOverTimeforUPM(DBUserPerMonth upm) {
+        SCHEMAS schema = SCHEMAS.valueOf(upm.overtime_rule.getValue());
 
-		switch (schema) {
-		case KEINES:
-			return new None();
-		case PAUSCHALIST:
-			return new FlatRate();
-		case ÜBERSTUNDENSCHEMA_01:
-			return new Schema_1();
-		}
+        switch (schema) {
+            case KEINES:
+                return new None(upm);
+            case PAUSCHALIST:
+                return new FlatRate(upm);
+            case ÜBERSTUNDENSCHEMA_01:
+                return new Schema_1(upm);
+            case FLATRATE_SFR_01:
+                return new Flatrate_Short_Friday_01(upm);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
         /**
          * @return die Soll-Arbeitsstunden im Monat
@@ -698,5 +634,10 @@ public class CalcMonthStuff {
         public HMSTime getOverTime()
         {
             return overtime;
+        }
+
+        public OvertimeInterface getOverTimeInterface()
+        {
+            return calc_overtime;
         }
 }

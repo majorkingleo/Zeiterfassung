@@ -39,6 +39,7 @@ import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.calendar.AustrianHolidays;
 import at.redeye.FrameWork.utilities.calendar.GermanHolidays;
 import at.redeye.FrameWork.utilities.calendar.HolidayMerger;
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import at.redeye.FrameWork.utilities.calendar.SwitzerlandHolidays;
 import at.redeye.FrameWork.widgets.calendarday.CalendarDay;
@@ -55,6 +56,7 @@ import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import at.redeye.Zeiterfassung.reports.MonthReportPerUser;
 import at.redeye.Zeiterfassung.reports.activity.MonthlyReportActivity;
+import java.util.GregorianCalendar;
 
 /**
  * 
@@ -749,7 +751,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 
         private void jMAbsenceTimeBookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMAbsenceTimeBookingActionPerformed
 
-            invokeDialogUnique(new AbsenceTimeBooking(root,this,month_stuff.getHoursPerDay()));
+            invokeDialogUnique(new AbsenceTimeBooking(root,this,month_stuff.getOverTimeInterface()));
 
         }//GEN-LAST:event_jMAbsenceTimeBookingActionPerformed
 
@@ -1314,9 +1316,11 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 				&& checkCustomers()) {
 			// System.out.println("Clicked on day " +
 			// month.isWhatDayOfMonth(day) );
-			invokeDialogUnique(new BookDay(root, new DateMidnight(year, mon,
-					month.isWhatDayOfMonth(day)), month.getDay(day), this,
-					month_stuff.getHoursPerDay(), cache));
+
+                    DateMidnight dm = new DateMidnight(year, mon, month.isWhatDayOfMonth(day) );
+
+                    invokeDialogUnique(new BookDay(root, dm, month.getDay(day), this,
+					month_stuff.getHoursPerDay(dm), cache));
 
 		}
 	}
@@ -1382,7 +1386,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                                                 text.append(" ");
 						text.append(month_stuff.getRemainingLeave()
 								.toString("HH:mm"));
-
+/*
 						if (month_stuff.getHoursPerDay() > 0)
 							text.append(" ("
 									+ Rounding.rndDouble(
@@ -1390,7 +1394,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 													.getHours()
 													/ month_stuff.getHoursPerDay(),
 											1) + " " + MlM("Tage") + ")");
-
+*/
 						jLSum.setText(text.toString());
 
 						jBErrorLog.setVisible(month_stuff.hasError());
@@ -1438,4 +1442,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         return hi.official_holiday;
     }
 
+    public Holidays getHolidays()
+    {
+        return merger;
+    }
 }
