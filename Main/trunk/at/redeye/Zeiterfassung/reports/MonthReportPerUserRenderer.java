@@ -165,7 +165,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                                             if( over_time_in_millis > 0 )
                                             {
                                                 html_newline();
-                                                html_bold("Überstunden: " + getDurFromMilli(over_time_in_millis + extra_time_in_millis));
+                                                html_bold("davon Überstunden: " + getDurFromMilli(over_time_in_millis + extra_time_in_millis));
 
                                                 if( extra_time_in_millis > 0 )
                                                     html_normal_text(" ( " + getDurFromMilli(over_time_in_millis) + " * " + over_time.getOverTimeFactor() + " )" );
@@ -235,7 +235,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 
                     if (over_time_in_millis > 0) {
                         html_newline();
-                        html_bold("Überstunden: " + getDurFromMilli(over_time_in_millis + extra_time_in_millis));
+                        html_bold("davon Überstunden: " + getDurFromMilli(over_time_in_millis + extra_time_in_millis));
 
                         if (extra_time_in_millis > 0) {
                             html_normal_text(" ( " + getDurFromMilli(over_time_in_millis) + " * " + over_time.getOverTimeFactor() + " )");
@@ -254,12 +254,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 for( Integer i : holiday_per_day.values() )
                     holidays_in_days_sum += i;
 
-		html_bold_title("Gesamt:");
-		html_blockquote_start();
-
 		write_sum_month(millis_per_jobtype_month, over_time_for_month_in_millis, extra_time_for_month_in_millis);
-
-		html_blockquote_end();
 
 		html_stop();
 
@@ -267,6 +262,9 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 	}
 
 	private void write_sum_month(HashMap<Integer, Long> sum_data, long over_time_for_month_in_millis, long extra_time_for_month_in_millis) {
+
+                html_bold_title("Gesamt:");
+		html_blockquote_start();
 
 		Set<Integer> keys = sum_data.keySet();
 
@@ -338,7 +336,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 		text.append("</td></tr>");
 
                 text.append("<tr><td>");
-                html_bold("Überstunden: ");
+                html_bold("davon Überstunden: ");
                 text.append("</td><td>");
                 html_bold(getDurFromMilli(over_time_for_month_in_millis + extra_time_for_month_in_millis));
                 text.append("</td></tr>");
@@ -348,7 +346,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 text.append("<tr><td>");
                 html_bold("Summe: ");
                 text.append("</td><td>");
-                html_bold(getDurFromMilli(summe + over_time_for_month_in_millis + extra_time_for_month_in_millis));
+                html_bold(getDurFromMilli(summe + extra_time_for_month_in_millis));
                 text.append("</td></tr>");
 
                 text.append("</table>");
@@ -373,19 +371,77 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 text.append("<tr><td>");
                 html_bold("Mehrstunden:");
                 text.append("</td><td>");
-                
-                html_bold(getDurFromMilli(calc_month_stuff.getCompleteTime().getMillis() - calc_month_stuff.getHoursPerMonthInMillis()));
-                
+
+            {
+                HMSTime extra_times = new HMSTime(calc_month_stuff.getCompleteTime().getMillis()
+                        - calc_month_stuff.getHoursPerMonthInMillis()
+                        - over_time_for_month_in_millis);
+
+                long diff = extra_times.getMillis();
+
+                HMSTime month_over_time = new HMSTime(over_time_for_month_in_millis + extra_time_for_month_in_millis);
+
+                if (diff < 0) {
+                    if (month_over_time.getMillis() > Math.abs(diff)) {
+                        extra_times.addMillis(diff);
+                        month_over_time.minusMillis(diff);
+                    } else {
+                        extra_times.addMillis(month_over_time.getMillis());
+                        month_over_time.setTime(0);
+                    }
+                }
+
+                html_bold(extra_times.toString("HH:mm"));
+
+
                 text.append("</td></tr>");
 
                 text.append("<tr><td>");
                 html_bold("Überstunden:");
                 text.append("</td><td>");
-                html_bold(calc_month_stuff.getOverTime().toString("HH:mm"));
+                html_bold(month_over_time.toString("HH:mm"));
+                text.append("</td></tr></table>");
+
+            }
+
+                html_blockquote_end();
+
+                html_bold_title("Gesamt mit Übertrag vom Vormonat:");
+		html_blockquote_start();
+
+                text.append("<table>");
+
+            {
+                HMSTime extra_times = new HMSTime(calc_month_stuff.getFlexTimeNoExtra().getMillis() - calc_month_stuff.getOverTimeNoExtra().getMillis());
+
+                long diff = extra_times.getMillis();
+
+                HMSTime general_over_time = calc_month_stuff.getOverTime();
+
+                if (diff < 0) {
+                    if (general_over_time.getMillis() > Math.abs(diff)) {
+                        extra_times.addMillis(diff);
+                        general_over_time.minusMillis(diff);
+                    } else {
+                        extra_times.addMillis(general_over_time.getMillis());
+                        general_over_time.setTime(0);
+                    }
+                }
+
+                text.append("<tr><td>");
+                html_bold("Mehrstunden:");
+                text.append("</td><td>");
+                html_bold(extra_times.toString("HH:mm"));
                 text.append("</td></tr>");
 
-                text.append("<tr><td></td></tr>");
-                
+                text.append("<tr><td>");
+                html_bold("Überstunden:");
+                text.append("</td><td>");
+                html_bold(general_over_time.toString("HH:mm"));
+                text.append("</td></tr>");
+
+            }
+
                 text.append("<tr><td>");
                 html_bold("Resturlaub:");
                 text.append("</td><td><b>");
@@ -404,6 +460,8 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 text.append("</b></td></tr>");
 
                 text.append("</table>");
+
+                html_blockquote_end();
 
 	}
 

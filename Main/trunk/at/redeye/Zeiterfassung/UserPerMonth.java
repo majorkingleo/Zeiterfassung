@@ -95,6 +95,7 @@ public class UserPerMonth extends BaseDialog {
 		tm.setEditable(upm.hours_overtime);
 		tm.setEditable(upm.days_per_week);
 		tm.setEditable(upm.overtime_rule);
+                tm.setEditable(upm.extra_time);
 
 		tm.setValidator(upm.from, new DateValidator());
 		tm.setValidator(upm.to, new DateValidator());

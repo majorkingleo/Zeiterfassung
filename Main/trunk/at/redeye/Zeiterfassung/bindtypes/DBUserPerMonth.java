@@ -31,9 +31,10 @@ public class DBUserPerMonth extends DBStrukt
     public DBDouble        hours_holidays = new DBDouble( "hours_holidays", "Urlaubsstunden");
     public DBDouble        days_holidays  = new DBDouble( "days_holidays", "Urlaub in Tagen");
     public DBDouble        hours_overtime = new DBDouble( "hours_overtime", "Überstunden");
+    public DBDouble        extra_time     = new DBDouble( "extra_time", "Mehrstunden");
     public DBOvertimeRule  overtime_rule  = new DBOvertimeRule( "overtime_rule","Überstundenschema");
-    public DBHistory       hist           = new DBHistory( "hist" );    
-    
+    public DBHistory       hist           = new DBHistory( "hist" );
+
     void add_all()
     {
         add( id );
@@ -47,12 +48,13 @@ public class DBUserPerMonth extends DBStrukt
         add( hours_holidays );
         add( days_holidays, 2 );
         add( hours_overtime );
+        add( extra_time, 4 );
         add( overtime_rule, 3 );
         add( hist );
         
         id.setAsPrimaryKey();
         
-        setVersion(3);
+        setVersion(4);
     }
     
     public DBUserPerMonth( DBSqlAsInteger.SqlQuery query_user )

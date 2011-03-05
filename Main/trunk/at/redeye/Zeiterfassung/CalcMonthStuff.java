@@ -51,6 +51,13 @@ public class CalcMonthStuff {
 	private HMSTime remaining_leave = new HMSTime();
 	private HMSTime flextime = new HMSTime();
         private HMSTime overtime = new HMSTime();
+        
+        /**
+         * die Anzahl der Stunden, die Überstunden sind.
+         */
+        private HMSTime overtime_hours = new HMSTime();
+
+        private HMSTime flextime_no_extra = new HMSTime();
 	private StringBuilder error_log = new StringBuilder();
 	private HMSTime time_correction_month_done = new HMSTime();
         private int user_id;
@@ -437,12 +444,17 @@ public class CalcMonthStuff {
 
 		logger.info(to.getTime());
 
-		Double dflextime = upm.hours_overtime.getValue();
+		Double dflextime = upm.extra_time.getValue();
+                Double dovertime = upm.hours_overtime.getValue();
 		long lflextime = dflextime.longValue() * 60 * 60 * 1000;
-                long lovertime = dflextime.longValue() * 60 * 60 * 1000;
+                long lovertime = dovertime.longValue() * 60 * 60 * 1000;
+                long lflextime_no_extra = lflextime;
+                long lovertime_hours_only = lovertime;
 
                 flextime.setTime(lflextime);
                 overtime.setTime(lovertime);
+                flextime_no_extra.setTime(lflextime_no_extra);
+                overtime_hours.setTime(lovertime_hours_only);
 
                 HMSTime debug_overtime = new HMSTime(lovertime);
 
@@ -479,6 +491,7 @@ public class CalcMonthStuff {
 		for (int i = 0; i < res.size(); i++) {
 			DBTimeEntries entry = (DBTimeEntries) res.get(i);
 			lflextime += entry.calcDuration();
+                        lflextime_no_extra += entry.calcDuration();
 
 			if (last_day.isEmpty()) {
 				cal_before.setTime(entry.from.getValue());
@@ -505,6 +518,7 @@ public class CalcMonthStuff {
 
 					lflextime += ft_extra;
                                         lovertime += ot + ft_extra;
+                                        lovertime_hours_only += ot;
 				} else {
 					last_day.add(entry);
 				}
@@ -532,6 +546,7 @@ public class CalcMonthStuff {
 
                     lflextime += ft_extra;
                     lovertime += ot + ft_extra;
+                    lovertime_hours_only += ot;
 		}
 
 		// so jetzt haben wir auf der Haben Seite alle Arbeitszeiten
@@ -579,6 +594,8 @@ public class CalcMonthStuff {
 		double flextime_result = (lflextime - correction) / 60 / 60 / 1000.0
 				- (regular_work_time);
 
+                lflextime_no_extra -= regular_work_time * 60 * 60 * 1000.0;
+
 		logger.info(String
 				.format("overal working hours from %s to %s: %.3f regular working hours: %.3f result: %.3f",
 						DBDateTime.getDateStr(from), DBDateTime.getDateStr(to),
@@ -588,6 +605,8 @@ public class CalcMonthStuff {
 
 		flextime.setTime((long) (flextime_result * 60 * 60 * 1000));
                 overtime.setTime(lovertime);
+                flextime_no_extra.setTime(lflextime_no_extra);
+                overtime_hours.setTime(lovertime_hours_only);
 
 		return true;
 	}
@@ -646,6 +665,14 @@ public class CalcMonthStuff {
             return flextime;
         }
 
+        /**         
+         * @return die Mehrstunden insgesammt, ohne extra Zeit zb 1.5 Stunden ZA für eine Überstunde hinzuzurechnen
+         */
+        public HMSTime getFlexTimeNoExtra()
+        {
+            return flextime_no_extra;
+        }
+
         public HMSTime getRemainingLeave()
         {
             return remaining_leave;
@@ -659,6 +686,15 @@ public class CalcMonthStuff {
         public HMSTime getOverTime()
         {
             return overtime;
+        }
+
+        /**
+         * die reine Anzahl der Überstunden, ohne irgendwelche Zuschläge
+         * @return
+         */
+        public HMSTime getOverTimeNoExtra()
+        {
+            return overtime_hours;
         }
 
         public OvertimeInterface getOverTimeInterface()
