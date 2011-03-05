@@ -30,6 +30,7 @@ public class AppConfigDefinitions extends BaseAppConfigDefinitions {
     public static DBConfig UseCustomersAndProjects = new DBConfig( "UseCustomersAndProjects", "JA", 
             "Kunde, Projekte und Unterprojekte verwenden",
             new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE) );
+    public static DBConfig HolidaysOnlyInDays = new DBConfig("HolidaysOnlyInDays", "NEIN", "Urlaube werden nur in Tagen abgerechnet.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
 
     public static void registerDefinitions() {
 
@@ -43,6 +44,7 @@ public class AppConfigDefinitions extends BaseAppConfigDefinitions {
         add(NumberOfMinimumCommentChars);
         add(AutoCreateSupProjectDefaultValue);
         add(UseCustomersAndProjects);
+        add(HolidaysOnlyInDays);
 
         GlobalConfigDefinitions.add_help_path("/at/redeye/Zeiterfassung/resources/Help/Params/");
         LocalConfigDefinitions.add_help_path("/at/redeye/Zeiterfassung/resources/Help/Params/");

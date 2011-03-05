@@ -73,11 +73,16 @@ public class UserPerMonth extends BaseDialog {
 
 		DBUserPerMonth upm = new DBUserPerMonth(user_query);
 
+                boolean holidays_in_days_only = StringUtils.isYes(root.getSetup().getConfig(AppConfigDefinitions.HolidaysOnlyInDays));
+
 		tm = new TableManipulator(root, jTContent, upm);
 
 		tm.hide(upm.id);
 		tm.hide(upm.hist.lo_user);
 		tm.hide(upm.hist.lo_zeit);
+
+                if( holidays_in_days_only )
+                    tm.hide(upm.hours_holidays);
 
 		tm.setEditable(upm.from);
 		tm.setEditable(upm.locked);

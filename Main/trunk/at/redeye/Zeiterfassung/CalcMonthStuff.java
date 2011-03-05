@@ -34,6 +34,7 @@ import at.redeye.Zeiterfassung.overtime.None;
 import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
 import at.redeye.Zeiterfassung.overtime.Flatrate_Short_Friday_01;
 import at.redeye.Zeiterfassung.overtime.Schema_1;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -55,6 +56,8 @@ public class CalcMonthStuff {
         private int user_id;
         private int days_of_month=0;
         private OvertimeInterface calc_overtime;
+        private double remaining_leave_in_days=0;
+        private int holidays_for_month_in_days = 0;
 
 	public CalcMonthStuff(CalcMonthStuffDataInterface month, Transaction trans, int user_id) {
 		this.display_month = month;
@@ -381,10 +384,27 @@ public class CalcMonthStuff {
 		Double durlaub = upm.hours_holidays.getValue();
 		long urlaub = durlaub.longValue() * 60 * 60 * 1000;
 
-		for (int i = 0; i < res.size(); i++) {
-			DBTimeEntries entry = (DBTimeEntries) res.get(i);
-			urlaub -= entry.calcDuration();
-		}
+                remaining_leave_in_days = upm.days_holidays.getValue();
+
+                LocalDate last_day = null;
+
+                for (int i = 0; i < res.size(); i++) {
+                   DBTimeEntries entry = (DBTimeEntries) res.get(i);
+                    urlaub -= entry.calcDuration();
+
+                    // Wenn sich das Datum ändert, dann wird ein Urlaubstag abgezogen
+                    if (last_day == null) {
+                        last_day = new LocalDate(entry.from.getValue());
+                        remaining_leave_in_days -= 1;                        
+                    } else {
+                        LocalDate other_entry = new LocalDate(entry.from.getValue());
+
+                        if (!other_entry.isEqual(last_day)) {
+                            remaining_leave_in_days -= 1;
+                            last_day = other_entry;                            
+                        }
+                    }
+                }
 
 		remaining_leave = new HMSTime(urlaub);
 
@@ -644,5 +664,29 @@ public class CalcMonthStuff {
         public OvertimeInterface getOverTimeInterface()
         {
             return calc_overtime;
+        }
+
+        /**
+         * Hier wird der Urlaub in ganzen Tagen gerechnet.
+         * Damit ist nicht nur eine Umrechnung in Tage gemeint, sondern
+         * wenn eine Urlaubseintrag an einem Tag vorhanden war, wird ein ganzer
+         * Urlaubstag vom Resturlaub abgezogen.
+         * @return der berechnete Resturlaub in ganzen Tagen
+         */
+        public double getRemainingLeaveInDays()
+        {
+            return remaining_leave_in_days;
+        }
+
+        /**
+         * Hier wird der Urlaub in ganzen Tagen gerechnet.
+         * Damit ist nicht nur eine Umrechnung in Tage gemeint, sondern
+         * wenn eine Urlaubseintrag an einem Tag vorhanden war, wird ein ganzer
+         * Urlaubstag vom Resturlaub abgezogen.
+         * @return der berechnete Resturlaub in ganzen Tagen
+         */
+        public double getHolidaysForMonthInDays()
+        {
+            return holidays_for_month_in_days;
         }
 }

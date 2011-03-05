@@ -1345,6 +1345,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 					public void do_stuff() throws Exception {
 						month_stuff.calc();
 
+                                                boolean holidays_in_days_only = StringUtils.isYes(root.getSetup().getConfig(AppConfigDefinitions.HolidaysOnlyInDays));
+
 						StringBuilder text = new StringBuilder();
 
 						text.append(MlM("Soll:"));
@@ -1384,9 +1386,15 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                                                 text.append(" ");
 						text.append(MlM("Resturlaub:"));
                                                 text.append(" ");
-						text.append(month_stuff.getRemainingLeave()
-								.toString("HH:mm"));
-/*
+
+                                                if( holidays_in_days_only ) {
+                                                    text.append(StringUtils.formatDouble(month_stuff.getRemainingLeaveInDays()) + " " + MlM("Tage"));
+                                                } else {
+                                                    text.append(month_stuff.getRemainingLeave()
+                                                                    .toString("HH:mm"));
+                                                }
+
+                                                /*
 						if (month_stuff.getHoursPerDay() > 0)
 							text.append(" ("
 									+ Rounding.rndDouble(
@@ -1394,7 +1402,9 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 													.getHours()
 													/ month_stuff.getHoursPerDay(),
 											1) + " " + MlM("Tage") + ")");
-*/
+                                                */
+
+
 						jLSum.setText(text.toString());
 
 						jBErrorLog.setVisible(month_stuff.hasError());

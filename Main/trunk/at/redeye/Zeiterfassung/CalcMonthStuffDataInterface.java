@@ -35,6 +35,6 @@ public interface CalcMonthStuffDataInterface
      */
     boolean isHoliday( DateMidnight day );
 
-    public Holidays getHolidays();
+    Holidays getHolidays();
 
 }

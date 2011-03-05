@@ -92,7 +92,14 @@ public class MonthReportPerUser extends BaseDialog {
 			JCUser.setVisible(false);
 		}
 
-		setMonth();
+            java.awt.EventQueue.invokeLater(new Runnable() {
+
+                public void run() {
+                    setMonth();
+
+                }
+            });
+		
 	}
 
 	public static String getTitle(int mon, int year) {
@@ -297,7 +304,7 @@ public class MonthReportPerUser extends BaseDialog {
 	private void setMonth() {
 		setTitle("Monatsbericht " + getTitle(mon, year) + " für " + currentUser);
 
-		ReportRenderer rr = new MonthReportPerUserRenderer(getTransaction(),
+		ReportRenderer rr = new MonthReportPerUserRenderer(root,getTransaction(),
 				mon, year, currentUser, currentUserId, holidays);
 
 		if (rr.collectData()) {

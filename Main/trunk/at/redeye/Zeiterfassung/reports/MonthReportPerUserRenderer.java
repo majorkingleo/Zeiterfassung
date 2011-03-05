@@ -17,15 +17,17 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBFlagJaNein.FLAGTYPES;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.reports.BaseReportRenderer;
 import at.redeye.FrameWork.base.reports.ReportRenderer;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.HMSTime;
-import at.redeye.FrameWork.utilities.Rounding;
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
+import at.redeye.Zeiterfassung.AppConfigDefinitions;
 import at.redeye.Zeiterfassung.CalcMonthStuff;
 import at.redeye.Zeiterfassung.CalcMonthStuffDataInterface;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
@@ -34,25 +36,31 @@ import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import at.redeye.Zeiterfassung.overtime.OvertimeInterface;
 import java.util.GregorianCalendar;
+import org.joda.time.LocalDate;
 
 /**
  * 
  * @author martin
  */
-public class MonthReportPerUserRenderer extends BaseReportRenderer implements ReportRenderer, CalcMonthStuffDataInterface {
-	Transaction trans;
-	List<DBStrukt> data = new ArrayList<DBStrukt>();
-	HashMap<Integer, DBJobType> job_types = new HashMap<Integer, DBJobType>();
-	int mon;
-	int year;
-	String username;
-	int user_id;
-        Holidays holidays;
-        CalcMonthStuff calc_month_stuff;
-        DBUserPerMonth upm;
-        OvertimeInterface over_time;
+public class MonthReportPerUserRenderer extends BaseReportRenderer implements ReportRenderer, CalcMonthStuffDataInterface
+{
+	private Transaction trans;
+	private List<DBStrukt> data = new ArrayList<DBStrukt>();
+	private HashMap<Integer, DBJobType> job_types = new HashMap<Integer, DBJobType>();
+	private int mon;
+	private int year;
+	private String username;
+	private int user_id;
+        private Holidays holidays;
+        private CalcMonthStuff calc_month_stuff;
+        private DBUserPerMonth upm;
+        private OvertimeInterface over_time;
+        private Root root;
+        private boolean holidays_in_days_only;
+        private List<Integer> holiday_job_types = new ArrayList<Integer>();
+        private int holidays_in_days_sum = 0;
 
-	public MonthReportPerUserRenderer(Transaction trans, int mon, int year,
+	public MonthReportPerUserRenderer(Root root, Transaction trans, int mon, int year,
 			String username, int user_id, Holidays holidays) {
 		this.trans = trans;
 		this.mon = mon;
@@ -61,6 +69,9 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 		this.username = username;
                 this.holidays = holidays;
                 calc_month_stuff = new CalcMonthStuff(this, trans, user_id);
+                this.root = root;
+
+                holidays_in_days_only = StringUtils.isYes(root.getSetup().getConfig(AppConfigDefinitions.HolidaysOnlyInDays));
 	}
 
 	public boolean collectData() {
@@ -77,28 +88,35 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 						+ " = "
 						+ user_id
 						+ " and "
-						+ trans.getPeriodStmt(entries.from, new DateMidnight(year,
-								mon, 1), new DateMidnight(year, mon, 1)
+						+ trans.getPeriodStmt(entries.from, new LocalDate(year,
+								mon, 1), new LocalDate(year, mon, 1)
 								.plusMonths(1).minusDays(1)) + " order by "
 						+ trans.markColumn(entries.from);
 
 				data = trans.fetchTable(entries, where);
 
 				// alle Jobtypes ins Hirn blasen
-				List<DBStrukt> res = trans.fetchTable(new DBJobType());
+				List<DBJobType> res = trans.fetchTable2(new DBJobType());
 
-				for (DBStrukt s : res) {
-					DBJobType jt = (DBJobType) s;
+                                job_types.clear();
+                                holiday_job_types.clear();
+
+				for (DBJobType jt : res) {
 					job_types.put(jt.id.getValue(), jt);
+
+                                        if( jt.is_holliday.isYes() )
+                                            holiday_job_types.add(jt.id.getValue());
 				}
 
                                 calc_month_stuff.calc();
                                 upm = calc_month_stuff.getUPMRecord(year, mon);       
                                 
                                 if( upm != null )
-                                    over_time = CalcMonthStuff.getOverTimeforUPM(upm);
+                                    over_time = CalcMonthStuff.getOverTimeforUPM(upm);                                
 
 				result = new Boolean(true);
+
+
 			}
 		};
 
@@ -121,6 +139,8 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 List<DBTimeEntries> entries_per_day = new ArrayList<DBTimeEntries>();
                 long over_time_for_month_in_millis = 0;
                 long extra_time_for_month_in_millis = 0;
+
+                HashMap<Integer,Integer> holiday_per_day = new HashMap();
 
 		for (DBStrukt s : data) {
 			DBTimeEntries e = (DBTimeEntries) s;
@@ -199,6 +219,11 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 			html_normal_text(" " + e.comment.getValue().toString());
 
 			html_newline();
+
+                        if( holiday_job_types.contains((Integer)e.jobtype.getValue() ) )
+                        {
+                            holiday_per_day.put(day, 1);
+                        }
 		}
 
 		html_newline();
@@ -223,6 +248,11 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 
 		if (data.size() > 0)
 			html_blockquote_end();
+
+                holidays_in_days_sum = 0;
+
+                for( Integer i : holiday_per_day.values() )
+                    holidays_in_days_sum += i;
 
 		html_bold_title("Gesamt:");
 		html_blockquote_start();
@@ -270,6 +300,9 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 			summe += sum_data.get(key);
 		}
 
+
+
+
                 text.append("<tr><td>");
                 html_newline();
 		text.append("</td></tr>");
@@ -289,7 +322,11 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 text.append("<tr><td>");
 		html_bold("Urlaub: ");
                 text.append("</td><td>");
-                html_bold(getDurFromMilli(urlaub));
+
+                if( holidays_in_days_only )
+                    html_bold(getDayString(holidays_in_days_sum));
+                else
+                    html_bold(getDurFromMilli(urlaub));
 		text.append("</td></tr>");
 
                 text.append("<tr><td colspan=2><hr/></td></tr>");
@@ -322,51 +359,49 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
                 text.append("<table>");
 
                 text.append("<tr><td>");
-                html_normal_text("Arbeitstage im Monat:");
+                html_bold("Arbeitstage im Monat:");
                 text.append("</td><td>");
-                html_normal_text(String.valueOf(calc_month_stuff.getWorkDaysForMonth(new GregorianCalendar(year,mon,1).getTime())));
+                html_bold(String.valueOf(calc_month_stuff.getWorkDaysForMonth(new GregorianCalendar(year,mon,1).getTime())));
                 text.append("</td></tr>");
 
                 text.append("<tr><td>");
-                html_normal_text("Sollstunden:");
+                html_bold("Sollstunden:");
                 text.append("</td><td>");
-                html_normal_text(getDurFromMilli(calc_month_stuff.getHoursPerMonthInMillis()));
+                html_bold(getDurFromMilli(calc_month_stuff.getHoursPerMonthInMillis()));
                 text.append("</td></tr>");
 
                 text.append("<tr><td>");
-                html_normal_text("Mehrstunden:");
+                html_bold("Mehrstunden:");
                 text.append("</td><td>");
                 
-                html_normal_text(getDurFromMilli(calc_month_stuff.getCompleteTime().getMillis() - calc_month_stuff.getHoursPerMonthInMillis()));
+                html_bold(getDurFromMilli(calc_month_stuff.getCompleteTime().getMillis() - calc_month_stuff.getHoursPerMonthInMillis()));
                 
                 text.append("</td></tr>");
 
                 text.append("<tr><td>");
-                html_normal_text("Überstunden:");
+                html_bold("Überstunden:");
                 text.append("</td><td>");
-                html_normal_text(calc_month_stuff.getOverTime().toString("HH:mm"));
+                html_bold(calc_month_stuff.getOverTime().toString("HH:mm"));
                 text.append("</td></tr>");
 
                 text.append("<tr><td></td></tr>");
-
-                /*
+                
                 text.append("<tr><td>");
-                html_normal_text("Iststunden gesammt:");
-                text.append("</td><td>");
-                html_normal_text(getDurFromMilli(calc_month_stuff.getHoursPerMonthInMillis()));
-                text.append("</td></tr>");
-*/
-                text.append("<tr><td>");
-                html_normal_text("Resturlaub:");
-                text.append("</td><td>");
+                html_bold("Resturlaub:");
+                text.append("</td><td><b>");
 
-                text.append( calc_month_stuff.getRemainingLeave().toString("HH:mm") );
+                if( holidays_in_days_only ) {
+                    text.append(StringUtils.formatDouble(calc_month_stuff.getRemainingLeaveInDays()) + " " + root.MlM("Tage"));
+                } else {
+                    text.append( calc_month_stuff.getRemainingLeave().toString("HH:mm") );
 
-//                double days = Rounding.rndDouble(calc_month_stuff.getRemainingLeave().getHours() / calc_month_stuff.getHoursPerDay(), 1);
-                double days = 0;
+                    // double days = Rounding.rndDouble(calc_month_stuff.getRemainingLeave().getHours() / calc_month_stuff.getHoursPerDay(), 1);
+                    double days = 0;
 
-                html_normal_text( " ( " + days + " Tage ) ");
-                text.append("</td></tr>");
+                    html_normal_text( " ( " + days + " Tage ) ");
+                }
+              
+                text.append("</b></td></tr>");
 
                 text.append("</table>");
 
@@ -429,5 +464,17 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
     public Holidays getHolidays()
     {
         return holidays;
+    }
+
+    /**
+     * @param days
+     * @return "1 day" or "12 days" depending on the param days
+     */
+    private String getDayString( long days )
+    {
+        if( days == 1 )
+            return days + " " + root.MlM("Tag");
+
+        return days + " " + root.MlM("Tage");
     }
 }
