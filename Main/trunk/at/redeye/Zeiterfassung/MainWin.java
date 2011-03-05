@@ -34,7 +34,6 @@ import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
 import at.redeye.FrameWork.base.prm.impl.gui.LocalConfig;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener;
 import at.redeye.FrameWork.utilities.HMSTime;
-import at.redeye.FrameWork.utilities.Rounding;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.calendar.AustrianHolidays;
 import at.redeye.FrameWork.utilities.calendar.GermanHolidays;
@@ -56,7 +55,6 @@ import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import at.redeye.Zeiterfassung.reports.MonthReportPerUser;
 import at.redeye.Zeiterfassung.reports.activity.MonthlyReportActivity;
-import java.util.GregorianCalendar;
 
 /**
  * 
@@ -1345,54 +1343,77 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 					public void do_stuff() throws Exception {
 						month_stuff.calc();
 
-                                                boolean holidays_in_days_only = StringUtils.isYes(root.getSetup().getConfig(AppConfigDefinitions.HolidaysOnlyInDays));
+                        boolean holidays_in_days_only = StringUtils.isYes(root.getSetup().getConfig(AppConfigDefinitions.HolidaysOnlyInDays));
 
 						StringBuilder text = new StringBuilder();
 
-						text.append(MlM("Soll:"));
-                                                text.append(" ");
-						text.append(month_stuff.getFormatedHoursPerMonth());
-                                                text.append(" ");
-						text.append(MlM("Ist:"));
-                                                text.append(" ");
-						text.append(month_stuff.getCompleteTime().toString("HH:mm"));
+                        text.append(MlM("Soll:"));
+                        text.append(" ");
+                        text.append(month_stuff.getFormatedHoursPerMonth());
+                        text.append(" ");
+                        text.append(MlM("Ist:"));
+                        text.append(" ");
 
-						if (month_stuff.getExtraTimePerMonthDone().getMillis() != 0) {
-							text.append(" ");
+                        HMSTime t = new HMSTime(month_stuff.getCompleteTime().getMillis());
+                        t.minusMillis(month_stuff.getOverTimePerMonthDone().getMillis());
 
-							if (month_stuff.getExtraTimePerMonthDone()
-									.getMillis() > 0) {
-								text.append("+");
-							}
+                        text.append(t.toString("HH:mm"));
 
-							text.append(month_stuff.getExtraTimePerMonthDone()
-									.toString("HH:mm"));
+                        if (month_stuff.getOverTimePerMonthDone().getMillis() != 0) {
+                            text.append(" ");
 
-							text.append(" = ");
+                            if (month_stuff.getOverTimePerMonthDone().getMillis() > 0) {
+                                text.append("+");
+                            }
 
-							HMSTime t = new HMSTime();
-							t.setTime(month_stuff.getCompleteTime().getMillis());
-							t.addMillis(month_stuff.getExtraTimePerMonthDone()
-									.getMillis());
+                            text.append(month_stuff.getOverTimePerMonthDone().toString("HH:mm"));
 
-							text.append(t.toString("HH:mm"));
+                            text.append(" = ");
+                            
+                            t.setTime(month_stuff.getCompleteTime().getMillis());
+                            t.addMillis(month_stuff.getExtraTimePerMonthDone().getMillis());
 
-						}
+                            text.append(t.toString("HH:mm"));
 
-                                                text.append(" ");
-						text.append(MlM("Gleitzeitkonto:"));
-                                                text.append(" ");
-						text.append(month_stuff.getFlexTime().toString("HH:mm"));
-                                                text.append(" ");
-						text.append(MlM("Resturlaub:"));
-                                                text.append(" ");
+                        }
 
-                                                if( holidays_in_days_only ) {
-                                                    text.append(StringUtils.formatDouble(month_stuff.getRemainingLeaveInDays()) + " " + MlM("Tage"));
-                                                } else {
-                                                    text.append(month_stuff.getRemainingLeave()
-                                                                    .toString("HH:mm"));
-                                                }
+                        text.append(" ");
+                        text.append(MlM("Gleitzeitkonto:"));
+                        text.append(" ");
+
+                        HMSTime extra_times = new HMSTime(month_stuff.getFlexTimeNoExtra().getMillis() - month_stuff.getOverTimeNoExtra().getMillis());
+
+                        long diff = extra_times.getMillis();
+
+                        HMSTime general_over_time = month_stuff.getOverTime();
+
+                        if (diff < 0) {
+                            if (general_over_time.getMillis() > Math.abs(diff)) {
+                                extra_times.addMillis(diff);
+                                general_over_time.minusMillis(diff);
+                            } else {
+                                extra_times.addMillis(general_over_time.getMillis());
+                                general_over_time.setTime(0);
+                            }
+                        }
+
+                        text.append(extra_times.toString("HH:mm"));
+
+                        if( general_over_time.getMillis() > 0 )
+                        {
+                            text.append(" +");
+                            text.append(general_over_time.toString("HH:mm"));
+                        }
+
+                        text.append(" ");
+                        text.append(MlM("Resturlaub:"));
+                        text.append(" ");
+
+                        if (holidays_in_days_only) {
+                            text.append(StringUtils.formatDouble(month_stuff.getRemainingLeaveInDays()) + " " + MlM("Tage"));
+                        } else {
+                            text.append(month_stuff.getRemainingLeave().toString("HH:mm"));
+                        }
 
                                                 /*
 						if (month_stuff.getHoursPerDay() > 0)

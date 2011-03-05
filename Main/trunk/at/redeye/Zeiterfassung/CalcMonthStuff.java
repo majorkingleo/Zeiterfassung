@@ -47,6 +47,10 @@ public class CalcMonthStuff {
 	private double hours_per_month_done = 0;
 	private Transaction trans;
 	private CalcMonthStuffDataInterface display_month;
+
+        /**
+         * gearbeitete Stunden, ohne extras und Aufschläge
+         */
 	private HMSTime complete_time = new HMSTime();
 	private HMSTime remaining_leave = new HMSTime();
 	private HMSTime flextime = new HMSTime();
@@ -59,7 +63,18 @@ public class CalcMonthStuff {
 
         private HMSTime flextime_no_extra = new HMSTime();
 	private StringBuilder error_log = new StringBuilder();
+
+        /**
+         * Zuschäge in dem Monat, also die Zeiten, wenn eine Überstunde mit 1.5 Stunden ZA
+         * abgegolten wird.
+         */
 	private HMSTime time_correction_month_done = new HMSTime();
+
+        /**
+         * Die Überstunden für das Monat, inklusive Zuschläge
+         */
+        private HMSTime over_time_correction_month_done = new HMSTime();
+
         private int user_id;
         private int days_of_month=0;
         private OvertimeInterface calc_overtime;
@@ -158,6 +173,7 @@ public class CalcMonthStuff {
 			DuplicateRecordException {
 		hours_per_month_done = 0;
 		time_correction_month_done.setTime(0);
+        over_time_correction_month_done.setTime(0);
 
 		int m = display_month.getMonth();
 		int y = display_month.getYear();
@@ -201,7 +217,8 @@ public class CalcMonthStuff {
 				if (cal_before.get(Calendar.DAY_OF_MONTH) != cal_act
 						.get(Calendar.DAY_OF_MONTH)) {
 					cal_before.setTime(te.from.getValue());
-					long ot = calc_overtime.calcExtraTimeForDay(last_day,isHoliday(te.from.getValue()));
+					long et = calc_overtime.calcExtraTimeForDay(last_day,isHoliday(te.from.getValue()));
+                                        long ot = calc_overtime.calcOverTimeForDay(last_day,isHoliday(te.from.getValue()));
 					last_day.clear();
 					last_day.add(te);
 
@@ -210,7 +227,8 @@ public class CalcMonthStuff {
 								+ " added " + ot + " to overtime.");
 					}
 
-					time_correction_month_done.addMillis(ot);
+					time_correction_month_done.addMillis(et);
+                                        over_time_correction_month_done.addMillis(ot+et);
 				} else {
 					last_day.add(te);
 				}
@@ -218,14 +236,16 @@ public class CalcMonthStuff {
 		}
 
 		if (last_day.size() > 0) {
-			long ot = calc_overtime.calcExtraTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()) );
+			long et = calc_overtime.calcExtraTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()) );
+                        long ot = calc_overtime.calcOverTimeForDay(last_day, isHoliday(last_day.get(0).from.getValue()) );
 
 			if (ot > 0) {
 				logger.info(DBDateTime.getDateStr(last_day.get(0).from
 						.getValue()) + " added " + ot + " to overtime.");
 			}
 
-			time_correction_month_done.addMillis(ot);
+			time_correction_month_done.addMillis(et);
+                        over_time_correction_month_done.addMillis(ot+et);
 		}
 
 		hours_per_month_done = millis;
@@ -655,6 +675,10 @@ public class CalcMonthStuff {
 		return (long) (hours_per_month * 1000 * 60 * 60);
 	}
 
+        /**
+         * gearbeitete Stunden ohne extras und Aufschläge
+         * @return
+         */
         public HMSTime getCompleteTime()
         {
             return complete_time;
@@ -683,6 +707,17 @@ public class CalcMonthStuff {
             return time_correction_month_done;
         }
 
+        /**         
+         * @return gearbeitete Überstunden + Extra in diesesm Monat
+         */
+        public HMSTime getOverTimePerMonthDone()
+        {
+            return over_time_correction_month_done;
+        }
+
+        /**
+         * @return die Überstunden im Monat insgesammt (inklusive Guthaben, etc)
+         */
         public HMSTime getOverTime()
         {
             return overtime;
