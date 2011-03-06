@@ -22,6 +22,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBExtraHolidays;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -49,7 +50,7 @@ public class LocalHolidays implements Holidays {
 		for (int i = 0; i < values.size(); i++) {
 			DBExtraHolidays e = (DBExtraHolidays) values.get(i);
 
-			DateMidnight d1 = new DateMidnight(((Date) e.date.getValue()));
+			LocalDate d1 = new LocalDate(((Date) e.date.getValue()));
 
 			if (d1.getYear() == year) {
 				hi.add(new HolidayInfo(d1, false, ((String) e.official_holiday
@@ -70,6 +71,10 @@ public class LocalHolidays implements Holidays {
 	}
 
 	public HolidayInfo getHolidayForDay(DateMidnight date) {
+		return getHolidayForDay(date.toLocalDate());
+	}
+
+	public HolidayInfo getHolidayForDay(LocalDate date) {
 		if (last_used_year != date.getYear() || last_used_holidays == null) {
 			last_used_year = date.getYear();
 			last_used_holidays = getHolidays(last_used_year);

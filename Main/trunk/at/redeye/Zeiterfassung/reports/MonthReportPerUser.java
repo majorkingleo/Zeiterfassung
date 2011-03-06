@@ -106,140 +106,95 @@ public class MonthReportPerUser extends BaseDialog {
 		return MonthNames.getFullMonthName(mon) + " " + Integer.toString(year);
 	}
 
-	// <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-	private void initComponents() {
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-		jScrollPane1 = new javax.swing.JScrollPane();
-		jReport = new javax.swing.JEditorPane();
-		plusMon = new javax.swing.JButton();
-		minusMon = new javax.swing.JButton();
-		jBPrint = new javax.swing.JButton();
-		JCUser = new javax.swing.JComboBox();
-		jBClose = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jReport = new javax.swing.JEditorPane();
+        plusMon = new javax.swing.JButton();
+        minusMon = new javax.swing.JButton();
+        jBPrint = new javax.swing.JButton();
+        JCUser = new javax.swing.JComboBox();
+        jBClose = new javax.swing.JButton();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-		jReport.setContentType("text/html");
-		jReport.setEditable(false);
-		jScrollPane1.setViewportView(jReport);
+        jReport.setContentType("text/html");
+        jReport.setEditable(false);
+        jReport.setText("<html>   <head>    </head>   <body>     <p style=\"margin-top: 0\">          Daten werden geladen....  </p>   </body> </html> ");
+        jScrollPane1.setViewportView(jReport);
 
-		plusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/next.png"))); // NOI18N
-		plusMon.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				plusMonActionPerformed(evt);
-			}
-		});
+        plusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/next.png"))); // NOI18N
+        plusMon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                plusMonActionPerformed(evt);
+            }
+        });
 
-		minusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/prev.png"))); // NOI18N
-		minusMon.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minusMonActionPerformed(evt);
-			}
-		});
+        minusMon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/prev.png"))); // NOI18N
+        minusMon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minusMonActionPerformed(evt);
+            }
+        });
 
-		jBPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/print.png"))); // NOI18N
-		jBPrint.setText("Drucken");
-		jBPrint.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jBPrintActionPerformed(evt);
-			}
-		});
+        jBPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/print.png"))); // NOI18N
+        jBPrint.setText("Drucken");
+        jBPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBPrintActionPerformed(evt);
+            }
+        });
 
-		JCUser.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
-				"Item 1", "Item 2", "Item 3", "Item 4" }));
+        JCUser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-		jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
-		jBClose.setText("Schließen");
-		jBClose.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jBCloseActionPerformed(evt);
-			}
-		});
+        jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
+        jBClose.setText("Schließen");
+        jBClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBCloseActionPerformed(evt);
+            }
+        });
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(
-														jScrollPane1,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														684, Short.MAX_VALUE)
-												.addGroup(
-														layout.createSequentialGroup()
-																.addComponent(
-																		minusMon)
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(
-																		plusMon)
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-																		313,
-																		Short.MAX_VALUE)
-																.addComponent(
-																		jBPrint)
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(
-																		jBClose))
-												.addComponent(
-														JCUser,
-														javax.swing.GroupLayout.PREFERRED_SIZE,
-														190,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addContainerGap()));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						javax.swing.GroupLayout.Alignment.TRAILING,
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(JCUser,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jScrollPane1,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										382, Short.MAX_VALUE)
-								.addGap(8, 8, 8)
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(
-														layout.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING,
-																false)
-																.addComponent(
-																		minusMon,
-																		javax.swing.GroupLayout.DEFAULT_SIZE,
-																		javax.swing.GroupLayout.DEFAULT_SIZE,
-																		Short.MAX_VALUE)
-																.addComponent(
-																		plusMon))
-												.addGroup(
-														layout.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.BASELINE)
-																.addComponent(
-																		jBClose)
-																.addComponent(
-																		jBPrint)))
-								.addContainerGap()));
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(minusMon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(plusMon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 409, Short.MAX_VALUE)
+                        .addComponent(jBPrint)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jBClose))
+                    .addComponent(JCUser, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(JCUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(minusMon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(plusMon))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jBClose)
+                        .addComponent(jBPrint)))
+                .addContainerGap())
+        );
 
-		pack();
-	}//</editor-fold>//GEN-END:initComponents
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void plusMonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusMonActionPerformed
 
@@ -290,16 +245,15 @@ public class MonthReportPerUser extends BaseDialog {
 		};
 	}//GEN-LAST:event_jBCloseActionPerformed
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JComboBox JCUser;
-	private javax.swing.JButton jBClose;
-	private javax.swing.JButton jBPrint;
-	private javax.swing.JEditorPane jReport;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JButton minusMon;
-	private javax.swing.JButton plusMon;
-
-	// End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox JCUser;
+    private javax.swing.JButton jBClose;
+    private javax.swing.JButton jBPrint;
+    private javax.swing.JEditorPane jReport;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton minusMon;
+    private javax.swing.JButton plusMon;
+    // End of variables declaration//GEN-END:variables
 
 	private void setMonth() {
 		setTitle("Monatsbericht " + getTitle(mon, year) + " für " + currentUser);

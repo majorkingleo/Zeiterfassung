@@ -5,6 +5,7 @@
 
 package at.redeye.Zeiterfassung.overtime;
 
+import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
@@ -12,7 +13,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import org.joda.time.DateMidnight;
+import net.sourceforge.jtds.jdbc.DateTime;
+import org.apache.log4j.Logger;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -36,6 +40,8 @@ import org.joda.time.DateMidnight;
  */
 public class Schema_1 implements OvertimeInterface
 {
+    private static final Logger logger = Logger.getLogger(Schema_1.class);
+
     static class Times
     {
         long extra_time = 0;
@@ -46,9 +52,12 @@ public class Schema_1 implements OvertimeInterface
     boolean is_sunday = false;
 
     Hours4DayInterface hours4day;
+    DBUserPerMonth upm;
 
     public Schema_1( DBUserPerMonth upm )
     {
+        this.upm = upm;
+
         if( upm.hours_per_week.getValue() >= 38.5 )
             hours4day = new ShortFriday(8.0,upm.hours_per_week.getValue()-8.0*4);
         else
@@ -183,8 +192,57 @@ public class Schema_1 implements OvertimeInterface
         return 1.5;
     }
 
-    public double getHours4Day(DateMidnight dm, Holidays holidays) {
+    public double getHours4Day(LocalDate dm, Holidays holidays) {
         return hours4day.getHours4Day(dm, holidays);
+    }
+
+    static private boolean isEndOfQuater(LocalDate date)
+    {
+        switch( date.getMonthOfYear() )
+        {
+            case DateTimeConstants.MARCH:
+            case DateTimeConstants.MAY:
+            case DateTimeConstants.AUGUST:
+            case DateTimeConstants.DECEMBER:
+                
+                if( date.getDayOfMonth() == 31 )
+                    return true;
+                break;
+        }
+
+        return false;
+    }
+
+    /*
+     *   Am Ende des Quartals d.h. mit Gültigkeit ab 1.4., 1.6., 1.9., 1.1. ist folgendes geregelt: übersteigt die
+     *   Summe der mehr+Überstunden insgesamt eine Wochenarbeitszeit, so ist diese Differenz auch als Überstunden
+     *   zu werten; bei 38,5 Stunden W-Arbeitszeit also z.B.: Ende 30. März: 33 Mehrstunden
+     *   plus 15 Ü Stunden = 48 abzüglich 38, 5 = 9,5 *0,5=4,75;
+     *   ergibt für die Arbeitnehmerin mit 1. April 33 Mehrstunden plus 19:45 Ü-Stunden
+     */
+    public void everyDayHook(LocalDate today, HMSTime flextime, HMSTime flextime_no_extra, HMSTime overtime, HMSTime overtime_hours)
+    {
+        if( !isEndOfQuater(today) )
+            return;
+
+        /*
+        long diff = flextime.getMillis() + overtime.getMillis();
+        long hours_per_week = (long)(upm.hours_per_week.getValue() * 60 * 60 * 1000);
+
+        if( diff > hours_per_week )
+        {
+            HMSTime hms_diff = new HMSTime(diff);
+            HMSTime hms_hours_per_week = new HMSTime(hours_per_week);
+
+            logger.info("Quartalszuschlag; Überstunden (" + overtime.toString("HH:mm") + ")" +
+                " + Mehrstunden (" + flextime.toString("HH:mm") + "): " + hms_diff + " Arbeitsstunden pro Woche: " + hms_hours_per_week );
+
+            diff -= hours_per_week;
+            overtime.addMillis((long)(diff * getOverTimeFactor()));
+            overtime_hours.addMillis(diff);
+        }
+          */
+         
     }
 
 }

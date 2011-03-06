@@ -5,11 +5,12 @@
 
 package at.redeye.Zeiterfassung.overtime;
 
+import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import java.util.Collection;
-import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -41,8 +42,12 @@ public class None implements OvertimeInterface
         return 0;
     }
 
-    public double getHours4Day(DateMidnight dm, Holidays holidays) {
+    public double getHours4Day(LocalDate dm, Holidays holidays) {
         return hours_per_day.getHours4Day(dm, holidays);
+    }
+
+    public void everyDayHook(LocalDate today, HMSTime flextime, HMSTime flextime_no_extra, HMSTime overtime, HMSTime overtime_hours) {
+        
     }
 
 }

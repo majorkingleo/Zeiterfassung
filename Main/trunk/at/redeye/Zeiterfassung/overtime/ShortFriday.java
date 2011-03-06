@@ -7,8 +7,8 @@ package at.redeye.Zeiterfassung.overtime;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -26,7 +26,7 @@ public class ShortFriday implements Hours4DayInterface
     }
 
     @Override
-    public double getHours4Day(DateMidnight dm, Holidays holidays)
+    public double getHours4Day(LocalDate dm, Holidays holidays)
     {
         HolidayInfo holiday =  holidays.getHolidayForDay(dm);
 

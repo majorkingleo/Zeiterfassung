@@ -76,6 +76,7 @@
           <Properties>
             <Property name="contentType" type="java.lang.String" value="text/html"/>
             <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;   &lt;head&gt;    &lt;/head&gt;   &lt;body&gt;     &lt;p style=&quot;margin-top: 0&quot;&gt;          Daten werden geladen....  &lt;/p&gt;   &lt;/body&gt; &lt;/html&gt; "/>
           </Properties>
         </Component>
       </SubComponents>

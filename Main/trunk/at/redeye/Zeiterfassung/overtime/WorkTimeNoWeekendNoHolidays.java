@@ -8,8 +8,8 @@ package at.redeye.Zeiterfassung.overtime;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -24,7 +24,7 @@ public class WorkTimeNoWeekendNoHolidays implements Hours4DayInterface
         this.upm = upm;
     }
 
-    public double getHours4Day(DateMidnight dm, Holidays holidays)
+    public double getHours4Day(LocalDate dm, Holidays holidays)
     {
          if( dm.getDayOfWeek() == DateTimeConstants.SATURDAY )
             return 0;

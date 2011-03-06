@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -405,8 +406,8 @@ public class AbsenceTimeBooking extends BaseDialog {
                     cal_from = cal_to;
                 }
 
-                DateMidnight mFrom = new DateMidnight(cal_from);
-                DateMidnight mTo = new DateMidnight(cal_to);
+                LocalDate mFrom = new LocalDate(cal_from);
+                LocalDate mTo = new LocalDate(cal_to);
 
                 Transaction trans = getTransaction();
 
@@ -414,10 +415,7 @@ public class AbsenceTimeBooking extends BaseDialog {
                         "where " + trans.getPeriodStmt(entry.from, mFrom, mTo) + " and " +
                         trans.markColumn(entry.user) + "=" + root.getUserId());
 
-                for( DateMidnight mCurrent = mFrom; 
-                        mCurrent.isBefore(mTo.getMillis()) ||
-                        mCurrent.isEqual(mTo.getMillis()) ;
-                    mCurrent = mCurrent.plusDays(1))
+                for( LocalDate mCurrent = mFrom; mCurrent.isBefore(mTo) || mCurrent.isEqual(mTo); mCurrent = mCurrent.plusDays(1))
                 {
                     HolidayInfo info = root.getHolidays().getHolidayForDay(mCurrent);
 
@@ -436,8 +434,8 @@ public class AbsenceTimeBooking extends BaseDialog {
 
                     e.id.loadFromCopy(new Integer(getNewSequenceValue(entry.getName())));
 
-                    e.from.loadFromCopy(mCurrent.toDate());                    
-                    e.to.loadFromCopy(mCurrent.toDate());
+                    e.from.loadFromCopy(mCurrent.toDateTimeAtStartOfDay().toDate());
+                    e.to.loadFromCopy(mCurrent.toDateTimeAtStartOfDay().toDate());
 
                     if( !jCWholeDay.isSelected() )
                     {

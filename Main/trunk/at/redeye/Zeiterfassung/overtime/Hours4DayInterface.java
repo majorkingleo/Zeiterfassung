@@ -6,7 +6,7 @@
 package at.redeye.Zeiterfassung.overtime;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays;
-import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -14,5 +14,5 @@ import org.joda.time.DateMidnight;
  */
 public interface Hours4DayInterface
 {
-    double getHours4Day(DateMidnight dm, Holidays holidays);
+    double getHours4Day(LocalDate dm, Holidays holidays);
 }

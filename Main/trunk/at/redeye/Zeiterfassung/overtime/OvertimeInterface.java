@@ -5,10 +5,12 @@
 
 package at.redeye.Zeiterfassung.overtime;
 
+import at.redeye.FrameWork.utilities.HMSTime;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
+import at.redeye.Zeiterfassung.CalcMonthStuff;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import java.util.Collection;
-import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -48,5 +50,17 @@ public interface OvertimeInterface
      * @param holidays
      * @return hours to work for this day
      */
-    public double getHours4Day( DateMidnight dm, Holidays holidays );
+    public double getHours4Day( LocalDate dm, Holidays holidays );
+
+    /**
+     * Die Methode wird an jedem Tag des zu berechnenden Monats aufgerufen, nachdem
+     * alle Berechnungen des Tages durchgeführt wurden.
+     * @param today
+     * @param flextime die Mehrstunden
+     * @param flextime_no_extra Mehrstunden, aber ohne zuschläge aus den überstunden
+     * @param overtime die Überstunden
+     * @param overtime_hours nur die Anzahl der Stunden, ohne einen zusätslichen Faktor
+     */
+    public void everyDayHook(LocalDate today, HMSTime flextime, HMSTime flextime_no_extra, HMSTime overtime, HMSTime overtime_hours);
+
 }

@@ -503,10 +503,14 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
     }
 
     private boolean isHoliday(Date day) {
-        return isHoliday(new DateMidnight(day));
+        return isHoliday(new LocalDate(day));
     }
 
     public boolean isHoliday(DateMidnight day) {
+        return isHoliday(day.toLocalDate());
+    }
+
+    public boolean isHoliday(LocalDate day) {
         if (holidays == null) {
             return false;
         }

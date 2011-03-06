@@ -55,6 +55,7 @@ import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import at.redeye.Zeiterfassung.reports.MonthReportPerUser;
 import at.redeye.Zeiterfassung.reports.activity.MonthlyReportActivity;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -1315,9 +1316,9 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 			// System.out.println("Clicked on day " +
 			// month.isWhatDayOfMonth(day) );
 
-                    DateMidnight dm = new DateMidnight(year, mon, month.isWhatDayOfMonth(day) );
+                    LocalDate dm = new LocalDate(year, mon, month.isWhatDayOfMonth(day) );
 
-                    invokeDialogUnique(new BookDay(root, dm, month.getDay(day), this,
+                    invokeDialogUnique(new BookDay(root, dm.toDateMidnight(), month.getDay(day), this,
 					month_stuff.getHoursPerDay(dm), cache));
 
 		}
@@ -1389,7 +1390,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 
                         if (diff < 0) {
                             if (general_over_time.getMillis() > Math.abs(diff)) {
-                                extra_times.addMillis(diff);
+                                extra_times.addMillis(Math.abs(diff));
                                 general_over_time.minusMillis(diff);
                             } else {
                                 extra_times.addMillis(general_over_time.getMillis());
@@ -1460,7 +1461,11 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
         return month.getDaysOfMonth();
     }
 
-    public boolean isHoliday( DateMidnight date )
+    public boolean isHoliday(DateMidnight day) {
+        return isHoliday(day.toLocalDate());
+    }
+
+    public boolean isHoliday( LocalDate date )
     {
         if( merger == null )
             return false;
@@ -1472,6 +1477,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
 
         return hi.official_holiday;
     }
+
+
 
     public Holidays getHolidays()
     {
