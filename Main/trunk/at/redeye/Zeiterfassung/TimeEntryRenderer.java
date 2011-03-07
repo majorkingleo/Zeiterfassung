@@ -153,8 +153,8 @@ public class TimeEntryRenderer implements InfoRenderer {
 					if (hi != null && hi.official_holiday)
 						is_holiday = true;
 
-					long correction = calc_overtime.calcExtraTimeForDay(
-							entries, is_holiday);
+					long correction = (long)(calc_overtime.calcOverTimeForDay(
+							entries, is_holiday) * calc_overtime.getOverTimeFactor());
 
 					if (correction != 0) {
 						bsum.append(" <font color=\"#990000\">");
