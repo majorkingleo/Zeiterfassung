@@ -224,8 +224,7 @@ public class Schema_1 implements OvertimeInterface
     {
         if( !isEndOfQuater(today) )
             return;
-
-        /*
+        
         long diff = flextime.getMillis() + overtime.getMillis();
         long hours_per_week = (long)(upm.hours_per_week.getValue() * 60 * 60 * 1000);
 
@@ -240,8 +239,9 @@ public class Schema_1 implements OvertimeInterface
             diff -= hours_per_week;
             overtime.addMillis((long)(diff * getOverTimeFactor()));
             overtime_hours.addMillis(diff);
-        }
-          */
+            flextime.addMillis((long)(diff * getOverTimeFactor()));
+            flextime_no_extra.addMillis(diff);
+        }          
          
     }
 

@@ -504,7 +504,7 @@ public class CalcMonthStuff {
 
         if (res.size() <= 0) {
             logger.warn("Noch keine Einträge gefunden mit: " + trans.getSql());
-            return true;
+            // return true;
         }
 
         logger.trace(trans.getSql());
@@ -600,6 +600,7 @@ public class CalcMonthStuff {
         double flextime_result = (flextime.getMillis() - correction) / 60 / 60 / 1000.0
             - (regular_work_time);
 
+        lflextime_no_extra = flextime_no_extra.getMillis();
         lflextime_no_extra -= regular_work_time * 60 * 60 * 1000.0;
 
         logger.info(String.format("overal working hours from %s to %s: %.3f regular working hours: %.3f result: %.3f",
