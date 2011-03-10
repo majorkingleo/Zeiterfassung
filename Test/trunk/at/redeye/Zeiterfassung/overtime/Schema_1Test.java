@@ -9,13 +9,12 @@ import at.redeye.FrameWork.utilities.calendar.AustrianHolidays;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
-import at.redeye.Zeiterfassung.overtime.Schema_1.Times;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -289,8 +288,8 @@ public class Schema_1Test {
         System.out.println("getHours4Day");
 
         {
-            DateMidnight dm = new DateMidnight(2011, 3, 1);
-            DateMidnight dm_end = dm.plusMonths(1);
+            LocalDate dm = new LocalDate(2011, 3, 1);
+            LocalDate dm_end = dm.plusMonths(1);
 
             Schema_1 instance = new Schema_1(upm_38_5);
             double hours_per_month = 0;
@@ -304,8 +303,23 @@ public class Schema_1Test {
         }
 
         {
-            DateMidnight dm = new DateMidnight(2011, 3, 1);
-            DateMidnight dm_end = dm.plusMonths(1);
+            LocalDate dm = new LocalDate(2010, 4, 1);
+            LocalDate dm_end = dm.plusMonths(1);
+
+            Schema_1 instance = new Schema_1(upm_38_5);
+            double hours_per_month = 0;
+            Holidays holidays = new AustrianHolidays();
+
+            for (; dm.isBefore(dm_end); dm = dm.plusDays(1)) {
+                hours_per_month += instance.getHours4Day(dm, holidays);
+            }
+
+            assertEquals(160.5, hours_per_month, 0.0);
+        }
+
+        {
+            LocalDate dm = new LocalDate(2011, 3, 1);
+            LocalDate dm_end = dm.plusMonths(1);
             Schema_1 instance = new Schema_1(upm_32);
             double hours_per_month = 0;
             Holidays holidays = new AustrianHolidays();
