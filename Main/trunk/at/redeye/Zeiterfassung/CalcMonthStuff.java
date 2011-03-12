@@ -176,7 +176,7 @@ public class CalcMonthStuff {
         return days_to_work;
     }
 
-    public void calcHoursPerMonthDone() throws SQLException,
+    private void calcHoursPerMonthDone() throws SQLException,
         TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
         WrongBindFileFormatException, CloneNotSupportedException,
         DuplicateRecordException {
@@ -357,7 +357,7 @@ public class CalcMonthStuff {
     /*
      * berechnet den Resturlaub
      */
-    public boolean calcRemainingLeave() throws SQLException,
+    private boolean calcRemainingLeave() throws SQLException,
         TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
         WrongBindFileFormatException, DuplicateRecordException {
         GregorianCalendar gdate = new GregorianCalendar(display_month.getYear(),
