@@ -8,7 +8,6 @@ package at.redeye.Zeiterfassung;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.HMSTime;
-import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
@@ -22,9 +21,7 @@ import at.redeye.Zeiterfassung.test.db.CalcMonthStuffInputGenerator;
 import at.redeye.Zeiterfassung.test.db.SetupTestDB;
 import at.redeye.Zeiterfassung.test.db.SetupTestDBInterface;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.junit.After;
@@ -35,11 +32,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Wir Testen hier nun eine 38.5 Stunden Woche mit Überstundenschema 1 im April 2010
- * Hier sollten weder Überstunden, noch mehrstunden entstehen
+ * Wir Testen hier nun eine 38.5 Stunden Woche mit Überstundenschema 1 im May 2010
+ * Hier wird eine Mehrstunde, aber keine Überstunden entstehen
  * @author martin
  */
-public class CalcMonthStuffTest {
+public class CalcMonthStuffTestSchama1May {
 
     static SetupTestDBInterface setup_test_db;
     static CalcMonthStuff calc_month_stuff;
@@ -50,11 +47,10 @@ public class CalcMonthStuffTest {
     final LocalDate from;
     final LocalDate to;
 
-    public CalcMonthStuffTest() throws ClassNotFoundException, UnSupportedDatabaseException, SQLException, MissingConnectionParamException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, CloneNotSupportedException, DuplicateRecordException
+    public CalcMonthStuffTestSchama1May() throws ClassNotFoundException, UnSupportedDatabaseException, SQLException, MissingConnectionParamException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, CloneNotSupportedException, DuplicateRecordException
     {
-        from = new LocalDate( 2010,4,1);
-        to = new LocalDate( 2010,4,30);
-                
+        from = new LocalDate( 2010,5,1);
+        to = new LocalDate( 2010,5,31);                
     }
 
     @BeforeClass
@@ -66,7 +62,7 @@ public class CalcMonthStuffTest {
             user = setup_test_db.getDB4User("martin.test");
             root = setup_test_db.getRoot();        
             trans = root.getDBConnection().getDefaultTransaction();
-            calc_month_stuff_generator = new CalcMonthStuffInputGenerator(2010, 4, user);
+            calc_month_stuff_generator = new CalcMonthStuffInputGenerator(2010, 5, user);
             calc_month_stuff = new CalcMonthStuff(calc_month_stuff_generator, trans, user.getUserId());
             calc_month_stuff.calc();
         }
@@ -132,10 +128,13 @@ public class CalcMonthStuffTest {
         System.out.println("getUPMRecord");
         
         DBUserPerMonth upm = new DBUserPerMonth();
+
+        LocalDate from_april = new LocalDate( 2010,4,1);
+        LocalDate to_april = new LocalDate( 2010,4,30);
         
         List<DBUserPerMonth> upms = trans.fetchTable2(upm, 
-            "where " + trans.getDayStmt(upm.from, from) + 
-            " and " + trans.getDayStmt(upm.to, to) + 
+            "where " + trans.getDayStmt(upm.from, from_april) +
+            " and " + trans.getDayStmt(upm.to, to_april) +
             " and " + trans.markColumn(upm.user) + "=" + user.id.toString() );
         
         assertEquals( upms.size(), 1 );
@@ -155,7 +154,7 @@ public class CalcMonthStuffTest {
 
         System.out.println("getWorkDaysForMonth");
         
-        int expResult = 21;
+        int expResult = 19;
         int result = calc_month_stuff.getWorkDaysForMonth(from.toDateTimeAtStartOfDay().toDate());
         assertEquals(expResult, result);
         
@@ -206,7 +205,7 @@ public class CalcMonthStuffTest {
     public void testGetFormatedHoursPerMonth() {
         System.out.println("getFormatedHoursPerMonth");
         
-        String expResult = "160:30";
+        String expResult = "146:00";
         String result = calc_month_stuff.getFormatedHoursPerMonth();
         assertEquals(expResult, result);
         
@@ -219,7 +218,7 @@ public class CalcMonthStuffTest {
     public void testGetHoursPerMonthInMillis() {
         System.out.println("getHoursPerMonthInMillis");
         
-        long expResult = (long)(160.5 * 60 * 60 * 1000);
+        long expResult = (long)(146 * 60 * 60 * 1000);
         long result = calc_month_stuff.getHoursPerMonthInMillis();
         assertEquals(expResult, result);
         
@@ -232,7 +231,7 @@ public class CalcMonthStuffTest {
     public void testGetCompleteTime() {
         System.out.println("getCompleteTime");
         
-        HMSTime expResult = new HMSTime((long)(160.5*60*60*1000));
+        HMSTime expResult = new HMSTime((long)(147*60*60*1000));
         HMSTime result = calc_month_stuff.getCompleteTime();
         assertEquals(expResult, result);
         
@@ -245,7 +244,7 @@ public class CalcMonthStuffTest {
     public void testGetFlexTime() {
         System.out.println("getFlexTime");
        
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime(1 * 1000*60*60);
         HMSTime result = calc_month_stuff.getFlexTime();
         assertEquals(expResult, result);
         
@@ -258,10 +257,23 @@ public class CalcMonthStuffTest {
     public void testGetFlexTimeNoExtra() {
         System.out.println("getFlexTimeNoExtra");
         
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime(1 * 1000*60*60);
         HMSTime result = calc_month_stuff.getFlexTimeNoExtra();
         assertEquals(expResult, result);
         
+    }
+
+    /**
+     * Test of getOverTimeNoExraPerMonthDone method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testGetOverTimeNoExtraPerMonthDone() {
+        System.out.println("getOverTimeNoExtraPerMonthDone");
+
+        HMSTime expResult = new HMSTime(0);
+        HMSTime result = calc_month_stuff.getOverTimeNoExtraPerMonthDone();
+        assertEquals(expResult, result);
+
     }
 
     /**

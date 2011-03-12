@@ -144,6 +144,40 @@ public class CreateCommonData {
 
         create_normal_time_entries_for_user( pb, new LocalDate( 2010,4,26), new LocalDate( 2010,4,29), NORMAL_START, NORMAL_END );
         create_normal_time_entries_for_user( pb, new LocalDate( 2010,4,30), new LocalDate( 2010,4,30), NORMAL_START, FRIDAY_END );
+
+        // Mai 2010
+        // 1 Mehrstunde wird gebastelt
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5, 3), new LocalDate( 2010,5, 6), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5, 7), new LocalDate( 2010,5, 7), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5,10), new LocalDate( 2010,5,12), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5,14), new LocalDate( 2010,5,14), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5,17), new LocalDate( 2010,5,20), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5,21), new LocalDate( 2010,5,21), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5,25), new LocalDate( 2010,5,27), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5,28), new LocalDate( 2010,5,28), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,5,31), new LocalDate( 2010,5,31), NORMAL_START, "18:00:00" );
+
+        // Juni 2010
+        // 1 Überstunde wird gebastelt
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6, 1), new LocalDate( 2010,6, 2), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6, 4), new LocalDate( 2010,6, 4), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6, 7), new LocalDate( 2010,6,10), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,11), new LocalDate( 2010,6,11), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,14), new LocalDate( 2010,6,17), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,18), new LocalDate( 2010,6,18), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,21), new LocalDate( 2010,6,24), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,25), new LocalDate( 2010,6,25), NORMAL_START, FRIDAY_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,26), new LocalDate( 2010,6,26), "10:00:00", "11:00:00" );
+        
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,28), new LocalDate( 2010,6,30), NORMAL_START, NORMAL_END );
+
     }
 
     public Integer getNormalJobTypeId() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
