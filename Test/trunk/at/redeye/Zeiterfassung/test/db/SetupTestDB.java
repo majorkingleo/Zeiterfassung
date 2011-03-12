@@ -8,6 +8,7 @@ package at.redeye.Zeiterfassung.test.db;
 import at.redeye.FrameWork.base.BaseModuleLauncher;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.LocalRoot;
+import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
@@ -20,6 +21,9 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.DBConnector;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import at.redeye.Zeiterfassung.AppConfigDefinitions;
 import at.redeye.Zeiterfassung.bindtypes.DBCustomerAddresses;
@@ -33,12 +37,15 @@ import at.redeye.Zeiterfassung.bindtypes.DBTimeEntries;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author martin
  */
-public class SetupTestDB extends BaseModuleLauncher
+public class SetupTestDB extends BaseModuleLauncher implements SetupTestDBInterface
 {
     public SetupTestDB()
     {
@@ -132,6 +139,28 @@ public class SetupTestDB extends BaseModuleLauncher
     @Override
     public String getVersion() {
         return "0.1";
+    }
+
+    public Root getRoot() {
+        return root;
+    }
+
+    public void close() {
+        root.getDBConnection().close();
+    }
+
+    public DBPb getDB4User(String login_name) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
+    {
+        Transaction trans = root.getDBConnection().getDefaultTransaction();
+
+        DBPb pb = new DBPb();
+
+        List<DBPb> pbs = trans.fetchTable2(pb, "where " + trans.markColumn(pb.login) + "='" + login_name + "'");
+
+        if( pbs.isEmpty() )
+            return null;
+
+        return pbs.get(0);
     }
 
 }

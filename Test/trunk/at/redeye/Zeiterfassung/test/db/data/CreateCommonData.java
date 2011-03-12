@@ -13,7 +13,6 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.UserManagement.bindtypes.DBPb;
-import at.redeye.UserManagement.bindtypes.DBPermissionLevel;
 import at.redeye.UserManagement.impl.UserDataHandling;
 import at.redeye.Zeiterfassung.bindtypes.DBJobType;
 import at.redeye.Zeiterfassung.bindtypes.DBOvertimeRule;
@@ -81,7 +80,7 @@ public class CreateCommonData {
         upm.from.loadFromString("2010-04-01 00:00:00");
         upm.to.loadFromString("2010-04-30 00:00:00");
         upm.usage.loadFromCopy(100.0);
-        upm.hours_per_week.loadFromCopy(35.5);
+        upm.hours_per_week.loadFromCopy(38.5);
         upm.id.loadFromCopy(trans.getNewSequenceValue(upm.getName(), 1234567));
         upm.locked.loadFromString("NEIN");
         upm.overtime_rule.loadFromString(DBOvertimeRule.SCHEMAS.ÜBERSTUNDENSCHEMA_01.toString());
