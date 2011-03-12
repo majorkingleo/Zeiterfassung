@@ -79,6 +79,12 @@ public class CalcMonthStuff {
      * Die Überstunden für das Monat, inklusive Zuschläge
      */
     private HMSTime over_time_correction_month_done = new HMSTime();
+
+    /**
+     * Die Überstunden für das Monat, ohne Zuschläge
+     */
+    private HMSTime over_time_month_done = new HMSTime();
+
     private int user_id;
     private int days_of_month = 0;
     private OvertimeInterface calc_overtime;
@@ -183,6 +189,7 @@ public class CalcMonthStuff {
         
         time_correction_month_done.setTime(0);
         over_time_correction_month_done.setTime(0);
+        over_time_month_done.setTime(0);
 
         int m = display_month.getMonth();
         int y = display_month.getYear();
@@ -237,6 +244,7 @@ public class CalcMonthStuff {
 
                     time_correction_month_done.addMillis(et);
                     over_time_correction_month_done.addMillis(ot + et);
+                    over_time_month_done.addMillis(ot);
                 } else {
                     last_day.add(te);
                 }
@@ -253,6 +261,7 @@ public class CalcMonthStuff {
 
             time_correction_month_done.addMillis(et);
             over_time_correction_month_done.addMillis(ot + et);
+            over_time_month_done.addMillis(ot);
         }        
 
         complete_time = new HMSTime(millis);
@@ -597,8 +606,7 @@ public class CalcMonthStuff {
                 (long) (regular_work_time * 60 * 60 * 1000), lflextime);
         }
 
-        double flextime_result = (flextime.getMillis() - correction) / 60 / 60 / 1000.0
-            - (regular_work_time);
+        double flextime_result = (flextime.getMillis() - correction) / 60 / 60 / 1000.0;
 
         lflextime_no_extra = flextime_no_extra.getMillis();
         lflextime_no_extra -= regular_work_time * 60 * 60 * 1000.0;
@@ -882,6 +890,13 @@ public class CalcMonthStuff {
      */
     public HMSTime getOverTimePerMonthDone() {
         return over_time_correction_month_done;
+    }
+
+    /**
+     * @return gearbeitete Überstunden ohne Extra in diesesm Monat
+     */
+    public HMSTime getOverTimeNoExtraPerMonthDone() {
+        return over_time_month_done;
     }
 
     /**

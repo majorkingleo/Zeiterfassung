@@ -1356,7 +1356,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                         text.append(" ");
 
                         HMSTime t = new HMSTime(month_stuff.getCompleteTime().getMillis());
-                        t.minusMillis(month_stuff.getOverTimePerMonthDone().getMillis());
+                        t.minusMillis(month_stuff.getOverTimeNoExtraPerMonthDone().getMillis());
 
                         text.append(t.toString("HH:mm"));
 
