@@ -88,8 +88,7 @@ public class CalcMonthStuff {
     private int user_id;
     private int days_of_month = 0;
     private OvertimeInterface calc_overtime;
-    private double remaining_leave_in_days = 0;
-    private int holidays_for_month_in_days = 0;
+    private double remaining_leave_in_days = 0;    
 
     public CalcMonthStuff(CalcMonthStuffDataInterface month, Transaction trans, int user_id) {
         this.display_month = month;
@@ -397,6 +396,9 @@ public class CalcMonthStuff {
                 display_month.getMonth() - 1, days_of_month);
             to = gdate2.getTime();
         }
+
+        LocalDate ld = new LocalDate( gdate );
+        to = ld.plusMonths(1).minusDays(1).toDateTimeAtStartOfDay().toDate();
 
         String JobTypeString = getJobTyesForHoliday();
 
@@ -927,16 +929,5 @@ public class CalcMonthStuff {
      */
     public double getRemainingLeaveInDays() {
         return remaining_leave_in_days;
-    }
-
-    /**
-     * Hier wird der Urlaub in ganzen Tagen gerechnet.
-     * Damit ist nicht nur eine Umrechnung in Tage gemeint, sondern
-     * wenn eine Urlaubseintrag an einem Tag vorhanden war, wird ein ganzer
-     * Urlaubstag vom Resturlaub abgezogen.
-     * @return der berechnete Resturlaub in ganzen Tagen
-     */
-    public double getHolidaysForMonthInDays() {
-        return holidays_for_month_in_days;
     }
 }
