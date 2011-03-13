@@ -371,41 +371,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
         html_bold(getDurFromMilli(calc_month_stuff.getHoursPerMonthInMillis()));
         text.append("</td></tr>");
 
-        text.append("<tr><td>");
-        html_bold("Mehrstunden:");
-        text.append("</td><td>");
-
-        {
-            HMSTime extra_times = new HMSTime(calc_month_stuff.getCompleteTime().getMillis()
-                - calc_month_stuff.getHoursPerMonthInMillis()
-                - over_time_for_month_in_millis);
-
-            long diff = extra_times.getMillis();
-
-            HMSTime month_over_time = new HMSTime(over_time_for_month_in_millis + extra_time_for_month_in_millis);
-
-            if (diff < 0) {
-                if (month_over_time.getMillis() > Math.abs(diff)) {
-                    extra_times.addMillis(diff);
-                    month_over_time.minusMillis(diff);
-                } else {
-                    extra_times.addMillis(month_over_time.getMillis());
-                    month_over_time.setTime(0);
-                }
-            }
-
-            html_bold(extra_times.toString("HH:mm"));
-
-
-            text.append("</td></tr>");
-
-            text.append("<tr><td>");
-            html_bold("Überstunden:");
-            text.append("</td><td>");
-            html_bold(month_over_time.toString("HH:mm"));
-            text.append("</td></tr></table>");
-
-        }
+        text.append("</table>");
 
         html_blockquote_end();
 
@@ -414,36 +380,23 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
 
         text.append("<table>");
 
-        {
-            HMSTime extra_times = new HMSTime(calc_month_stuff.getFlexTimeNoExtra().getMillis() - calc_month_stuff.getOverTimeNoExtra().getMillis());
+        text.append("<tr><td>");
+        html_bold("Zeitausgleichskonto:");
+        text.append("</td><td>");
+        html_bold(calc_month_stuff.getFlexTime().toString("HH:mm"));
+        text.append("</td></tr>");
 
-            long diff = extra_times.getMillis();
+        text.append("<tr><td>");
+        html_bold("davon Überstunden:");
+        text.append("</td><td>");
 
-            HMSTime general_over_time = calc_month_stuff.getOverTime();
+        HMSTime general_overtime = new HMSTime( calc_month_stuff.getFlexTime().getMillis() - calc_month_stuff.getFlexTimeNoExtra().getMillis());
 
-            if (diff < 0) {
-                if (general_over_time.getMillis() > Math.abs(diff)) {
-                    extra_times.addMillis(diff);
-                    general_over_time.minusMillis(diff);
-                } else {
-                    extra_times.addMillis(general_over_time.getMillis());
-                    general_over_time.setTime(0);
-                }
-            }
+        if( calc_month_stuff.getFlexTime().getMillis() < 0 )
+            general_overtime.setTime(0);
 
-            text.append("<tr><td>");
-            html_bold("Mehrstunden:");
-            text.append("</td><td>");
-            html_bold(extra_times.toString("HH:mm"));
-            text.append("</td></tr>");
-
-            text.append("<tr><td>");
-            html_bold("Überstunden:");
-            text.append("</td><td>");
-            html_bold(general_over_time.toString("HH:mm"));
-            text.append("</td></tr>");
-
-        }
+        html_bold(general_overtime.toString("HH:mm"));
+        text.append("</td></tr>");
 
         text.append("<tr><td>");
         html_bold("Resturlaub:");

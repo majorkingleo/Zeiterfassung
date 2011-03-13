@@ -1356,6 +1356,24 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                         text.append(" ");
 
                         HMSTime t = new HMSTime(month_stuff.getCompleteTime().getMillis());
+                        t.addMillis(month_stuff.getExtraTimePerMonthDone().getMillis());
+
+                        text.append(t.toString("HH:mm"));
+
+                        if( month_stuff.getOverTimeNoExtraPerMonthDone().getMillis() > 0 )
+                        {
+                            text.append( " (");
+                            text.append(month_stuff.getOverTimePerMonthDone().toString("HH:mm"));
+                            text.append(")");
+                        }
+
+                        text.append(" ");
+                        text.append(MlM("Zeitausgleichskonto:"));
+                        text.append(" ");
+
+                        text.append(month_stuff.getFlexTime().toString("HH:mm"));
+/*
+                        HMSTime t = new HMSTime(month_stuff.getCompleteTime().getMillis());
                         t.minusMillis(month_stuff.getOverTimeNoExtraPerMonthDone().getMillis());
 
                         text.append(t.toString("HH:mm"));
@@ -1409,7 +1427,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                             text.append(" +");
                             text.append(general_over_time.toString("HH:mm"));
                         }
-
+*/
                         text.append(" ");
                         text.append(MlM("Resturlaub:"));
                         text.append(" ");
@@ -1419,6 +1437,7 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                         } else {
                             text.append(month_stuff.getRemainingLeave().toString("HH:mm"));
                         }
+
 
                                                 /*
 						if (month_stuff.getHoursPerDay() > 0)

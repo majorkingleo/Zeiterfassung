@@ -18,6 +18,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.Zeiterfassung.bindtypes.DBUserPerMonth;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -132,23 +133,57 @@ public class GetUserPerMonthRecord {
 				logger.warn("Keine Eintrag für den Zeitraum gefunden");
 				return null;
 			} else {
-				String message = "Mehr als einen Eintrag den Benutzer "
-						+ userId + " gefunden " + "( " + year + "-" + month
-						+ "-" + "01 )";
 
-				logger.error(message);
-				logger.error("Liste der Einträge:");
-				logger.error("Sql: " + trans.getSql());
+                LocalDate from = new LocalDate( year, month, 1);
+                LocalDate to   = from.plusMonths(1).minusDays(1);
 
-				for (int i = 0; i < res.size(); i++) {
-					DBUserPerMonth rec = (DBUserPerMonth) res.get(i);
+                DBUserPerMonth matching_upm = null;
 
-					logger.error((i + 1) + "UPM Id: " + rec.id + " from: "
-							+ rec.from.getDateStr() + " to: "
-							+ rec.to.getDateStr());
-				}
+                for( DBStrukt rec : res )
+                {
+                    DBUserPerMonth u = (DBUserPerMonth) rec;
 
-				throw new DuplicateRecordException(message);
+                    LocalDate uf = new LocalDate( u.from.getValue() );
+                    LocalDate ut = new LocalDate( u.to.getValue() );
+
+                    if( ( from.isBefore(uf) || from.isEqual(uf) ) &&
+                        ( to.isBefore(ut) || to.isEqual(ut)) )
+                    {
+                        if( matching_upm != null )
+                        {
+                            String message = "Mehr als einen Eintrag für den Benutzer "
+                                + userId + " gefunden " + "( " + year + "-" + month
+                                + "-" + "01 )";
+
+                            logger.error(message);
+                            logger.error("Liste der Einträge:");
+                            logger.error("Sql: " + trans.getSql());
+
+                            for (int i = 0; i < res.size(); i++) {
+                                DBUserPerMonth r = (DBUserPerMonth) res.get(i);
+
+                                logger.error((i + 1) + "UPM Id: " + r.id + " from: "
+                                    + r.from.getDateStr() + " to: "
+                                    + r.to.getDateStr());
+                            }
+
+                            throw new DuplicateRecordException(message);
+                        }
+                        else
+                        {
+                            matching_upm = u;
+                        }
+                    }  // if
+                }
+
+                if (matching_upm == null) {
+                    logger.warn("Keine Eintrag für den Zeitraum gefunden");
+                    return null;
+                } else {
+                    logger.info("UPM Id: " + matching_upm.id + " from: " + matching_upm.from.getDateStr()
+                        + " to: " + matching_upm.to.getDateStr() + " holiday hours "
+                        + matching_upm.hours_holidays);
+                }
 			}
 		} else if (res.size() == 1) {
 
