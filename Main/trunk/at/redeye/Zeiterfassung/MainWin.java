@@ -1382,19 +1382,23 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                         text.append(MlM("Gleitzeitkonto:"));
                         text.append(" ");
 
-                        HMSTime extra_times = new HMSTime(month_stuff.getFlexTimeNoExtra().getMillis() - month_stuff.getOverTimeNoExtra().getMillis());
-
-                        long diff = extra_times.getMillis();
-
+                        HMSTime extra_times = new HMSTime(month_stuff.getFlexTimeNoExtra().getMillis());
                         HMSTime general_over_time = month_stuff.getOverTime();
 
-                        if (diff < 0) {
-                            if (general_over_time.getMillis() > Math.abs(diff)) {
-                                extra_times.addMillis(Math.abs(diff));
-                                general_over_time.minusMillis(diff);
-                            } else {
-                                extra_times.addMillis(general_over_time.getMillis());
-                                general_over_time.setTime(0);
+                        if (extra_times.getMillis() < 0)
+                        {
+                            extra_times = new HMSTime(month_stuff.getFlexTimeNoExtra().getMillis() - month_stuff.getOverTimeNoExtra().getMillis());
+
+                            long diff = extra_times.getMillis();
+
+                            if (diff < 0) {
+                                if (general_over_time.getMillis() > Math.abs(diff)) {
+                                    extra_times.addMillis(Math.abs(diff));
+                                    general_over_time.minusMillis(diff);
+                                } else {
+                                    extra_times.addMillis(general_over_time.getMillis());
+                                    general_over_time.setTime(0);
+                                }
                             }
                         }
 
