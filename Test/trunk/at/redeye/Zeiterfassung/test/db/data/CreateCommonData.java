@@ -33,6 +33,7 @@ public class CreateCommonData {
 
     Root root;
     Integer normal_job_type_id = null;
+    Integer holiday_job_type_id = null;
 
     private CreateCommonData(Root root) {
         this.root = root;
@@ -70,15 +71,29 @@ public class CreateCommonData {
         Transaction trans = root.getDBConnection().getDefaultTransaction();
 
         DBUserPerMonth upm = new DBUserPerMonth();
-         DBTimeEntries entry = new DBTimeEntries();        
+        DBTimeEntries entry = new DBTimeEntries();        
 
         trans.updateValues("delete from " + trans.markTable(upm) + " where " + trans.markColumn(upm.user) + "=" + pb.id.toString());
         trans.updateValues("delete from " + trans.markTable(entry) + " where " + trans.markColumn(entry.user)  + " = " + pb.id.toString());
-
-        upm.days_holidays.loadFromCopy(0.0);
+        
         upm.days_per_week.loadFromCopy(5.0);
+        upm.days_holidays.loadFromCopy(25.0);
         upm.from.loadFromString("2010-04-01 00:00:00");
         upm.to.loadFromString("2010-04-30 00:00:00");
+        upm.usage.loadFromCopy(100.0);
+        upm.hours_per_week.loadFromCopy(38.5);
+        upm.id.loadFromCopy(trans.getNewSequenceValue(upm.getName(), 1234567));
+        upm.locked.loadFromString("NEIN");
+        upm.overtime_rule.loadFromString(DBOvertimeRule.SCHEMAS.ÜBERSTUNDENSCHEMA_01.toString());
+        upm.user.loadFromCopy(pb.id.getValue());
+
+        DefaultInsertOrUpdater.insertOrUpdateValuesWithPrimKey(trans, upm);
+
+        upm.id.loadFromCopy(0);
+        upm.days_per_week.loadFromCopy(5.0);
+        upm.days_holidays.loadFromCopy(20.0);
+        upm.from.loadFromString("2011-04-01 00:00:00");
+        upm.to.loadFromString("2020-01-01 00:00:00");
         upm.usage.loadFromCopy(100.0);
         upm.hours_per_week.loadFromCopy(38.5);
         upm.id.loadFromCopy(trans.getNewSequenceValue(upm.getName(), 1234567));
@@ -92,6 +107,14 @@ public class CreateCommonData {
     }
 
     private void create_normal_time_entries_for_user(DBPb pb, LocalDate from, LocalDate to, String StartAtTime, String EndTime) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException {
+        create_time_entries_for_user( pb, from, to, StartAtTime, EndTime, getNormalJobTypeId(),"Normal");
+    }
+
+    private void create_holiday_time_entries_for_user(DBPb pb, LocalDate from, LocalDate to, String StartAtTime, String EndTime) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException {
+        create_time_entries_for_user( pb, from, to, StartAtTime, EndTime, getHolidayJobTypeId(),"Urlaub");
+    }
+
+    private void create_time_entries_for_user(DBPb pb, LocalDate from, LocalDate to, String StartAtTime, String EndTime, Integer job_type, String text) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException {
         Transaction trans = root.getDBConnection().getDefaultTransaction();
 
         DBTimeEntries entry = new DBTimeEntries();        
@@ -103,12 +126,12 @@ public class CreateCommonData {
             DBTimeEntries e = new DBTimeEntries();
 
             e.user.loadFromCopy(pb.id.getValue());
-            e.comment.loadFromString("test");
+            e.comment.loadFromString(text);
             e.from.loadFromCopy(from.toDateTimeAtStartOfDay().toDate());
             e.from.loadTimePart(StartAtTime);
             e.to.loadFromCopy(from.toDateTimeAtStartOfDay().toDate());
             e.to.loadTimePart(EndTime);
-            e.jobtype.loadFromCopy(getNormalJobTypeId());
+            e.jobtype.loadFromCopy(job_type);
 
             entries.add(e);
         }
@@ -124,7 +147,7 @@ public class CreateCommonData {
         trans.commit();
     }
 
-    private void create_normal_time_entries_for_april_2010( DBPb pb ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException
+    private void create_normal_time_entries_for_martin_test_2010( DBPb pb ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException
     {
         final String NORMAL_START = "09:00:00";
         final String NORMAL_END = "17:00:00";
@@ -178,6 +201,49 @@ public class CreateCommonData {
         
         create_normal_time_entries_for_user( pb, new LocalDate( 2010,6,28), new LocalDate( 2010,6,30), NORMAL_START, NORMAL_END );
 
+
+        // Juli 2010
+        // 1 Urlaubstag wird gebastelt
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7, 1), new LocalDate( 2010,7, 1), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7, 2), new LocalDate( 2010,7, 2), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7, 5), new LocalDate( 2010,7, 8), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7, 9), new LocalDate( 2010,7, 9), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7,12), new LocalDate( 2010,7,15), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7,16), new LocalDate( 2010,7,16), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7,19), new LocalDate( 2010,7,22), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7,23), new LocalDate( 2010,7,23), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,7,26), new LocalDate( 2010,7,29), NORMAL_START, NORMAL_END );
+        create_holiday_time_entries_for_user( pb, new LocalDate( 2010,7,30), new LocalDate( 2010,7,30), NORMAL_START, FRIDAY_END );
+    }
+
+    private void create_normal_time_entries_for_martin_test_2011( DBPb pb ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException
+    {
+        final String NORMAL_START = "10:00:00";
+        final String NORMAL_END = "18:00:00";
+        final String FRIDAY_END = "16:30:00";
+
+        // April 2011
+
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4, 1), new LocalDate( 2011,4, 1), NORMAL_START, FRIDAY_END );
+
+        create_holiday_time_entries_for_user(pb, new LocalDate( 2011,4, 4), new LocalDate( 2011,4, 7), NORMAL_START, NORMAL_END );
+        create_holiday_time_entries_for_user(pb, new LocalDate( 2011,4, 8), new LocalDate( 2011,4, 8), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,11), new LocalDate( 2011,4,11), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,12), new LocalDate( 2011,4,12), "06:00:00",   "14:00:00" );
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,13), new LocalDate( 2011,4,13), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,14), new LocalDate( 2011,4,14), "14:00:00",   "22:00:00" );
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,15), new LocalDate( 2011,4,15), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,18), new LocalDate( 2011,4,21), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,22), new LocalDate( 2011,4,22), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,26), new LocalDate( 2011,4,28), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,29), new LocalDate( 2011,4,29), NORMAL_START, "17:30:00" );
     }
 
     public Integer getNormalJobTypeId() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
@@ -195,7 +261,29 @@ public class CreateCommonData {
         if( jts.isEmpty() )
             return null;
 
-        return jts.get(0).id.getValue();
+        normal_job_type_id = jts.get(0).id.getValue();
+
+        return normal_job_type_id;
+    }
+
+    public Integer getHolidayJobTypeId() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
+    {
+        if( holiday_job_type_id != null )
+            return holiday_job_type_id;
+
+        Transaction trans = root.getDBConnection().getDefaultTransaction();
+
+        DBJobType jt = new DBJobType();
+
+
+        List<DBJobType> jts = trans.fetchTable2(jt, "where " + trans.markColumn(jt.is_holliday) + "= 'JA' and " + trans.markColumn(jt.locked) + "=0" );
+
+        if( jts.isEmpty() )
+            return null;
+
+        holiday_job_type_id = jts.get(0).id.getValue();
+
+        return holiday_job_type_id;
     }
 
     public static void main( String[] args )
@@ -212,7 +300,8 @@ public class CreateCommonData {
                 final CreateCommonData data_inserter = new CreateCommonData(setup.root);
                 DBPb pb = data_inserter.create_userdata();
                 data_inserter.create_upmdata_for_user(pb);
-                data_inserter.create_normal_time_entries_for_april_2010(pb);
+                data_inserter.create_normal_time_entries_for_martin_test_2010(pb);
+                data_inserter.create_normal_time_entries_for_martin_test_2011(pb);
             }
         };
 

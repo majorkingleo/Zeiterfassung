@@ -362,21 +362,8 @@ public class CalcMonthStuffTestSchama1April {
     public void testGetRemainingLeaveInDays() {
         System.out.println("getRemainingLeaveInDays");
         
-        double expResult = 0.0;
+        double expResult = 25.0;
         double result = calc_month_stuff.getRemainingLeaveInDays();
-        assertEquals(expResult, result, 0.0);
-        
-    }
-
-    /**
-     * Test of getHolidaysForMonthInDays method, of class CalcMonthStuff.
-     */
-    @Test
-    public void testGetHolidaysForMonthInDays() {
-        System.out.println("getHolidaysForMonthInDays");
-        
-        double expResult = 0.0;
-        double result = calc_month_stuff.getHolidaysForMonthInDays();
         assertEquals(expResult, result, 0.0);
         
     }
