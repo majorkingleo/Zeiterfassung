@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * Hier dürfen weder Überstunden, noch Mehrstunden entstehen
  * @author martin
  */
-public class CalcMonthStuffTestSchama1April {
+public class CalcMonthStuffTestSchema1April {
 
     static SetupTestDBInterface setup_test_db;
     static CalcMonthStuff calc_month_stuff;
@@ -47,7 +47,7 @@ public class CalcMonthStuffTestSchama1April {
     final LocalDate from;
     final LocalDate to;
 
-    public CalcMonthStuffTestSchama1April() throws ClassNotFoundException, UnSupportedDatabaseException, SQLException, MissingConnectionParamException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, CloneNotSupportedException, DuplicateRecordException
+    public CalcMonthStuffTestSchema1April() throws ClassNotFoundException, UnSupportedDatabaseException, SQLException, MissingConnectionParamException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, CloneNotSupportedException, DuplicateRecordException
     {
         from = new LocalDate( 2010,4,1);
         to = new LocalDate( 2010,4,30);
@@ -366,6 +366,33 @@ public class CalcMonthStuffTestSchama1April {
         double result = calc_month_stuff.getRemainingLeaveInDays();
         assertEquals(expResult, result, 0.0);
         
+    }
+
+    /**
+     * Test of getFlexTimeEOM method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetFlexTimeEOM() {
+        System.out.println("getFlexTimeEOM");
+
+        HMSTime expResult = new HMSTime(0);
+        HMSTime result = calc_month_stuff.getFlexTimeEOM();
+        assertEquals(expResult, result);
+
+    }
+
+
+    /**
+     * Test of getOverTimeEOM method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetOvertimeEOM() {
+        System.out.println("getOverTimeEOM");
+
+        HMSTime expResult = new HMSTime(0);
+        HMSTime result = calc_month_stuff.getOverTimeEOM();
+        assertEquals(expResult, result);
+
     }
 
 }

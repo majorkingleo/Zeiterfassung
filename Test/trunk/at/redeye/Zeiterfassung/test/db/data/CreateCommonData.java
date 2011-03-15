@@ -218,6 +218,23 @@ public class CreateCommonData {
 
         create_normal_time_entries_for_user( pb, new LocalDate( 2010,7,26), new LocalDate( 2010,7,29), NORMAL_START, NORMAL_END );
         create_holiday_time_entries_for_user( pb, new LocalDate( 2010,7,30), new LocalDate( 2010,7,30), NORMAL_START, FRIDAY_END );
+
+        // August 2010
+        // Es wird zu wenig gearbeitet, sprich ZA genommen
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8, 2), new LocalDate( 2010,8, 5), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8, 6), new LocalDate( 2010,8, 6), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8, 9), new LocalDate( 2010,8, 12), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8,13), new LocalDate( 2010,8, 13), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8,16), new LocalDate( 2010,8,19), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8,20), new LocalDate( 2010,8,20), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8,23), new LocalDate( 2010,8,26), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8,27), new LocalDate( 2010,8,27), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,8,30), new LocalDate( 2010,8,31), NORMAL_START, "16:00:00" );
+
     }
 
     private void create_normal_time_entries_for_martin_test_2011( DBPb pb ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException
