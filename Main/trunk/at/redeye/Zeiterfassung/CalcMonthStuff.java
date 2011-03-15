@@ -55,7 +55,7 @@ public class CalcMonthStuff {
     private HMSTime remaining_leave = new HMSTime();
 
     /**
-     * Mehrstunden
+     * Mehrstunden, täglich berechnet
      */
     private HMSTime flextime = new HMSTime();
 
@@ -68,7 +68,12 @@ public class CalcMonthStuff {
      * die Anzahl der Stunden, die Überstunden sind.
      */
     private HMSTime overtime_hours = new HMSTime();
+
+    /**
+     * Das Zeitausgleichskonto ohne extras
+     */
     private HMSTime flextime_no_extra = new HMSTime();
+
     private StringBuilder error_log = new StringBuilder();
     /**
      * Zuschäge in dem Monat, also die Zeiten, wenn eine Überstunde mit 1.5 Stunden ZA
@@ -84,6 +89,17 @@ public class CalcMonthStuff {
      * Die Überstunden für das Monat, ohne Zuschläge
      */
     private HMSTime over_time_month_done = new HMSTime();
+
+    /**
+     * Das Gleitzeitkonto, die Minusstunden am Ende des Monats
+     * Mit den Überstunden bereinigt
+     */
+    private HMSTime flextime_eom = new HMSTime(); // flextime EndOfMonth
+
+    /**
+     * Die Überstunden, am Ende des Monats mit flextime_eom gegengerechnet
+     */
+    private HMSTime overtime_eom = new HMSTime();
 
     private int user_id;
     private int days_of_month = 0;
@@ -490,6 +506,9 @@ public class CalcMonthStuff {
         flextime_no_extra.setTime(lflextime_no_extra);
         overtime_hours.setTime(lovertime_hours_only);        
 
+        flextime_eom.setTime(lflextime);
+        overtime_eom.setTime(lovertime);
+
         if (Time.isMinimumTime(to.getTime())) {
             // der letzte Tag des aktuellen Monats
             GregorianCalendar gdate2 = new GregorianCalendar(display_month.getYear(),
@@ -505,8 +524,8 @@ public class CalcMonthStuff {
         List<DBTimeEntries> res = trans.fetchTable2(
             entries,
             "where "
-            + trans.getPeriodStmt("from", new DateMidnight(from),
-            new DateMidnight(to)) + " and "
+            + trans.getPeriodStmt("from", new LocalDate(from),
+            new LocalDate(to)) + " and "
             + trans.markColumn(entries.user) + " = "
             + user_id + " and "
             + trans.markColumn(entries.jobtype) + " in ("
@@ -569,6 +588,8 @@ public class CalcMonthStuff {
 
         double regular_work_time = 0;
 
+        LocalDate ld_from = new LocalDate(from);
+
         for( Map.Entry<Long,List<DBTimeEntries>> entry : entries_per_day )
         {
             LocalDate today = new LocalDate( entry.getKey() );                        
@@ -578,12 +599,17 @@ public class CalcMonthStuff {
 
             flextime_no_extra.minusMillis((long)(hours_per_day*60*60*1000));
             flextime.minusMillis((long)(hours_per_day*60*60*1000));
+            flextime_eom.minusMillis((long)(hours_per_day*60*60*1000));
 
             if (entry.getValue() != null) {
 
                 for (DBTimeEntries time_entry : entry.getValue()) {
-                    flextime.addMillis(time_entry.calcDuration());
-                    flextime_no_extra.addMillis(time_entry.calcDuration());
+
+                    long duration = time_entry.calcDuration();
+
+                    flextime.addMillis(duration);
+                    flextime_no_extra.addMillis(duration);
+                    flextime_eom.addMillis(duration);
                 }
 
                 long ft_extra = calc_overtime.calcExtraTimeForDay(entry.getValue(), isHoliday(today));
@@ -596,9 +622,29 @@ public class CalcMonthStuff {
                 flextime.addMillis(ft_extra);
                 overtime.addMillis(ot + ft_extra);
                 overtime_hours.addMillis(ot);
+                overtime_eom.addMillis(ot+ft_extra);
+                flextime_eom.minusMillis(ot); // damit in diesem Feld die Überstunden nicht schon enthalten sind.
             }
 
             calc_overtime.everyDayHook(today,flextime, flextime_no_extra, overtime, overtime_hours);
+
+            if( isLastDayOfMonth(today) )
+            {
+                if( flextime_eom.getMillis() < 0 && overtime_eom.getMillis() > 0 )
+                {
+                    if( Math.abs(flextime_eom.getMillis()) >= overtime_eom.getMillis() )
+                    {
+                        flextime_eom.addMillis(overtime_eom.getMillis());
+                        overtime_eom.setTime(0);
+                    }
+                    else
+                    {
+                        long diff = overtime_eom.getMillis() - Math.abs(flextime_eom.getMillis());
+                        flextime_eom.setTime(0);
+                        overtime_eom.setTime(diff);
+                    }
+                }
+            }
         }
 
         long correction = 0;
@@ -929,5 +975,33 @@ public class CalcMonthStuff {
      */
     public double getRemainingLeaveInDays() {
         return remaining_leave_in_days;
+    }
+
+    private boolean isLastDayOfMonth( LocalDate date )
+    {
+       if( date.getMonthOfYear() != date.plusDays(1).getMonthOfYear() )
+           return true;
+
+       return false;
+    }
+
+    /**
+     * Zeitausgleichskonto am Ende des Monats durch das Überstundenkonto
+     * eventuelle Minusbestände bereits ausgeglichen
+     * @return Zeitausgleiskontostunden
+     */
+    public HMSTime getFlexTimeEOM()
+    {
+        return flextime_eom;
+    }
+
+    /**
+     * Die verbleibenden Überstunden, gegengerechnet am Ende des Monats
+     * mit eventuellen Minusbeständen von flextime_eom
+     * @return Die Anzahl an Überstunde, die am Ende des Monats noch verblieben sind
+     */
+    public HMSTime getOverTimeEOM()
+    {
+        return overtime_eom;
     }
 }

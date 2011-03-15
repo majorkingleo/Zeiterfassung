@@ -390,12 +390,7 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
         html_bold("davon Überstunden:");
         text.append("</td><td>");
 
-        HMSTime general_overtime = new HMSTime( calc_month_stuff.getFlexTime().getMillis() - calc_month_stuff.getFlexTimeNoExtra().getMillis());
-
-        if( calc_month_stuff.getFlexTime().getMillis() < 0 )
-            general_overtime.setTime(0);
-
-        html_bold(general_overtime.toString("HH:mm"));
+        html_bold(calc_month_stuff.getOverTimeEOM().toString("HH:mm"));
         text.append("</td></tr>");
 
         text.append("<tr><td>");
