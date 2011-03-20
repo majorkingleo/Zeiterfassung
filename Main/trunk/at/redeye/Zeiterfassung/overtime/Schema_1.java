@@ -41,6 +41,9 @@ public class Schema_1 implements OvertimeInterface
 {
     private static final Logger logger = Logger.getLogger(Schema_1.class);
 
+    private static final double OVERTIME_FACTOR = 1.5;
+    private static final double EXTRATIME_FACTOR = 1.5;
+
     static class Times
     {
         long extra_time = 0;
@@ -165,10 +168,10 @@ public class Schema_1 implements OvertimeInterface
 
         if( is_saturday || is_sunday || is_holiday )
         {
-            times.extra_time = (long)(duration_per_day * 0.5);
+            times.extra_time = (long)(duration_per_day * EXTRATIME_FACTOR);
             times.over_time = duration_per_day;
         } else {
-            times.extra_time = (long)((duration_after_evening + duration_before_morning + duration_extra ) * 0.5);
+            times.extra_time = (long)((duration_after_evening + duration_before_morning + duration_extra ) * EXTRATIME_FACTOR);
             times.over_time = duration_after_evening + duration_before_morning + duration_extra;
         }
 
@@ -188,7 +191,7 @@ public class Schema_1 implements OvertimeInterface
     }
 
     public double getOverTimeFactor() {
-        return 1.5;
+        return OVERTIME_FACTOR;
     }
 
     public double getHours4Day(LocalDate dm, Holidays holidays) {
