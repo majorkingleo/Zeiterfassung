@@ -38,6 +38,7 @@ public class Schema_1Test {
         Collection<DBTimeEntries> entries = new ArrayList<DBTimeEntries>();
         long expected_result_for_extra_time = -1;
         long expected_result_for_over_time = -1;
+        long expected_result_for_more_time = -1;
         boolean is_holiday = false;
 
         String name;
@@ -112,6 +113,7 @@ public class Schema_1Test {
 
             test.expected_result_for_extra_time = 0;
             test.expected_result_for_over_time = 0;
+            test.expected_result_for_more_time = 0;
         }
 
         {
@@ -123,6 +125,7 @@ public class Schema_1Test {
 
             test.expected_result_for_extra_time = 0;
             test.expected_result_for_over_time = 0;
+            test.expected_result_for_more_time = 0;
         }
 
         {
@@ -135,6 +138,7 @@ public class Schema_1Test {
 
             test.expected_result_for_extra_time = 30 * MINUTES;
             test.expected_result_for_over_time = 1 * HOURS;
+            test.expected_result_for_more_time = 0;
         }
 
         {
@@ -146,6 +150,7 @@ public class Schema_1Test {
 
             test.expected_result_for_extra_time = 2 * HOURS;
             test.expected_result_for_over_time = 4 * HOURS;
+            test.expected_result_for_more_time = 2 * HOURS + 30 * MINUTES;
         }
 
         {
@@ -157,6 +162,7 @@ public class Schema_1Test {
 
             test.expected_result_for_extra_time = (3 * HOURS + 59 * MINUTES)/2;
             test.expected_result_for_over_time = 3 * HOURS + 59 * MINUTES;
+            test.expected_result_for_more_time = 0;
         }
 
         {
@@ -168,6 +174,7 @@ public class Schema_1Test {
 
             test.expected_result_for_extra_time = 30 * MINUTES;
             test.expected_result_for_over_time = 1 * HOURS;
+            test.expected_result_for_more_time = 0;
         }
 
     }
@@ -329,6 +336,26 @@ public class Schema_1Test {
             }
 
             assertEquals(149, hours_per_month, 0.0);
+        }
+    }
+
+    /**
+     * Test of calcMoreTime4Day method, of class Schema_1.
+     */
+    @Test
+    public void testCalcMoreTime4Day() {
+        System.out.println("getMoreTime4Day");
+
+        List<DBTimeEntries> entries_per_day = null;
+        boolean holiday = false;
+        Schema_1 instance = new Schema_1(upm_38_5);
+
+        for( TestCase test : test_cases )
+        {
+            System.out.println("    => " + test.toString());
+            long expResult = test.expected_result_for_more_time;
+            long result = instance.calcMoreTime4Day(test.entries, test.is_holiday);
+            assertEquals(expResult, result);
         }
     }
 

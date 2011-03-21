@@ -129,13 +129,15 @@ public class CalcMonthStuffTestSchema1April {
         System.out.println("getUPMRecord");
         
         DBUserPerMonth upm = new DBUserPerMonth();
+
+        LocalDate to_dez = new LocalDate( 2010,12,31);
         
         List<DBUserPerMonth> upms = trans.fetchTable2(upm, 
             "where " + trans.getDayStmt(upm.from, from) + 
-            " and " + trans.getDayStmt(upm.to, to) + 
+            " and " + trans.getDayStmt(upm.to, to_dez) +
             " and " + trans.markColumn(upm.user) + "=" + user.id.toString() );
         
-        assertEquals( upms.size(), 1 );
+        assertEquals( 1, upms.size() );
         
         upm = upms.get(0);
         
@@ -395,4 +397,40 @@ public class CalcMonthStuffTestSchema1April {
 
     }
 
+   /**
+     * Test of getMoreTimeMoreTime method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetMoreTimeMoreTime() {
+        System.out.println("getMoreTimeMoreTime");
+
+        HMSTime expResult = new HMSTime(0);
+        HMSTime result = calc_month_stuff.getMoreTimeMoreTime();
+        assertEquals(expResult, result);
+    }
+
+   /**
+     * Test of getFlexTimeMoreTime method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetFlexTimeMoreTime() {
+        System.out.println("getFlexTimeMoreTime");
+
+        HMSTime expResult = new HMSTime(0);
+        HMSTime result = calc_month_stuff.getFlexTimeMoreTime();
+        assertEquals(expResult, result);
+    }
+
+   /**
+     * Test of getMoreTimeMoreTime method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetOverTimeMoreTime() {
+        System.out.println("getOverTimeMoreTime");
+
+        HMSTime expResult = new HMSTime(0);
+        HMSTime result = calc_month_stuff.getOverTimeMoreTime();
+        assertEquals(expResult, result);
+    }
+    
 }

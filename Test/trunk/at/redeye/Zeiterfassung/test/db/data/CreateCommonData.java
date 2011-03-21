@@ -75,11 +75,26 @@ public class CreateCommonData {
 
         trans.updateValues("delete from " + trans.markTable(upm) + " where " + trans.markColumn(upm.user) + "=" + pb.id.toString());
         trans.updateValues("delete from " + trans.markTable(entry) + " where " + trans.markColumn(entry.user)  + " = " + pb.id.toString());
-        
+
+        upm.id.loadFromCopy(0);
+        upm.days_per_week.loadFromCopy(5.0);
+        upm.days_holidays.loadFromCopy(25.0);
+        upm.from.loadFromString("2010-01-01 00:00:00");
+        upm.to.loadFromString("2010-03-31 00:00:00");
+        upm.usage.loadFromCopy(100.0);
+        upm.hours_per_week.loadFromCopy(38.5);
+        upm.id.loadFromCopy(trans.getNewSequenceValue(upm.getName(), 1234567));
+        upm.locked.loadFromString("NEIN");
+        upm.overtime_rule.loadFromString(DBOvertimeRule.SCHEMAS.ÜBERSTUNDENSCHEMA_01.toString());
+        upm.user.loadFromCopy(pb.id.getValue());
+
+        DefaultInsertOrUpdater.insertOrUpdateValuesWithPrimKey(trans, upm);
+
+        upm.id.loadFromCopy(0);
         upm.days_per_week.loadFromCopy(5.0);
         upm.days_holidays.loadFromCopy(25.0);
         upm.from.loadFromString("2010-04-01 00:00:00");
-        upm.to.loadFromString("2010-04-30 00:00:00");
+        upm.to.loadFromString("2010-12-31 00:00:00");
         upm.usage.loadFromCopy(100.0);
         upm.hours_per_week.loadFromCopy(38.5);
         upm.id.loadFromCopy(trans.getNewSequenceValue(upm.getName(), 1234567));
@@ -144,7 +159,7 @@ public class CreateCommonData {
             trans.insertValues(e);
         }
 
-        trans.commit();
+        //trans.commit();
     }
 
     private void create_normal_time_entries_for_martin_test_2010( DBPb pb ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException
@@ -152,6 +167,27 @@ public class CreateCommonData {
         final String NORMAL_START = "09:00:00";
         final String NORMAL_END = "17:00:00";
         final String FRIDAY_END = "15:30:00";
+
+        // Jänner 2010
+        // 1 Mehrstunde, 1 Überstunde aber am Ende des Monats darf nur eine Mehrstunde überigbleiben
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1, 4), new LocalDate( 2010,1, 5), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1, 7), new LocalDate( 2010,1, 7), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1, 8), new LocalDate( 2010,1, 8), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,11), new LocalDate( 2010,1,14), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,15), new LocalDate( 2010,1,15), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,18), new LocalDate( 2010,1,21), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,22), new LocalDate( 2010,1,22), NORMAL_START, FRIDAY_END );
+
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,25), new LocalDate( 2010,1,25), NORMAL_START, "18:00:00");
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,26), new LocalDate( 2010,1,26), "05:30:00",   "13:30:00" );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,27), new LocalDate( 2010,1,27), NORMAL_START, NORMAL_END );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,28), new LocalDate( 2010,1,28), NORMAL_START, "16:00:00" );
+        create_normal_time_entries_for_user( pb, new LocalDate( 2010,1,29), new LocalDate( 2010,1,29), NORMAL_START, FRIDAY_END );
+
+
+        // April 2010
 
         create_normal_time_entries_for_user( pb, new LocalDate( 2010,4, 1), new LocalDate( 2010,4, 1), NORMAL_START, NORMAL_END );
         create_normal_time_entries_for_user( pb, new LocalDate( 2010,4, 2), new LocalDate( 2010,4, 2), NORMAL_START, FRIDAY_END );
@@ -235,6 +271,8 @@ public class CreateCommonData {
 
         create_normal_time_entries_for_user( pb, new LocalDate( 2010,8,30), new LocalDate( 2010,8,31), NORMAL_START, "16:00:00" );
 
+
+        root.getDBConnection().getDefaultTransaction().commit();
     }
 
     private void create_normal_time_entries_for_martin_test_2011( DBPb pb ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, IOException
@@ -261,6 +299,8 @@ public class CreateCommonData {
 
         create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,26), new LocalDate( 2011,4,28), NORMAL_START, NORMAL_END );
         create_normal_time_entries_for_user(pb, new LocalDate( 2011,4,29), new LocalDate( 2011,4,29), NORMAL_START, "17:30:00" );
+
+        root.getDBConnection().getDefaultTransaction().commit();
     }
 
     public Integer getNormalJobTypeId() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
