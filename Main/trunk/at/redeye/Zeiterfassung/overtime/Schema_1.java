@@ -42,12 +42,17 @@ public class Schema_1 implements OvertimeInterface
     private static final Logger logger = Logger.getLogger(Schema_1.class);
 
     private static final double OVERTIME_FACTOR = 1.5;
-    private static final double EXTRATIME_FACTOR = 1.5;
+    private static final double EXTRATIME_FACTOR = 0.5;
 
     static class Times
     {
         long extra_time = 0;
         long over_time = 0;
+        
+        /**
+         * Mehrstunden. Zeit am Tag die mehr als gefordert gearbeitet wurde.
+         */
+        long more_time = 0;
     }
 
     boolean is_saturday = false;
@@ -113,6 +118,12 @@ public class Schema_1 implements OvertimeInterface
         return times.extra_time;
     }
 
+    public long calcMoreTime4Day(Collection<DBTimeEntries> entries_per_day, boolean is_holiday) {
+        Times times = calcTimesForDay(entries_per_day, is_holiday);
+
+        return times.more_time;
+    }
+
     Times calcTimesForDay(Collection<DBTimeEntries> entries_per_day, boolean is_holiday )
     {
         long duration_per_day = 0;
@@ -173,6 +184,14 @@ public class Schema_1 implements OvertimeInterface
         } else {
             times.extra_time = (long)((duration_after_evening + duration_before_morning + duration_extra ) * EXTRATIME_FACTOR);
             times.over_time = duration_after_evening + duration_before_morning + duration_extra;
+
+
+            double h4d = hours4day.getHours4Day(new LocalDate(d_morning), null);
+
+            times.more_time = duration_per_day - times.over_time - (long)(h4d * 60 * 60 * 1000.0);
+
+            if( times.more_time < 0 )
+                times.more_time = 0;
         }
 
         return times;

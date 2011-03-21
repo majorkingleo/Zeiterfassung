@@ -101,6 +101,23 @@ public class CalcMonthStuff {
      */
     private HMSTime overtime_eom = new HMSTime();
 
+    /**
+     * Die Mehrarbeitszeit (Die Zeit, die mehr gearbeitet wird als gefordert, aber trotzdem keine Überstunde ist.
+     */
+    private HMSTime moretime_moretime = new HMSTime();
+
+    /**
+     * Die flexible Arbeitszeit, gegengerechnet mit den überstunden, wobei hier die Übertstunden
+     * vor den Mehrstunden vom Konto abgebucht werden. Der Abgleich erfolgt täglich.
+     */
+    private HMSTime flextime_moretime = new HMSTime();
+
+    /**
+     * Die Überstunden. gegengerechnet mit den Mehrstunden, wobei hier die Überstunden vor den
+     * Mehrstunden vom Konto abgebucht werden. Der Abgleich erfolgt täglich.
+     */
+    private HMSTime overtime_moretime = new HMSTime();
+
     private int user_id;
     private int days_of_month = 0;
     private OvertimeInterface calc_overtime;
@@ -509,6 +526,10 @@ public class CalcMonthStuff {
         flextime_eom.setTime(lflextime);
         overtime_eom.setTime(lovertime);
 
+        moretime_moretime.setTime(lflextime);
+        flextime_moretime.setTime(lflextime);
+        overtime_moretime.setTime(lovertime);
+
         if (Time.isMinimumTime(to.getTime())) {
             // der letzte Tag des aktuellen Monats
             GregorianCalendar gdate2 = new GregorianCalendar(display_month.getYear(),
@@ -600,6 +621,7 @@ public class CalcMonthStuff {
             flextime_no_extra.minusMillis((long)(hours_per_day*60*60*1000));
             flextime.minusMillis((long)(hours_per_day*60*60*1000));
             flextime_eom.minusMillis((long)(hours_per_day*60*60*1000));
+            flextime_moretime.minusMillis((long)(hours_per_day*60*60*1000));
 
             if (entry.getValue() != null) {
 
@@ -610,10 +632,12 @@ public class CalcMonthStuff {
                     flextime.addMillis(duration);
                     flextime_no_extra.addMillis(duration);
                     flextime_eom.addMillis(duration);
+                    flextime_moretime.addMillis(duration);
                 }
 
                 long ft_extra = calc_overtime.calcExtraTimeForDay(entry.getValue(), isHoliday(today));
                 long ot = calc_overtime.calcOverTimeForDay(entry.getValue(), isHoliday(today));
+                long mt = calc_overtime.calcMoreTime4Day(entry.getValue(), isHoliday(today));
 
                 if (ft_extra > 0) {
                     logger.trace(DBDateTime.getDateStr(today) + " added " + ft_extra + " to overtime.");
@@ -624,10 +648,58 @@ public class CalcMonthStuff {
                 overtime_hours.addMillis(ot);
                 overtime_eom.addMillis(ot+ft_extra);
                 flextime_eom.minusMillis(ot); // damit in diesem Feld die Überstunden nicht schon enthalten sind.
+
+                moretime_moretime.addMillis(mt);
+                flextime_moretime.minusMillis(mt);
+                flextime_moretime.minusMillis(ot); // damit in diesem Feld die Überstunden nicht schon enthalten sind.
+                overtime_moretime.addMillis(ot + ft_extra);
             }
 
             calc_overtime.everyDayHook(today,flextime, flextime_no_extra, overtime, overtime_hours);
 
+
+            /**
+             * Ausgleich aus dem Überstundenkonto (BJV braucht das)
+             */
+            if( flextime_moretime.getMillis() < 0 )
+            {
+                if( overtime_moretime.getMillis() > 0 )
+                {
+                    if( Math.abs(flextime_moretime.getMillis()) >= overtime_moretime.getMillis() )
+                    {
+                        flextime_moretime.addMillis(overtime_moretime.getMillis());
+                        overtime_moretime.setTime(0);
+                    }
+                    else
+                    {
+                        long diff = overtime_moretime.getMillis() - Math.abs(flextime_moretime.getMillis());
+                        flextime_moretime.setTime(0);
+                        overtime_moretime.setTime(diff);
+                    }
+                }
+            }
+            
+            /**
+             * Und dannach erst der Ausgleich aus dem Mehrstundenkonto (BJV braucht das)
+             */
+            if( flextime_moretime.getMillis() < 0 )
+            {
+                if( moretime_moretime.getMillis() > 0 )
+                {
+                    if( Math.abs(flextime_moretime.getMillis()) >= moretime_moretime.getMillis() )
+                    {
+                        flextime_moretime.addMillis(moretime_moretime.getMillis());
+                        moretime_moretime.setTime(0);
+                    }
+                    else
+                    {
+                        long diff = moretime_moretime.getMillis() - Math.abs(flextime_moretime.getMillis());
+                        flextime_moretime.setTime(0);
+                        moretime_moretime.setTime(diff);
+                    }
+                }
+            }
+            
             if( isLastDayOfMonth(today) )
             {
                 if( flextime_eom.getMillis() < 0 && overtime_eom.getMillis() > 0 )
@@ -670,6 +742,7 @@ public class CalcMonthStuff {
         return true;
     }
 
+    /*
     private boolean calcFlexTimeOld() throws SQLException,
         TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
         WrongBindFileFormatException, DuplicateRecordException {
@@ -860,6 +933,8 @@ public class CalcMonthStuff {
 
         return true;
     }
+     *
+     */
 
     public String getError() {
         return error_log.toString();
@@ -1003,5 +1078,39 @@ public class CalcMonthStuff {
     public HMSTime getOverTimeEOM()
     {
         return overtime_eom;
+    }
+
+    /**
+     * die Anzal der Mehrstunden, täglich abgeglichen, wobei immer zuerst die
+     * Überstunden abgebaut werden und dann erst die Mehrstunden.
+     * Mehrstunden, sind jene Stunden die mehr als das soll sind, aber keine
+     * Überstunden sind.
+     */
+    public HMSTime getMoreTimeMoreTime()
+    {
+        return moretime_moretime;
+    }
+
+    /**
+     * die Anzal der ZA Stunden, täglich abgeglichen, wobei immer zuerst die
+     * Überstunden abgebaut werden und dann erst die Mehrstunden.
+     * Mehrstunden, sind jene Stunden die mehr als das soll sind, aber keine
+     * Überstunden sind.
+     * @return die Anzahl der ZA Stunden, ohne Mehrstunden
+     */
+    public HMSTime getFlexTimeMoreTime()
+    {
+        return flextime_moretime;
+    }
+
+    /**
+     * die Anzal der Überstunden, täglich abgeglichen, wobei immer zuerst die
+     * Überstunden abgebaut werden und dann erst die Mehrstunden.
+     * Mehrstunden, sind jene Stunden die mehr als das soll sind, aber keine
+     * Überstunden sind.
+     */
+    public HMSTime getOverTimeMoreTime()
+    {
+        return overtime_moretime;
     }
 }

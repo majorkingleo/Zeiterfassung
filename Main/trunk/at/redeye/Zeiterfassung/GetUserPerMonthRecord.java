@@ -146,7 +146,7 @@ public class GetUserPerMonthRecord {
                     LocalDate uf = new LocalDate( u.from.getValue() );
                     LocalDate ut = new LocalDate( u.to.getValue() );
 
-                    if( ( from.isBefore(uf) || from.isEqual(uf) ) &&
+                    if( ( uf.isBefore(from) || uf.isEqual(from) ) &&
                         ( to.isBefore(ut) || to.isEqual(ut)) )
                     {
                         if( matching_upm != null )

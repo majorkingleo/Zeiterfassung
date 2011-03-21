@@ -63,4 +63,13 @@ public interface OvertimeInterface
      */
     public void everyDayHook(LocalDate today, HMSTime flextime, HMSTime flextime_no_extra, HMSTime overtime, HMSTime overtime_hours);
 
+    /**
+     * Berechnet die Mehrarbeitszeit für den Tag. Die Mehrarbeitszeit ist jene Zeit, die
+     * mehr als geforder gearebitet wurde, aber keine Überstunden sind.
+     * @param entries_per_day
+     * @param holiday
+     * @return
+     */
+    public long calcMoreTime4Day( Collection<DBTimeEntries> entries_per_day, boolean holiday );
+
 }

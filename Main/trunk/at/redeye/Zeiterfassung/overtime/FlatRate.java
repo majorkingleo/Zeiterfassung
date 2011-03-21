@@ -61,4 +61,8 @@ public class FlatRate implements OvertimeInterface
         
     }
 
+    public long calcMoreTime4Day(Collection<DBTimeEntries> entries_per_day, boolean holiday) {
+        return 0;
+    }
+
 }

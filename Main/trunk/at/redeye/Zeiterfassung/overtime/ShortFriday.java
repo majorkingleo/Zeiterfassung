@@ -28,7 +28,10 @@ public class ShortFriday implements Hours4DayInterface
     @Override
     public double getHours4Day(LocalDate dm, Holidays holidays)
     {
-        HolidayInfo holiday =  holidays.getHolidayForDay(dm);
+        HolidayInfo holiday = null;
+
+        if( holidays != null )
+            holiday = holidays.getHolidayForDay(dm);
 
          if( holiday != null && holiday.official_holiday )
          {
