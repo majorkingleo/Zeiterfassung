@@ -107,7 +107,7 @@ public class CalcMonthStuff {
     private HMSTime moretime_moretime = new HMSTime();
 
     /**
-     * Die flexible Arbeitszeit, gegengerechnet mit den überstunden, wobei hier die Übertstunden
+     * Die flexible Arbeitszeit, gegengerechnet mit den überstunden, wobei hier die Überstunden
      * vor den Mehrstunden vom Konto abgebucht werden. Der Abgleich erfolgt täglich.
      */
     private HMSTime flextime_moretime = new HMSTime();
@@ -222,6 +222,7 @@ public class CalcMonthStuff {
         time_correction_month_done.setTime(0);
         over_time_correction_month_done.setTime(0);
         over_time_month_done.setTime(0);
+        complete_time.setTime(0);
 
         int m = display_month.getMonth();
         int y = display_month.getYear();
@@ -243,15 +244,48 @@ public class CalcMonthStuff {
             + trans.getPeriodStmt("from", dmStart, dmEnd) + " order by "
             + trans.markColumn("from");
 
-        List<DBStrukt> res = trans.fetchTable(new DBTimeEntries(), where);
+        List<DBTimeEntries> res = trans.fetchTable2(new DBTimeEntries(), where);       
 
-        long millis = 0;
+        List<Map.Entry<Long,List<DBTimeEntries>>> entries_per_day = splitTimeEntriesPerDay(res,dmStart.toDate(),dmEnd.toDate());
 
-        List<DBTimeEntries> last_day = new ArrayList<DBTimeEntries>();
+         /*
+         * Jetzt haben wir alle Tage und Zeitstempel aufgruppiert nun gehts ans berechnen
+         */
 
-        Calendar cal_before = new GregorianCalendar();
-        Calendar cal_act = new GregorianCalendar();
+  //      double regular_work_time = 0;
 
+        LocalDate ld_from = new LocalDate(dmStart);
+
+        for( Map.Entry<Long,List<DBTimeEntries>> entry : entries_per_day )
+        {
+            LocalDate today = new LocalDate( entry.getKey() );
+/*
+            double hours_per_day = getHoursPerDay(today);
+            regular_work_time += hours_per_day;
+
+            long lhours_per_day = (long)(hours_per_day*60*60*1000);            
+*/
+            if( entry.getValue() != null )
+            {
+                for( DBTimeEntries te : entry.getValue() )
+                {
+                    long duration = te.calcDuration();
+
+                   complete_time.addMillis(duration);
+                }
+
+                boolean is_holiday = isHoliday(today);
+
+                long et = calc_overtime.calcExtraTimeForDay(entry.getValue(), is_holiday );
+                long ot = calc_overtime.calcOverTimeForDay(entry.getValue(), is_holiday );
+                long mt = calc_overtime.calcMoreTime4Day(entry.getValue(), is_holiday );
+
+                time_correction_month_done.addMillis(et);
+                over_time_correction_month_done.addMillis(ot + et);
+                over_time_month_done.addMillis(ot);
+            }
+        }
+            /*
         for (DBStrukt s : res) {
             DBTimeEntries te = (DBTimeEntries) s;
 
@@ -266,6 +300,7 @@ public class CalcMonthStuff {
                     cal_before.setTime(te.from.getValue());
                     long et = calc_overtime.calcExtraTimeForDay(last_day, isHoliday(te.from.getValue()));
                     long ot = calc_overtime.calcOverTimeForDay(last_day, isHoliday(te.from.getValue()));
+                    
                     last_day.clear();
                     last_day.add(te);
 
@@ -297,6 +332,8 @@ public class CalcMonthStuff {
         }        
 
         complete_time = new HMSTime(millis);
+             *
+             */
     }
 
     public void calc() throws TableBindingNotRegisteredException,
@@ -489,6 +526,52 @@ public class CalcMonthStuff {
         return true;
     }
 
+    private List<Map.Entry<Long,List<DBTimeEntries>>> splitTimeEntriesPerDay(List<DBTimeEntries> res, Date from, Date to )
+    {
+        /* So, jetzt bauen wir uns ein Array auf mit den Zeiteinträgen pro Tag,
+         * damit wir paralell die Arbeitszeit und die Sollarbeitszeit ausrechnen können,
+         * und dann mit richtigen und aktuellen Werten dia Quartalsfuntion aufrufen können.
+         */
+        LocalDate ld_inc = new LocalDate(from);
+        LocalDate ld_to = new LocalDate(to);
+
+        List<Map.Entry<Long,List<DBTimeEntries>>> entries_per_day = new ArrayList(300);
+
+        for( ; ld_inc.isBefore(ld_to) || ld_inc.isEqual(ld_to); ld_inc = ld_inc.plusDays(1))
+        {
+            Map.Entry<Long,List<DBTimeEntries>> entry = new SimpleEntry<Long, List<DBTimeEntries>>(ld_inc.toDateTimeAtStartOfDay().getMillis(),null);
+            entries_per_day.add(entry);
+
+            if( res.isEmpty() )
+                continue;
+
+           DBTimeEntries time_entry = null;
+           LocalDate from_date = null;
+
+            do
+            {
+                time_entry = res.get(0);
+                from_date = new LocalDate( time_entry.from.getValue() );
+
+                if( from_date.equals(ld_inc) ) {
+                    List<DBTimeEntries> time_entries_for_one_day = entry.getValue();
+
+                    if( time_entries_for_one_day == null )
+                    {
+                        time_entries_for_one_day = new ArrayList();
+                        entry.setValue(time_entries_for_one_day);
+                    }
+
+                    time_entries_for_one_day.add(time_entry);
+                    res.remove(0);
+                }
+
+            }  while( !res.isEmpty() && time_entry != null && from_date.equals(ld_inc));
+        }
+
+        return entries_per_day;
+    }
+
     private boolean calcFlexTime() throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException, DuplicateRecordException
     {
         GregorianCalendar gdate = new GregorianCalendar(display_month.getYear(), display_month.getMonth() - 1, 1);
@@ -560,46 +643,7 @@ public class CalcMonthStuff {
 
         logger.trace(trans.getSql());
 
-        /* So, jetzt bauen wir uns ein Array auf mit den Zeiteinträgen pro Tag,
-         * damit wir paralell die Arbeitszeit und die Sollarbeitszeit ausrechnen können,
-         * und dann mit richtigen und aktuellen Werten dia Quartalsfuntion aufrufen können.
-         */
-        LocalDate ld_inc = new LocalDate(from);
-        LocalDate ld_to = new LocalDate(to);
-
-        List<Map.Entry<Long,List<DBTimeEntries>>> entries_per_day = new ArrayList(300);
-
-        for( ; ld_inc.isBefore(ld_to) || ld_inc.isEqual(ld_to); ld_inc = ld_inc.plusDays(1))
-        {
-            Map.Entry<Long,List<DBTimeEntries>> entry = new SimpleEntry<Long, List<DBTimeEntries>>(ld_inc.toDateTimeAtStartOfDay().getMillis(),null);
-            entries_per_day.add(entry);
-
-            if( res.isEmpty() )
-                continue;
-
-           DBTimeEntries time_entry = null;
-           LocalDate from_date = null;
-
-            do
-            {
-                time_entry = res.get(0);
-                from_date = new LocalDate( time_entry.from.getValue() );
-
-                if( from_date.equals(ld_inc) ) {
-                    List<DBTimeEntries> time_entries_for_one_day = entry.getValue();
-
-                    if( time_entries_for_one_day == null )
-                    {
-                        time_entries_for_one_day = new ArrayList();
-                        entry.setValue(time_entries_for_one_day);
-                    }
-
-                    time_entries_for_one_day.add(time_entry);
-                    res.remove(0);
-                }
-
-            }  while( !res.isEmpty() && time_entry != null && from_date.equals(ld_inc));
-        }
+        List<Map.Entry<Long,List<DBTimeEntries>>> entries_per_day = splitTimeEntriesPerDay(res,from,to);
 
         logger.info(from + " - " + to + " " + entries_per_day.size() + " Tage");
 
@@ -618,10 +662,12 @@ public class CalcMonthStuff {
             double hours_per_day = getHoursPerDay(today);
             regular_work_time += hours_per_day;
 
-            flextime_no_extra.minusMillis((long)(hours_per_day*60*60*1000));
-            flextime.minusMillis((long)(hours_per_day*60*60*1000));
-            flextime_eom.minusMillis((long)(hours_per_day*60*60*1000));
-            flextime_moretime.minusMillis((long)(hours_per_day*60*60*1000));
+            long lhours_per_day = (long)(hours_per_day*60*60*1000);
+
+            flextime_no_extra.minusMillis(lhours_per_day);
+            flextime.minusMillis(lhours_per_day);
+            flextime_eom.minusMillis(lhours_per_day);
+            flextime_moretime.minusMillis(lhours_per_day);
 
             if (entry.getValue() != null) {
 
@@ -635,9 +681,11 @@ public class CalcMonthStuff {
                     flextime_moretime.addMillis(duration);
                 }
 
-                long ft_extra = calc_overtime.calcExtraTimeForDay(entry.getValue(), isHoliday(today));
-                long ot = calc_overtime.calcOverTimeForDay(entry.getValue(), isHoliday(today));
-                long mt = calc_overtime.calcMoreTime4Day(entry.getValue(), isHoliday(today));
+                boolean is_holiday = isHoliday(today);
+
+                long ft_extra = calc_overtime.calcExtraTimeForDay(entry.getValue(), is_holiday);
+                long ot = calc_overtime.calcOverTimeForDay(entry.getValue(), is_holiday);
+                long mt = calc_overtime.calcMoreTime4Day(entry.getValue(), is_holiday);
 
                 if (ft_extra > 0) {
                     logger.trace(DBDateTime.getDateStr(today) + " added " + ft_extra + " to overtime.");

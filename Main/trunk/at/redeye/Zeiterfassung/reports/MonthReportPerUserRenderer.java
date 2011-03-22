@@ -389,8 +389,13 @@ public class MonthReportPerUserRenderer extends BaseReportRenderer implements Re
         text.append("<tr><td>");
         html_bold("davon Überstunden:");
         text.append("</td><td>");
+        html_bold(calc_month_stuff.getOverTimeMoreTime().toString("HH:mm"));
+        text.append("</td></tr>");
 
-        html_bold(calc_month_stuff.getOverTimeEOM().toString("HH:mm"));
+        text.append("<tr><td>");
+        html_bold("davon Mehrstunden:");
+        text.append("</td><td>");
+        html_bold(calc_month_stuff.getMoreTimeMoreTime().toString("HH:mm"));
         text.append("</td></tr>");
 
         text.append("<tr><td>");
