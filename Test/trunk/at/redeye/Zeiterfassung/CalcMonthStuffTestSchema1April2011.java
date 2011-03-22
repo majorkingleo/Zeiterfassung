@@ -390,9 +390,45 @@ public class CalcMonthStuffTestSchema1April2011 {
     public void testgetOvertimeEOM() {
         System.out.println("getOverTimeEOM");
 
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime((long)(2.25*60*60*1000));
         HMSTime result = calc_month_stuff.getOverTimeEOM();
         assertEquals(expResult, result);
 
+    }
+
+    /**
+     * Test of getMoreTimeMoreTime method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetMoreTimeMoreTime() {
+        System.out.println("getMoreTimeMoreTime");
+
+        HMSTime expResult = new HMSTime((long)(1*60*60*1000));
+        HMSTime result = calc_month_stuff.getMoreTimeMoreTime();
+        assertEquals(expResult, result);
+    }
+
+   /**
+     * Test of getFlexTimeMoreTime method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetFlexTimeMoreTime() {
+        System.out.println("getFlexTimeMoreTime");
+
+        HMSTime expResult = new HMSTime(0);
+        HMSTime result = calc_month_stuff.getFlexTimeMoreTime();
+        assertEquals(expResult, result);
+    }
+
+   /**
+     * Test of getOverTimeMoreTime method, of class CalcMonthStuff.
+     */
+    @Test
+    public void testgetOverTimeMoreTime() {
+        System.out.println("getOverTimeMoreTime");
+
+        HMSTime expResult = new HMSTime((long)(1.25*60*60*1000));
+        HMSTime result = calc_month_stuff.getOverTimeMoreTime();
+        assertEquals(expResult, result);
     }
 }

@@ -281,7 +281,7 @@ public class CalcMonthStuffTestSchema1Jan {
     public void testGetExtraTimePerMonthDone() {
         System.out.println("getExtraTimePerMonthDone");
         
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime((long)(0.5*60*60*1000));
         HMSTime result = calc_month_stuff.getExtraTimePerMonthDone();
         assertEquals(expResult, result);
         
@@ -294,7 +294,7 @@ public class CalcMonthStuffTestSchema1Jan {
     public void testGetOverTimePerMonthDone() {
         System.out.println("getOverTimePerMonthDone");
         
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime((long)(1.5*60*60*1000));
         HMSTime result = calc_month_stuff.getOverTimePerMonthDone();
         assertEquals(expResult, result);
         
@@ -307,7 +307,7 @@ public class CalcMonthStuffTestSchema1Jan {
     public void testGetOverTimeNoExtraPerMonthDone() {
         System.out.println("getOverTimeNoExtraPerMonthDone");
 
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime(60*60*1000);
         HMSTime result = calc_month_stuff.getOverTimeNoExtraPerMonthDone();
         assertEquals(expResult, result);
 
@@ -320,7 +320,7 @@ public class CalcMonthStuffTestSchema1Jan {
     public void testGetOverTime() {
         System.out.println("getOverTime");
         
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime((long)(1.5*60*60*1000));
         HMSTime result = calc_month_stuff.getOverTime();
         assertEquals(expResult, result);
         
@@ -333,7 +333,7 @@ public class CalcMonthStuffTestSchema1Jan {
     public void testGetOverTimeNoExtra() {
         System.out.println("getOverTimeNoExtra");
         
-        HMSTime expResult =  new HMSTime(0);
+        HMSTime expResult =  new HMSTime(60*60*1000);
         HMSTime result = calc_month_stuff.getOverTimeNoExtra();
         assertEquals(expResult, result);
         
@@ -389,7 +389,7 @@ public class CalcMonthStuffTestSchema1Jan {
     public void testgetOvertimeEOM() {
         System.out.println("getOverTimeEOM");
 
-        HMSTime expResult = new HMSTime(0);
+        HMSTime expResult = new HMSTime((long)(0.5*60*60*1000));
         HMSTime result = calc_month_stuff.getOverTimeEOM();
         assertEquals(expResult, result);
 
