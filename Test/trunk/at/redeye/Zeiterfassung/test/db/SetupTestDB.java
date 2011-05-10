@@ -82,7 +82,7 @@ public class SetupTestDB extends BaseModuleLauncher implements SetupTestDBInterf
                "localhost",
                0,
                "root",
-               "",
+               "kingleo",
                db_name,
                SupportedDBMSTypes.DB_MYSQL
                );
@@ -120,7 +120,7 @@ public class SetupTestDB extends BaseModuleLauncher implements SetupTestDBInterf
         root.getSetup().setLocalConfig(Setup.DBDatabase, db_name);
         root.getSetup().setLocalConfig(Setup.DBHost, "localhost");
         root.getSetup().setLocalConfig(Setup.DBUser, "root");
-        root.getSetup().setLocalConfig(Setup.DBPasswd, "");
+        root.getSetup().setLocalConfig(Setup.DBPasswd, "kingleo");
         root.getSetup().setLocalConfig(Setup.DBPort, "");
         root.getSetup().setLocalConfig(Setup.DBInstance, "test");
         root.getSetup().setLocalConfig(Setup.DBType, SupportedDBMSTypes.DB_MYSQL.toString());
