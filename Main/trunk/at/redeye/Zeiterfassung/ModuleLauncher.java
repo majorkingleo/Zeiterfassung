@@ -290,7 +290,7 @@ public class ModuleLauncher extends BaseModuleLauncher implements
 
 		first_run = false;
 
-		updateJnlp2();
+		// updateJnlp2();
 
 	}
 
