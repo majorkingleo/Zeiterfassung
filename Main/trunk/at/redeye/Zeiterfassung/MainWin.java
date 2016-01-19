@@ -1054,6 +1054,8 @@ public class MainWin extends BaseDialog implements DayEventListener, MonthSumInf
                 return;
             }
 
+            root.getDBConnection().close();
+            
             ImportDialog importer = new ImportDialog(root);
 
             importer.setFinishedListener(new Runnable() {
